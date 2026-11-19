@@ -176,5 +176,6 @@ table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
 th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
 th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
 td.date { white-space: nowrap; }
+td.flags { font-size: 1.15rem; letter-spacing: 0.1em; white-space: nowrap; }
 
 .empty { color: var(--muted); margin: 0; }

@@ -126,13 +126,16 @@
         <h2 id="preview-heading">Next 12 months</h2>
         {% if events %}
         <table>
-          <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th></tr></thead>
+          <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th><th scope="col">Region</th><th scope="col">Type</th></tr></thead>
           <tbody>
-            {% for event in events %}
+            {% for view in events %}
+            {% set event = view.event %}
             <tr>
               <td class="date">{{ event.date.strftime("%a, %b %-d") }}{% if event.days > 1 %} – {{ (event.end - one_day).strftime("%a, %b %-d") }}{% endif %}</td>
               <td>{{ title(event, config.title_style) }}</td>
-              <td class="muted">{{ event.occurrences | map(attribute="source") | unique | join(", ") }}</td>
+              <td class="flags">{% for badge in view.sources %}<span role="img" aria-label="{{ badge.name }}" title="{{ badge.name }}">{{ badge.flag }}</span>{% endfor %}</td>
+              <td class="muted">{{ view.regions | join(", ") or "—" }}</td>
+              <td class="muted">{{ view.categories | join(", ") }}</td>
             </tr>
             {% endfor %}
           </tbody>

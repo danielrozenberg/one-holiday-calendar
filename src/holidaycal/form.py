@@ -40,6 +40,46 @@ class SourceView:
     holidays: list[Option]
 
 
+@dataclasses.dataclass(frozen=True)
+class SourceBadge:
+    """A source's flag or symbol, with its name for tooltips and readers."""
+
+    flag: str
+    name: str
+
+
+@dataclasses.dataclass(frozen=True)
+class EventView:
+    """Everything the preview needs to render one event."""
+
+    event: merge.Event
+    sources: list[SourceBadge]
+    regions: list[str]
+    categories: list[str]
+
+
+def event_view(event: merge.Event) -> EventView:
+    """Describes an event's sources, regions and categories for display."""
+    codes = dict.fromkeys(o.source for o in event.occurrences)
+    regions = dict.fromkeys(
+        subdivision_names(o.source).get(o.subdivision, o.subdivision)
+        for o in event.occurrences
+        if o.subdivision
+    )
+    categories = dict.fromkeys(
+        o.category.replace("_", " ") for o in event.occurrences
+    )
+    return EventView(
+        event=event,
+        sources=[
+            SourceBadge(sources.flag(code), sources.source_name(code))
+            for code in codes
+        ],
+        regions=list(regions),
+        categories=list(categories),
+    )
+
+
 @functools.cache
 def subdivision_names(country: str) -> dict[str, str]:
     """Returns subdivision names by code, falling back to the code."""

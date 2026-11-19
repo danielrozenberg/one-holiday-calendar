@@ -136,7 +136,7 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
     path = flask.url_for("calendar", blob=blob) if blob else ""
     return flask.render_template(
         "index.html",
-        events=events,
+        events=[form.event_view(e) for e in events],
         config=parsed,
         title=ics.title,
         one_day=datetime.timedelta(days=1),

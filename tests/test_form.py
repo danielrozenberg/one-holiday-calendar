@@ -4,6 +4,7 @@ from werkzeug import datastructures
 from holidaycal import config
 from holidaycal import config_pb2
 from holidaycal import form
+from holidaycal import merge
 
 
 def _parse(*pairs: tuple[str, str]) -> config_pb2.Config:
@@ -135,3 +136,21 @@ def test_invalid_move(move):
 def test_combine_multiday_option():
     assert _parse(("add", "CA"), ("combine_multiday", "1")).combine_multiday
     assert not _parse(("add", "CA"), ("combine_multiday", "")).combine_multiday
+
+
+def test_event_view():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="CA", subdivisions=["ON", "AB"]),
+            config_pb2.Source(religion="christian"),
+        ]
+    )
+    [family_day] = [
+        e for e in merge.build(parsed, [2026]) if e.key == "family day"
+    ]
+
+    view = form.event_view(family_day)
+
+    assert view.sources == [form.SourceBadge("\U0001f1e8\U0001f1e6", "Canada")]
+    assert sorted(view.regions) == ["Alberta", "Ontario"]
+    assert view.categories == ["public"]
