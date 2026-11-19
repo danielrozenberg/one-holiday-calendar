@@ -78,7 +78,7 @@ def test_views_list_holidays_and_exclusions():
     [view] = form.views(parsed, [2026])
 
     assert view.label == "Canada"
-    assert form.Option("christmas day", "Christmas Day", True) in view.holidays
+    assert form.Option("christmas_day", "Christmas Day", True) in view.holidays
     assert form.Option("ON", "Ontario") in view.subdivisions
     assert form.Option("public", "public", True) in view.categories
 

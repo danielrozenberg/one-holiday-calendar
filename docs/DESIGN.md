@@ -58,17 +58,29 @@ allows a breaking change if one is ever needed. Generated code
 
 Holidays are generated in English: each country's own variant where
 python-holidays has one (`en_CA`, `en_GB`, …), US English otherwise. They are
-merged on `(date, normalized name)`. Normalization lowercases, strips
-punctuation and "(observed)" / "(estimated)" markers, and maps names of the same
-holiday through `src/holidaycal/aliases.toml` (e.g. "Labour Day" and "Labor
-Day", "Pesach" and "Passover", regional variants of Martin Luther King Jr. Day).
-The aliases were curated from a scan of every country, region and category for
-same-date names that look alike; an alias is added only when both names are the
-same holiday. Aliases never chain, and keys stay sorted (both are tested).
+merged on `(date, merge key)`. The merge key is the name lowercased, without
+punctuation or "(observed)" / "(estimated)" markers, unless that name belongs to
+a holiday in `src/holidaycal/aliases.toml`, in which case it is that holiday's
+id (e.g. `labor_day` for "Labour Day", "Workers' Day" and "Labor Day").
 
-A merged event is named after its first occurrence, so the name comes from the
-top-most configured source: [US, CA] gives "Labor Day", [CA, US] "Labour Day".
-It remembers every source, subdivision and category it came from.
+Each holiday in `aliases.toml` lists its names as tiers in order of preference:
+
+```toml
+labor_day = [
+  ["labor day", "labour day"],
+  ["international workers day", "workers day"],
+  ...
+]
+```
+
+A merged event takes the name of the occurrence in the earliest tier; within a
+tier, the top-most configured source wins. So [US, CA] gives "Labor Day" and
+[CA, US] "Labour Day", while "Christmas Eve" beats "Christmas Eve (from 12pm)"
+whatever the order. The aliases were curated from a scan of every country,
+region and category for same-date names that look alike, and only join names of
+the same holiday. Ids stay sorted and a name belongs to one holiday at most
+(both are tested). A merged event remembers every source, subdivision and
+category it came from.
 
 Each event's UID is a hash of its date and merge key, so it is stable across
 refreshes and across configurations. Hiding a holiday stores its merge key; a

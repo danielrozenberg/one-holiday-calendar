@@ -1,168 +1,339 @@
-# Normalized holiday names that refer to the same holiday as another name.
-# Keys and values are in `merge.normalize` form, without aliasing, and a value
-# is never itself a key. Aliases only merge holidays that fall on the same date.
-# Keep keys in alphabetical order.
+# Holidays known under several names. Each entry is one holiday: its id is the
+# merge key, and its value lists the holiday's names, in `merge.unaliased`
+# form, as tiers in order of preference. A merged event is named after the
+# occurrence whose name is in the earliest tier; within a tier, the top-most
+# configured source wins. Names only merge when they fall on the same date.
+#
+# Keep ids in alphabetical order. A name belongs to at most one holiday.
 
 [aliases]
-"africa freedom day" = "africa day"
-"africa liberation day" = "africa day"
-"african emancipation day" = "emancipation day"
-"african liberation day" = "africa day"
-"agriculture and labor day" = "labor day"
-"aid el fitr" = "eid al fitr"
-"albanian alphabet day" = "alphabet day"
-"american indian heritage day" = "native american heritage day"
-"assumption of mary day" = "assumption day"
-"baisakhi" = "vaisakhi"
-"bijaya dashami" = "dussehra"
-"birthday of martin luther king jr" = "martin luther king jr day"
-"catholic christmas day" = "christmas day"
-"catholic christmas eve" = "christmas eve"
-"catholic easter" = "easter sunday"
-"catholic easter monday" = "easter monday"
-"catholic easter sunday" = "easter sunday"
-"catholic good friday" = "good friday"
-"chinese new year spring festival" = "chinese new year"
-"chinese new years day" = "chinese new year"
-"chinese new years eve afternoon" = "chinese new years eve"
-"chinese spring festival" = "chinese new year"
-"christmas" = "christmas day"
-"christmas eve afternoon" = "christmas eve"
-"christmas eve from 12pm" = "christmas eve"
-"christmas eve from 1pm" = "christmas eve"
-"christmas eve from 6pm" = "christmas eve"
-"christmas eve from 7pm" = "christmas eve"
-"christmas festival" = "christmas day"
-"christmas second day" = "second day of christmas"
-"chung yeung festival festival of ancestors" = "chung yeung festival"
-"coptic christmas day" = "orthodox christmas day"
-"day before ascension day from 2pm" = "day before ascension day"
-"day following christmas" = "day after christmas"
-"day of victory over fascism" = "victory over fascism day"
-"deepavali" = "diwali"
-"divali" = "diwali"
-"diwali deepavali" = "diwali"
-"dr martin luther king jr and robert e lees birthdays" = "martin luther king jr day"
-"dr martin luther king jr civil rights day" = "martin luther king jr day"
-"dussehra mahanavami" = "mahanavami"
-"dussehra mahashtami" = "mahashtami"
-"dzyady all souls day" = "all souls day"
-"early may bank holiday" = "may day bank holiday"
-"easter" = "easter sunday"
-"easter sunday pascha" = "orthodox easter sunday"
-"eid al adha from 1pm" = "eid al adha"
-"eid al adha holiday" = "eid al adha"
-"eid al fitr from 1pm" = "eid al fitr"
-"eid al fitr holiday" = "eid al fitr"
-"eid e miladunnabi" = "prophets birthday"
-"eid milad un nabi" = "prophets birthday"
-"eid ul adha" = "eid al adha"
-"eid ul azha" = "eid al adha"
-"eid ul fitr" = "eid al fitr"
-"eidl adha" = "eid al adha"
-"eidl fitr" = "eid al fitr"
-"feast of immaculate conception of mary" = "immaculate conception"
-"feast of the assumption" = "assumption day"
-"feast of the immaculate conception" = "immaculate conception"
-"feast of the immaculate conception of mary" = "immaculate conception"
-"finding of true cross" = "finding of the true cross"
-"first day of ramadan" = "ramadan begins"
-"friday after thanksgiving" = "day after thanksgiving"
-"ganesh chaturthi vinayak chaturthi" = "ganesh chaturthi"
-"gobardhan pooja" = "govardhan puja"
-"gregorian easter sunday" = "easter sunday"
-"holiday of spring and labor" = "labor day"
-"id el fitr" = "eid al fitr"
-"id ul fitr" = "eid al fitr"
-"idd ul azha" = "eid al adha"
-"idd ul fitr" = "eid al fitr"
-"idul adha" = "eid al adha"
-"idul fitri" = "eid al fitr"
-"international childrens day" = "childrens day"
-"international labor day" = "labor day"
-"international labour day" = "labor day"
-"international nowruz day" = "nowruz"
-"international womens rights day" = "international womens day"
-"international workers day" = "labor day"
-"islamic new year day" = "islamic new year"
-"janmashtami vaishnava" = "janmashtami"
-"julian easter sunday" = "orthodox easter sunday"
-"karaka chaturthi karwa chouth" = "karwa chouth"
-"labor and solidarity day" = "labor day"
-"labour day" = "labor day"
-"late summer bank holiday" = "summer bank holiday"
-"lialat ul qadr" = "laylat al qadr"
-"lincoln washington presidents day" = "washingtons birthday"
-"lincolns and washingtons birthdays" = "washingtons birthday"
-"lunar new year" = "chinese new year"
-"lunar new years day" = "chinese new year"
-"lunar new years eve" = "chinese new years eve"
-"lunar new years eve afternoon" = "chinese new years eve"
-"maghe sankranti" = "makar sankranti"
-"maha ashtami" = "mahashtami"
-"maha navami" = "mahanavami"
-"maha shivaratree" = "maha shivaratri"
-"maha sivarathri day" = "maha shivaratri"
-"martin luther king jr idaho human rights day" = "martin luther king jr day"
-"martin luther king jr robert e lees birthday" = "martin luther king jr day"
-"martin luther king jr s birthday" = "martin luther king jr day"
-"maundy thursday from 1pm" = "maundy thursday"
-"maundy thursday from 2pm" = "maundy thursday"
-"mawlid" = "prophets birthday"
-"may bank holiday" = "may day bank holiday"
-"mid winter day" = "midwinter day"
-"milad un nabi" = "prophets birthday"
-"national labor day" = "labor day"
-"new year enkutatash" = "ethiopian new year"
-"new years eve afternoon" = "new years eve"
-"new years eve from 1pm" = "new years eve"
-"new years eve from 7pm" = "new years eve"
-"nooruz holiday" = "nowruz"
-"nowruz day" = "nowruz"
-"nowruz holiday" = "nowruz"
-"orthodox christmas" = "orthodox christmas day"
-"orthodox easter" = "orthodox easter sunday"
-"orthodox new year" = "orthodox new years day"
-"ougadi" = "ugadi"
-"parsi new year shahenshahi" = "parsi new year"
-"pesach" = "passover"
-"pesach holiday" = "passover"
-"prophet mohammeds birthday" = "prophets birthday"
-"prophet muhammads birthday" = "prophets birthday"
-"saint anthony of paduas day" = "saint anthonys day"
-"saint jamess day" = "saint james day"
-"saint jean baptiste day" = "saint john the baptist day"
-"saint john the baptist" = "saint john the baptist day"
-"saint peter and saint pauls day" = "saints peter and paul day"
-"saint valentines day" = "valentines day"
-"saints peter and paul" = "saints peter and paul day"
-"saints peter and pauls day" = "saints peter and paul day"
-"second day of lunar new year" = "chinese new year second day"
-"seventh day of pesach" = "passover"
-"shree krishna janmashtami" = "janmashtami"
-"simchat torah shemini atzeret" = "shemini atzeret"
-"sonam lochhar" = "sonam lhochhar"
-"struggle for freedom and democracy day and international students day" = "struggle for freedom and democracy day"
-"tamu lochhar" = "tamu lhochhar"
-"the birthday of the buddha" = "buddhas birthday"
-"the buddhas birthday" = "buddhas birthday"
-"the buddhas birthday feast of buddha" = "buddhas birthday"
-"the day after new years day" = "day after new years day"
-"the day following chong chao mid autumn festival" = "the day following the chinese mid autumn festival"
-"the feast of the immaculate conception" = "immaculate conception"
-"the second day of chinese new year" = "chinese new year second day"
-"the second day of lunar new year" = "chinese new year second day"
-"the third day of chinese new year" = "chinese new year third day"
-"the third day of lunar new year" = "chinese new year third day"
-"third day of lunar new year" = "chinese new year third day"
-"tiradentes execution" = "tiradentes day"
-"tung ng festival dragon boat festival" = "dragon boat festival"
-"victory and peace day" = "victory day"
-"vijayadashami" = "dussehra"
-"washington and lincoln day" = "washingtons birthday"
-"washington lincoln day" = "washingtons birthday"
-"washingtons and lincolns birthday" = "washingtons birthday"
-"womens day" = "international womens day"
-"workers day" = "labor day"
-"world childrens day" = "childrens day"
-"yawmul ashura" = "ashura"
+africa_day = [
+  ["africa day"],
+  ["africa freedom day", "africa liberation day", "african liberation day"],
+]
+all_souls_day = [
+  ["all souls day"],
+  ["dzyady all souls day"],
+]
+alphabet_day = [
+  ["alphabet day", "albanian alphabet day"],
+]
+ashura = [
+  ["ashura", "yawmul ashura"],
+]
+assumption_day = [
+  ["assumption day"],
+  ["assumption of mary day", "feast of the assumption"],
+]
+buddhas_birthday = [
+  ["buddhas birthday", "the buddhas birthday", "the birthday of the buddha"],
+  ["the buddhas birthday feast of buddha"],
+]
+childrens_day = [
+  ["childrens day", "international childrens day"],
+  ["world childrens day"],
+]
+chinese_new_year = [
+  ["chinese new year", "lunar new year"],
+  ["chinese new years day", "lunar new years day"],
+  ["chinese new year spring festival", "chinese spring festival"],
+]
+chinese_new_year_second_day = [
+  ["chinese new year second day", "second day of lunar new year"],
+  ["the second day of chinese new year", "the second day of lunar new year"],
+]
+chinese_new_year_third_day = [
+  ["third day of lunar new year"],
+  ["the third day of chinese new year", "the third day of lunar new year"],
+]
+chinese_new_years_eve = [
+  ["chinese new years eve", "lunar new years eve"],
+  ["chinese new years eve afternoon", "lunar new years eve afternoon"],
+]
+christmas_day = [
+  ["christmas day"],
+  ["christmas", "christmas festival", "catholic christmas day"],
+]
+christmas_eve = [
+  ["christmas eve"],
+  [
+    "christmas eve afternoon",
+    "christmas eve from 12pm",
+    "christmas eve from 1pm",
+    "christmas eve from 6pm",
+    "christmas eve from 7pm",
+  ],
+  ["catholic christmas eve"],
+]
+chung_yeung_festival = [
+  ["chung yeung festival"],
+  ["chung yeung festival festival of ancestors"],
+]
+day_after_christmas = [
+  ["day after christmas", "day following christmas"],
+]
+day_after_new_years_day = [
+  ["day after new years day", "the day after new years day"],
+]
+day_after_thanksgiving = [
+  ["day after thanksgiving", "friday after thanksgiving"],
+]
+day_before_ascension_day = [
+  ["day before ascension day"],
+  ["day before ascension day from 2pm"],
+]
+day_following_mid_autumn_festival = [
+  [
+    "the day following the chinese mid autumn festival",
+    "the day following chong chao mid autumn festival",
+  ],
+]
+diwali = [
+  ["diwali", "deepavali", "divali"],
+  ["diwali deepavali"],
+]
+dragon_boat_festival = [
+  ["dragon boat festival"],
+  ["tung ng festival dragon boat festival"],
+]
+dussehra = [
+  ["dussehra", "vijayadashami", "bijaya dashami"],
+]
+easter_monday = [
+  ["easter monday"],
+  ["catholic easter monday"],
+]
+easter_sunday = [
+  ["easter sunday", "easter"],
+  ["catholic easter sunday", "catholic easter", "gregorian easter sunday"],
+]
+eid_al_adha = [
+  [
+    "eid al adha",
+    "eid ul adha",
+    "eid ul azha",
+    "eidl adha",
+    "idd ul azha",
+    "idul adha",
+  ],
+  ["eid al adha holiday", "eid al adha from 1pm"],
+]
+eid_al_fitr = [
+  [
+    "eid al fitr",
+    "aid el fitr",
+    "eid ul fitr",
+    "eidl fitr",
+    "id el fitr",
+    "id ul fitr",
+    "idd ul fitr",
+    "idul fitri",
+  ],
+  ["eid al fitr holiday", "eid al fitr from 1pm"],
+]
+emancipation_day = [
+  ["emancipation day"],
+  ["african emancipation day"],
+]
+ethiopian_new_year = [
+  ["ethiopian new year", "new year enkutatash"],
+]
+finding_of_the_true_cross = [
+  ["finding of the true cross", "finding of true cross"],
+]
+ganesh_chaturthi = [
+  ["ganesh chaturthi"],
+  ["ganesh chaturthi vinayak chaturthi"],
+]
+good_friday = [
+  ["good friday"],
+  ["catholic good friday"],
+]
+govardhan_puja = [
+  ["govardhan puja", "gobardhan pooja"],
+]
+immaculate_conception = [
+  ["immaculate conception"],
+  [
+    "feast of immaculate conception of mary",
+    "feast of the immaculate conception",
+    "feast of the immaculate conception of mary",
+    "the feast of the immaculate conception",
+  ],
+]
+international_womens_day = [
+  ["international womens day", "womens day"],
+  ["international womens rights day"],
+]
+islamic_new_year = [
+  ["islamic new year", "islamic new year day"],
+]
+janmashtami = [
+  ["janmashtami", "shree krishna janmashtami"],
+  ["janmashtami vaishnava"],
+]
+karwa_chauth = [
+  ["karwa chouth"],
+  ["karaka chaturthi karwa chouth"],
+]
+labor_day = [
+  ["labor day", "labour day"],
+  ["international workers day", "workers day"],
+  [
+    "agriculture and labor day",
+    "holiday of spring and labor",
+    "international labor day",
+    "international labour day",
+    "labor and solidarity day",
+    "national labor day",
+  ],
+]
+laylat_al_qadr = [
+  ["laylat al qadr", "lialat ul qadr"],
+]
+maha_shivaratri = [
+  ["maha shivaratri", "maha shivaratree", "maha sivarathri day"],
+]
+mahanavami = [
+  ["mahanavami", "maha navami"],
+  ["dussehra mahanavami"],
+]
+mahashtami = [
+  ["mahashtami", "maha ashtami"],
+  ["dussehra mahashtami"],
+]
+makar_sankranti = [
+  ["makar sankranti", "maghe sankranti"],
+]
+martin_luther_king_jr_day = [
+  ["martin luther king jr day"],
+  ["birthday of martin luther king jr", "martin luther king jr s birthday"],
+  [
+    "dr martin luther king jr and robert e lees birthdays",
+    "dr martin luther king jr civil rights day",
+    "martin luther king jr idaho human rights day",
+    "martin luther king jr robert e lees birthday",
+  ],
+]
+maundy_thursday = [
+  ["maundy thursday"],
+  ["maundy thursday from 1pm", "maundy thursday from 2pm"],
+]
+may_day_bank_holiday = [
+  ["may day bank holiday", "early may bank holiday", "may bank holiday"],
+]
+midwinter_day = [
+  ["midwinter day", "mid winter day"],
+]
+native_american_heritage_day = [
+  ["native american heritage day", "american indian heritage day"],
+]
+new_years_eve = [
+  ["new years eve"],
+  ["new years eve afternoon", "new years eve from 1pm", "new years eve from 7pm"],
+]
+nowruz = [
+  ["nowruz", "nowruz day"],
+  ["international nowruz day", "nooruz holiday", "nowruz holiday"],
+]
+orthodox_christmas_day = [
+  ["orthodox christmas day", "orthodox christmas"],
+  ["coptic christmas day"],
+]
+orthodox_easter_sunday = [
+  ["orthodox easter sunday", "orthodox easter"],
+  ["easter sunday pascha", "julian easter sunday"],
+]
+orthodox_new_years_day = [
+  ["orthodox new years day", "orthodox new year"],
+]
+parsi_new_year = [
+  ["parsi new year"],
+  ["parsi new year shahenshahi"],
+]
+passover = [
+  ["passover", "pesach"],
+  ["pesach holiday", "seventh day of pesach"],
+]
+prophets_birthday = [
+  [
+    "prophets birthday",
+    "mawlid",
+    "prophet mohammeds birthday",
+    "prophet muhammads birthday",
+  ],
+  ["eid e miladunnabi", "eid milad un nabi", "milad un nabi"],
+]
+ramadan_begins = [
+  ["ramadan begins", "first day of ramadan"],
+]
+saint_anthonys_day = [
+  ["saint anthonys day"],
+  ["saint anthony of paduas day"],
+]
+saint_james_day = [
+  ["saint james day", "saint jamess day"],
+]
+saint_john_the_baptist_day = [
+  ["saint john the baptist day", "saint jean baptiste day"],
+  ["saint john the baptist"],
+]
+saints_peter_and_paul_day = [
+  [
+    "saints peter and paul day",
+    "saint peter and saint pauls day",
+    "saints peter and paul",
+    "saints peter and pauls day",
+  ],
+]
+second_day_of_christmas = [
+  ["second day of christmas", "christmas second day"],
+]
+shemini_atzeret = [
+  ["shemini atzeret"],
+  ["simchat torah shemini atzeret"],
+]
+sonam_lhochhar = [
+  ["sonam lhochhar", "sonam lochhar"],
+]
+struggle_for_freedom_and_democracy_day = [
+  ["struggle for freedom and democracy day"],
+  [
+    "struggle for freedom and democracy day and international students day",
+  ],
+]
+summer_bank_holiday = [
+  ["summer bank holiday", "late summer bank holiday"],
+]
+tamu_lhochhar = [
+  ["tamu lhochhar", "tamu lochhar"],
+]
+tiradentes_day = [
+  ["tiradentes day", "tiradentes execution"],
+]
+ugadi = [
+  ["ugadi", "ougadi"],
+]
+vaisakhi = [
+  ["vaisakhi", "baisakhi"],
+]
+valentines_day = [
+  ["valentines day", "saint valentines day"],
+]
+victory_day = [
+  ["victory day"],
+  ["victory and peace day"],
+]
+victory_over_fascism_day = [
+  ["victory over fascism day", "day of victory over fascism"],
+]
+washingtons_birthday = [
+  ["washingtons birthday"],
+  [
+    "lincoln washington presidents day",
+    "lincolns and washingtons birthdays",
+    "washington and lincoln day",
+    "washington lincoln day",
+    "washingtons and lincolns birthday",
+  ],
+]

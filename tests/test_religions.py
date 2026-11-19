@@ -53,5 +53,5 @@ def test_estimated_islamic_dates_merge_with_countries():
         [2026],
     )
 
-    eid = [e for e in events if e.key == "eid al fitr"]
+    eid = [e for e in events if e.key == "eid_al_fitr"]
     assert any(len({o.source for o in e.occurrences}) == 2 for e in eid)

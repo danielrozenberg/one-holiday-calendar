@@ -305,7 +305,7 @@ def _view(
     for occurrence in sources.occurrences(unfiltered, years):
         names.setdefault(merge.normalize(occurrence.name), occurrence.name)
     holiday_options = [
-        Option(key, name, key in source.excluded)
+        Option(key, name, merge.is_hidden(name, source.excluded))
         for key, name in sorted(names.items(), key=lambda item: item[1])
     ]
     if source.HasField("religion"):

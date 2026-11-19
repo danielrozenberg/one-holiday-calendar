@@ -1,30 +1,33 @@
 import datetime
+import re
 
 import pytest
 
 from holidaycal import config_pb2
 from holidaycal import merge
+from holidaycal import sources
 
 
 @pytest.mark.parametrize(
     ("name", "key"),
     [
         ("New Year's Day", "new years day"),
-        ("Christmas Day (observed)", "christmas day"),
-        ("Eid al-Fitr (estimated)", "eid al fitr"),
-        ("Eid-ul-Fitr", "eid al fitr"),
-        ("Labour Day", "labor day"),
-        ("International Workers' Day", "labor day"),
+        ("Christmas Day (observed)", "christmas_day"),
+        ("Eid al-Fitr (estimated)", "eid_al_fitr"),
+        ("Eid-ul-Fitr", "eid_al_fitr"),
+        ("Labour Day", "labor_day"),
+        ("International Workers' Day", "labor_day"),
     ],
 )
 def test_normalize(name, key):
     assert merge.normalize(name) == key
 
 
-def test_aliases_are_sorted():
-    keys = list(merge._aliases())
+def test_alias_ids_are_sorted_snake_case():
+    ids = list(merge.alias_groups())
 
-    assert keys == sorted(keys)
+    assert ids == sorted(ids)
+    assert all(re.fullmatch(r"[a-z0-9]+(_[a-z0-9]+)*", i) for i in ids)
 
 
 def _build(*sources: config_pb2.Source) -> list[merge.Event]:
@@ -104,17 +107,38 @@ def test_combine_multiday_keeps_observed_days_apart():
     )
     events = merge.build(config, [2027])
 
-    christmas = [e for e in events if e.key == "christmas day"]
+    christmas = [e for e in events if e.key == "christmas_day"]
     assert [(e.date.day, e.days) for e in christmas] == [(24, 1), (25, 1)]
 
 
-def test_aliases_are_normalized_and_never_chain():
-    aliases = merge._aliases()
+def test_alias_names_are_normalized_and_unique():
+    names = [
+        name
+        for tiers in merge.alias_groups().values()
+        for tier in tiers
+        for name in tier
+    ]
 
-    for key, value in aliases.items():
-        assert merge.unaliased(key) == key
-        assert merge.unaliased(value) == value
-        assert value not in aliases
+    assert all(merge.unaliased(name) == name for name in names)
+    assert len(names) == len(set(names))
+
+
+def _occurrence(name: str, source: str) -> sources.Occurrence:
+    return sources.Occurrence(
+        datetime.date(2026, 12, 24), name, source, "", "public"
+    )
+
+
+def test_earlier_tier_name_wins_over_source_order():
+    [event] = merge.merge(
+        [
+            _occurrence("Christmas Eve (from 12pm)", "US"),
+            _occurrence("Christmas Eve", "DE"),
+        ]
+    )
+
+    assert event.key == "christmas_eve"
+    assert event.name == "Christmas Eve"
 
 
 @pytest.mark.parametrize(
@@ -135,7 +159,7 @@ def test_regional_variants_merge_into_the_national_holiday():
         e
         for e in events
         if e.date == datetime.date(2026, 1, 19)
-        and e.key == "martin luther king jr day"
+        and e.key == "martin_luther_king_jr_day"
     ]
     assert mlk_day.name == "Martin Luther King Jr. Day"
     assert len({o.name for o in mlk_day.occurrences}) > 1

@@ -8,7 +8,7 @@ import hashlib
 import importlib.resources
 import re
 import tomllib
-from collections.abc import Iterable
+from collections.abc import Collection, Iterable
 
 from holidaycal import config_pb2
 from holidaycal import sources
@@ -41,9 +41,20 @@ class Event:
 
 
 def normalize(name: str) -> str:
-    """Returns the merge key of a holiday name."""
+    """Returns the merge key of a holiday name: its holiday id if aliased."""
     key = unaliased(name)
-    return _aliases().get(key, key)
+    return _aliases().get(key, (key, 0))[0]
+
+
+def _tier(name: str) -> int:
+    """Returns how preferred a name is among its holiday's names; 0 is best."""
+    return _aliases().get(unaliased(name), ("", 0))[1]
+
+
+def is_hidden(name: str, excluded: Collection[str]) -> bool:
+    """Whether a holiday name matches a source's excluded keys."""
+    # Unaliased keys keep holidays hidden after a new alias is added.
+    return normalize(name) in excluded or unaliased(name) in excluded
 
 
 def unaliased(name: str) -> str:
@@ -54,9 +65,20 @@ def unaliased(name: str) -> str:
 
 
 @functools.cache
-def _aliases() -> dict[str, str]:
+def alias_groups() -> dict[str, list[list[str]]]:
+    """Returns each aliased holiday's names, by holiday id, as ranked tiers."""
     text = importlib.resources.files(__package__).joinpath("aliases.toml")
     return tomllib.loads(text.read_text(encoding="utf-8"))["aliases"]
+
+
+@functools.cache
+def _aliases() -> dict[str, tuple[str, int]]:
+    return {
+        name: (holiday, tier)
+        for holiday, tiers in alias_groups().items()
+        for tier, names in enumerate(tiers)
+        for name in names
+    }
 
 
 def build(config: config_pb2.Config, years: Iterable[int]) -> list[Event]:
@@ -68,8 +90,7 @@ def build(config: config_pb2.Config, years: Iterable[int]) -> list[Event]:
         found.extend(
             o
             for o in sources.occurrences(source, years)
-            # Unaliased keys keep holidays hidden after a new alias is added.
-            if not {normalize(o.name), unaliased(o.name)} & excluded
+            if not is_hidden(o.name, excluded)
         )
     events = merge(found)
     return combine_multiday(events) if config.combine_multiday else events
@@ -78,8 +99,9 @@ def build(config: config_pb2.Config, years: Iterable[int]) -> list[Event]:
 def merge(occurrences: Iterable[sources.Occurrence]) -> list[Event]:
     """Groups occurrences by date and normalized name, sorted by date.
 
-    Each event is named after its first occurrence, so the name follows the
-    order of the configured sources.
+    Each event takes the most preferred name among its occurrences (see
+    `aliases.toml`); ties go to the earliest, which follows the order of the
+    configured sources.
     """
     groups: dict[tuple[datetime.date, str], list[sources.Occurrence]] = (
         collections.defaultdict(list)
@@ -87,7 +109,12 @@ def merge(occurrences: Iterable[sources.Occurrence]) -> list[Event]:
     for occurrence in occurrences:
         groups[occurrence.date, normalize(occurrence.name)].append(occurrence)
     return [
-        Event(date, key, group[0].name, tuple(group))
+        Event(
+            date,
+            key,
+            min(group, key=lambda o: _tier(o.name)).name,
+            tuple(group),
+        )
         for (date, key), group in sorted(groups.items())
     ]
 
