@@ -1,0 +1,38 @@
+// Calendar configuration, carried in the URL as unpadded base64url.
+//
+// Never reuse a field number; mark removed fields as `reserved`.
+
+syntax = "proto3";
+
+package holidaycal;
+
+message Config {
+  // Schema version. 0 is the current schema.
+  uint32 v = 1;
+  repeated Source sources = 2;
+  TitleStyle title_style = 3;
+  bool describe_sources = 4;
+  bool describe_categories = 5;
+}
+
+message Source {
+  oneof kind {
+    // ISO 3166-1 alpha-2 country code, e.g. "CA".
+    string country = 1;
+    // Religion key, e.g. "christian".
+    string religion = 2;
+  }
+  // Subdivision codes, e.g. "ON". Empty means national holidays only.
+  repeated string subdivisions = 3;
+  bool all_subdivisions = 4;
+  // python-holidays category names. Empty means "public" only.
+  repeated string categories = 5;
+  // Normalized names of holidays to leave out.
+  repeated string excluded = 6;
+}
+
+enum TitleStyle {
+  TITLE_STYLE_PLAIN = 0;
+  TITLE_STYLE_PREFIX_CODES = 1;
+  TITLE_STYLE_PREFIX_NAMES = 2;
+}
