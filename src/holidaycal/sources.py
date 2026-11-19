@@ -7,9 +7,11 @@ from collections.abc import Iterable, Iterator
 import holidays
 
 from holidaycal import config_pb2
+from holidaycal import religions
 
 LANGUAGE = "en_US"
 DEFAULT_CATEGORY = "public"
+RELIGIOUS_CATEGORY = "religious"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -31,8 +33,13 @@ def occurrences(
     match source.WhichOneof("kind"):
         case "country":
             yield from _country_occurrences(source, years)
-        case "religion" | None as kind:
-            raise ValueError(f"Unsupported source kind {kind}")
+        case "religion":
+            label, calendar = religions.RELIGIONS[source.religion]
+            yield from _emit(
+                calendar(years=years), label, "", RELIGIOUS_CATEGORY, None
+            )
+        case None:
+            raise ValueError("Source has no kind")
 
 
 def _country_occurrences(

@@ -59,12 +59,19 @@
     {% endfor %}
 
     <p>
-      <label for="add">Add a country</label>
+      <label for="add">Add a country or religion</label>
       <select id="add" name="add">
         <option value="">Choose…</option>
-        {% for code, name in countries.items() %}
-        <option value="{{ code }}">{{ name }}</option>
-        {% endfor %}
+        <optgroup label="Religions">
+          {% for value, name in religions.items() %}
+          <option value="{{ value }}">{{ name }}</option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Countries">
+          {% for code, name in countries.items() %}
+          <option value="{{ code }}">{{ name }}</option>
+          {% endfor %}
+        </optgroup>
       </select>
     </p>
     <button type="submit">Update</button>

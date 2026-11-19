@@ -78,6 +78,7 @@ def _page(parsed: config_pb2.Config, blob: str) -> str:
         events=events,
         sources=form.views(parsed, years),
         countries=form.country_names(),
+        religions=form.religion_names(),
         https_url=flask.request.host_url.rstrip("/") + path if path else "",
         webcal_url=f"webcal://{flask.request.host}{path}" if path else "",
     )

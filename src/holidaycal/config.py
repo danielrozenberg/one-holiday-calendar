@@ -7,6 +7,7 @@ import holidays
 from google.protobuf import message
 
 from holidaycal import config_pb2
+from holidaycal import religions
 
 MAX_BLOB_LENGTH = 2048
 
@@ -54,7 +55,10 @@ def validate(config: config_pb2.Config) -> None:
             case "country":
                 _validate_country(source)
             case "religion":
-                raise InvalidConfigError(f"Unknown religion {source.religion}")
+                if source.religion not in religions.RELIGIONS:
+                    raise InvalidConfigError(
+                        f"Unknown religion {source.religion}"
+                    )
             case None:
                 raise InvalidConfigError("Source has no country or religion")
 

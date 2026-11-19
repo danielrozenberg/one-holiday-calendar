@@ -16,6 +16,20 @@ def test_add_country():
     )
 
 
+def test_add_religion():
+    assert _parse(("add", "@jewish")) == config_pb2.Config(
+        sources=[config_pb2.Source(religion="jewish")]
+    )
+
+
+def test_religion_view():
+    [view] = form.views(_parse(("s0.kind", "@hindu")), [2026])
+
+    assert (view.kind, view.label) == ("@hindu", "Hindu")
+    assert not view.subdivisions
+    assert form.Option("diwali", "Diwali") in view.holidays
+
+
 def test_source_fields():
     parsed = _parse(
         ("s0.kind", "CA"),

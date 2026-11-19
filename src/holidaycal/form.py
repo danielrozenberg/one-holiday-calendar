@@ -11,7 +11,10 @@ from werkzeug import datastructures
 from holidaycal import config
 from holidaycal import config_pb2
 from holidaycal import merge
+from holidaycal import religions
 from holidaycal import sources
+
+RELIGION_PREFIX = "@"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -70,7 +73,7 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
             parsed.sources.append(_parse_source(form, f"s{index}.", kind))
         index += 1
     if added := form.get("add"):
-        parsed.sources.append(config_pb2.Source(country=added))
+        parsed.sources.append(_new_source(added))
     config.validate(parsed)
     return parsed
 
@@ -78,18 +81,30 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
 def _parse_source(
     form: datastructures.MultiDict[str, str], prefix: str, kind: str
 ) -> config_pb2.Source:
-    source = config_pb2.Source(
-        subdivisions=form.getlist(prefix + "subdivision"),
-        all_subdivisions=bool(form.get(prefix + "all_subdivisions")),
-        categories=form.getlist(prefix + "category"),
-        excluded=form.getlist(prefix + "excluded"),
-    )
-    source.country = kind
+    source = _new_source(kind)
+    source.subdivisions.extend(form.getlist(prefix + "subdivision"))
+    source.all_subdivisions = bool(form.get(prefix + "all_subdivisions"))
+    source.categories.extend(form.getlist(prefix + "category"))
+    source.excluded.extend(form.getlist(prefix + "excluded"))
     if source.all_subdivisions:
         source.ClearField("subdivisions")
     if list(source.categories) == [sources.DEFAULT_CATEGORY]:
         source.ClearField("categories")
     return source
+
+
+def religion_names() -> dict[str, str]:
+    """Returns religion names by form value."""
+    return {
+        RELIGION_PREFIX + key: label
+        for key, (label, _) in religions.RELIGIONS.items()
+    }
+
+
+def _new_source(kind: str) -> config_pb2.Source:
+    if kind.startswith(RELIGION_PREFIX):
+        return config_pb2.Source(religion=kind.removeprefix(RELIGION_PREFIX))
+    return config_pb2.Source(country=kind)
 
 
 def views(parsed: config_pb2.Config, years: Iterable[int]) -> list[SourceView]:
@@ -104,14 +119,29 @@ def views(parsed: config_pb2.Config, years: Iterable[int]) -> list[SourceView]:
 def _view(
     index: int, source: config_pb2.Source, years: list[int]
 ) -> SourceView:
-    country = source.country
-    categories = set(source.categories) or {sources.DEFAULT_CATEGORY}
     unfiltered = config_pb2.Source()
     unfiltered.CopyFrom(source)
     unfiltered.ClearField("excluded")
     names: dict[str, str] = {}
     for occurrence in sources.occurrences(unfiltered, years):
         names.setdefault(merge.normalize(occurrence.name), occurrence.name)
+    holiday_options = [
+        Option(key, name, key in source.excluded)
+        for key, name in sorted(names.items(), key=lambda item: item[1])
+    ]
+    if source.HasField("religion"):
+        kind = RELIGION_PREFIX + source.religion
+        return SourceView(
+            index=index,
+            kind=kind,
+            label=religion_names()[kind],
+            all_subdivisions=False,
+            subdivisions=[],
+            categories=[],
+            holidays=holiday_options,
+        )
+    country = source.country
+    categories = set(source.categories) or {sources.DEFAULT_CATEGORY}
     return SourceView(
         index=index,
         kind=country,
@@ -125,8 +155,5 @@ def _view(
             Option(category, category.replace("_", " "), category in categories)
             for category in config.supported_categories(country)
         ],
-        holidays=[
-            Option(key, name, key in source.excluded)
-            for key, name in sorted(names.items(), key=lambda item: item[1])
-        ],
+        holidays=holiday_options,
     )
