@@ -157,3 +157,12 @@ def test_all_regions_disables_region_boxes(client):
     boxes = re.findall(r"<input [^>]*data-region=[^>]*>", page.text)
     assert boxes
     assert all("disabled" in box and "checked" not in box for box in boxes)
+
+
+def test_add_offers_a_select_and_an_autocomplete(client):
+    page = client.get("/", headers={"Accept": BROWSER_ACCEPT}).text
+
+    assert '<option value="CA">Canada</option>' in page
+    assert 'role="combobox"' in page
+    assert 'data-value="CA" data-search="Canada CA"' in page
+    assert 'data-value="@jewish"' in page

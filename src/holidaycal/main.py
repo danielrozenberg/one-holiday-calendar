@@ -149,6 +149,7 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
         sources=form.views(parsed, all_events),
         countries=sources.country_names(),
         religions=form.religion_names(),
+        flag=sources.flag,
         https_url=flask.request.host_url.rstrip("/") + path if path else "",
         webcal_url=f"webcal://{flask.request.host}{path}" if path else "",
     ).encode()

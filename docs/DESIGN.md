@@ -167,6 +167,11 @@ row carries its card content (title in every style, date, description lines) as 
 previews need no server round trip. Updates animate with the View Transitions
 API where available.
 
+Countries and religions are added through an autocomplete box (the ARIA
+combobox pattern): focusing it lists everything, typing filters by name or code
+(ignoring accents), and arrow keys, Enter and Escape work as expected. It writes
+the choice into a plain `<select>`, which pages without JavaScript use directly.
+
 A service worker (`/sw.js`, rendered from `templates/sw.js`) serves the CSS and
 JS from cache and pages network-first, falling back to the last 20 cached pages
 offline. Static URLs carry `?v=<APP_VERSION>`, and the worker's cache is named

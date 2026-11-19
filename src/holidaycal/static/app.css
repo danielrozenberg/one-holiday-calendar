@@ -414,3 +414,47 @@ tr.previewable:has(.pin[aria-pressed="true"]) { background: color-mix(in srgb, v
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none; }
   input[role="switch"], input[role="switch"]::after { transition: none; }
 }
+
+/* "Add" autocomplete; the plain select remains for pages without JavaScript. */
+
+.combobox { display: none; position: relative; }
+.js .combobox { display: block; }
+.js .add select { display: none; }
+
+.combobox-list {
+  position: absolute;
+  z-index: 2;
+  inset: calc(100% + 0.25rem) 0 auto;
+  max-height: 18rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+}
+
+.combobox-group {
+  padding: 0.4rem 0.5rem 0.2rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.combobox-list [role="option"] {
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.combobox-list [role="option"]:hover,
+.combobox-list [role="option"].active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.combobox-empty { padding: 0.5rem; color: var(--muted); }

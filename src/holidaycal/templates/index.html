@@ -80,8 +80,9 @@
         </div>
         {% endfor %}
 
+        {% set add_label = "Add another" if sources else "Add a country or religion" %}
         <div class="add">
-          <label for="add">{{ "Add another" if sources else "Add a country or religion" }}</label>
+          <label for="add">{{ add_label }}</label>
           <select id="add" name="add">
             <option value="">Choose…</option>
             <optgroup label="Religions">
@@ -95,6 +96,19 @@
               {% endfor %}
             </optgroup>
           </select>
+          <div class="combobox">
+            <input type="text" class="combobox-input" role="combobox" aria-label="{{ add_label }}" aria-expanded="false" aria-controls="add-options" aria-autocomplete="list" autocomplete="off" placeholder="Search countries and religions…">
+            <ul id="add-options" class="combobox-list" role="listbox" aria-label="Countries and religions" hidden>
+              <li class="combobox-group" role="presentation">Religions</li>
+              {% for value, name in religions.items() %}
+              <li id="add-option-{{ value[1:] }}" role="option" data-value="{{ value }}" data-search="{{ name }}"><span aria-hidden="true">{{ flag(name) }}</span> {{ name }}</li>
+              {% endfor %}
+              <li class="combobox-group" role="presentation">Countries</li>
+              {% for code, name in countries.items() %}
+              <li id="add-option-{{ code }}" role="option" data-value="{{ code }}" data-search="{{ name }} {{ code }}"><span aria-hidden="true">{{ flag(code) }}</span> {{ name }}</li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
       </section>
 

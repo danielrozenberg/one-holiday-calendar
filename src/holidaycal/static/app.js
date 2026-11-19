@@ -4,7 +4,10 @@ if ("serviceWorker" in navigator) {
 
 let pending;
 
+document.documentElement.classList.add("js");
+
 document.addEventListener("change", (event) => {
+  if (event.target.matches(".combobox-input")) return;
   const all = event.target.closest?.("[data-all-regions]");
   if (all) {
     // Disabled boxes keep their ticks but are left out of the submitted form.
@@ -226,3 +229,112 @@ document.addEventListener("click", (event) => {
 });
 
 restoreCard();
+
+// "Add" autocomplete over the hidden select, following the ARIA combobox pattern.
+
+const fold = (text) =>
+  text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+
+function comboboxParts(input) {
+  const list = document.getElementById(input.getAttribute("aria-controls"));
+  return { list, options: [...list.querySelectorAll('[role="option"]')] };
+}
+
+function visibleOptions(input) {
+  return comboboxParts(input).options.filter((option) => !option.hidden);
+}
+
+function openCombobox(input) {
+  const { list, options } = comboboxParts(input);
+  const query = fold(input.value.trim());
+  for (const option of options) {
+    option.hidden = !fold(option.dataset.search).includes(query);
+  }
+  for (const group of list.querySelectorAll(".combobox-group")) {
+    let next = group.nextElementSibling;
+    let any = false;
+    while (next && !next.classList.contains("combobox-group")) {
+      any ||= !next.hidden;
+      next = next.nextElementSibling;
+    }
+    group.hidden = !any;
+  }
+  list.hidden = false;
+  input.setAttribute("aria-expanded", "true");
+  setActive(input, visibleOptions(input)[0] ?? null);
+}
+
+function closeCombobox(input) {
+  comboboxParts(input).list.hidden = true;
+  input.setAttribute("aria-expanded", "false");
+  setActive(input, null);
+}
+
+function setActive(input, option) {
+  for (const other of comboboxParts(input).options) {
+    other.classList.toggle("active", other === option);
+    other.setAttribute("aria-selected", String(other === option));
+  }
+  if (option) {
+    input.setAttribute("aria-activedescendant", option.id);
+    option.scrollIntoView({ block: "nearest" });
+  } else {
+    input.removeAttribute("aria-activedescendant");
+  }
+}
+
+function choose(input, option) {
+  const select = input.closest(".add").querySelector("select");
+  select.value = option.dataset.value;
+  closeCombobox(input);
+  select.form.requestSubmit();
+}
+
+document.addEventListener("focusin", (event) => {
+  if (event.target.matches?.(".combobox-input")) openCombobox(event.target);
+});
+
+document.addEventListener("input", (event) => {
+  if (event.target.matches(".combobox-input")) openCombobox(event.target);
+});
+
+document.addEventListener("focusout", (event) => {
+  if (event.target.matches?.(".combobox-input")) closeCombobox(event.target);
+});
+
+document.addEventListener("mousedown", (event) => {
+  const option = event.target.closest?.('.combobox-list [role="option"]');
+  if (!option) return;
+  // Keep focus in the input so focusout doesn't close the list first.
+  event.preventDefault();
+  const input = document.querySelector(
+    `[aria-controls="${option.closest(".combobox-list").id}"]`,
+  );
+  choose(input, option);
+});
+
+document.addEventListener("keydown", (event) => {
+  const input = event.target;
+  if (!input.matches?.(".combobox-input")) return;
+  const options = visibleOptions(input);
+  const active = options.findIndex((o) => o.classList.contains("active"));
+  switch (event.key) {
+    case "ArrowDown":
+    case "ArrowUp": {
+      event.preventDefault();
+      if (comboboxParts(input).list.hidden) openCombobox(input);
+      const step = event.key === "ArrowDown" ? 1 : -1;
+      const next = (active + step + options.length) % options.length;
+      setActive(input, options[next] ?? null);
+      break;
+    }
+    case "Enter":
+      event.preventDefault();
+      if (options[Math.max(active, 0)]) choose(input, options[Math.max(active, 0)]);
+      break;
+    case "Escape":
+      input.value = "";
+      closeCombobox(input);
+      break;
+  }
+});
