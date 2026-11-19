@@ -22,22 +22,31 @@ encodes the configuration and redirects to `/c/<blob>`.
 ## Data source
 
 Holidays come from [python-holidays](https://github.com/vacanza/holidays):
-250 countries, 651 subdivisions, per-country holiday categories (public, bank,
-optional, government, school, …) and religious calendars.
+250 countries, 651 subdivisions and per-country holiday categories (public,
+bank, optional, government, school, …). Country names are taken in English
+(`en_US`) where python-holidays has a translation.
+
+Religions (Christian, Orthodox Christian, Jewish, Islamic, Hindu) are
+calendars defined in `src/holidaycal/religions.py` on top of python-holidays'
+calendar mixins, which compute the dates (Easter, Hebrew, Hijri and Hindu
+lunisolar calendars). Their holiday names match the countries' English names
+where possible, so they merge.
 
 ## Configuration
 
 The configuration is a protobuf message (`proto/config.proto`), serialized and
 encoded as unpadded base64url. It holds:
 
-- **Sources**: each one is a country with optional subdivisions, a set of
-  categories, and a list of excluded holidays; or a religion.
+- **Sources**: each one is either a country, with optional subdivisions (or
+  all of them), categories (`public` when empty) and excluded holidays; or a
+  religion, with excluded holidays.
 - **Title style**: plain (`Christmas Eve`) or prefixed with the contributing
   sources (`[CA, US] Christmas Eve`), using codes or names.
-- **Description options**: which details (sources, categories, local names)
-  to list in each event's description.
+- **Description options**: whether each event's description lists the
+  countries (with regions, for regional holidays) and the holiday types.
 
-Field numbers are never reused; removed fields are `reserved`. The `v` field
+Empty and default fields cost no bytes, so a typical blob is about 40–60
+characters. Field numbers are never reused; removed fields are `reserved`. The `v` field
 allows a breaking change if one is ever needed. Generated code
 (`src/holidaycal/config_pb2.py` and `.pyi`) is committed and refreshed with
 `tools/genproto.sh`; `tools/ci.sh` fails if it is stale.
@@ -46,7 +55,7 @@ allows a breaking change if one is ever needed. Generated code
 
 Holidays are generated with English names and merged on
 `(date, normalized name)`. Normalization lowercases, strips punctuation and
-"(observed)" markers, and maps known spelling variants through
+"(observed)" and "(estimated)" markers, and maps known spelling variants through
 `src/holidaycal/aliases.toml` (e.g. "Labour Day" and "Labor Day"). A merged
 event remembers every source, subdivision and category it came from.
 
@@ -62,5 +71,17 @@ after next, with a one-day refresh hint (`REFRESH-INTERVAL`,
 
 ## Development
 
-- `./tools/ci.sh`: format check, lint, type check, tests.
+- Environment: pyenv Python 3.13 with a `.venv` built from it
+  (`pip install -e '.[dev]'`).
+- `./tools/ci.sh`: format check, lint, type check, protobuf freshness, tests.
+- `./tools/genproto.sh`: regenerates `config_pb2.py` after editing the proto.
 - `flask --app holidaycal.main run`: local server.
+
+## Deployment
+
+App Engine standard, `python313` runtime (`app.yaml`). App Engine installs
+`requirements.txt`, which installs this package (`.`) so its dependencies stay
+pinned in `pyproject.toml` alone. `.gcloudignore` keeps tests and tooling out
+of the upload.
+
+    gcloud app deploy
