@@ -132,7 +132,10 @@ App Engine standard, `python313` runtime (`app.yaml`). App Engine installs
 pinned in `pyproject.toml` alone. `.gcloudignore` keeps tests and tooling out
 of the upload.
 
-    gcloud app deploy
+    ./tools/deploy.sh
+
+It runs the CI gate, then `gcloud app deploy` to the `one-holiday-calendar`
+project; extra flags (e.g. `--no-promote`) are passed through.
 
 ## Settings
 
