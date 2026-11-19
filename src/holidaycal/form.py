@@ -5,7 +5,7 @@ import datetime
 import functools
 import re
 import typing
-from collections.abc import Collection
+from collections.abc import Collection, Iterable
 
 import holidays
 from werkzeug import datastructures
@@ -408,14 +408,23 @@ def _notices(
     events: list[merge.Event],
     hidden: set[str],
 ) -> list[HiddenNotice]:
-    """Flags a source, region or type whose holidays are all hidden."""
-    found = [
-        (o, merge.hide_token(o) in hidden)
-        for event in events
-        for o in event.occurrences
-        if o.source == code
-    ]
-    if found and all(is_hidden for _, is_hidden in found):
+    """Flags a source, region or type whose holidays are all hidden.
+
+    A holiday counts toward a region only when the source has no national
+    occurrence of it, matching how the preview shows it.
+    """
+    rows: list[tuple[set[str], set[str], bool]] = []
+    for event in events:
+        mine = [o for o in event.occurrences if o.source == code]
+        if mine:
+            rows.append(
+                (
+                    {o.subdivision for o in mine},
+                    {o.category for o in mine},
+                    merge.hide_token(mine[0]) in hidden,
+                )
+            )
+    if rows and all(is_hidden for _, _, is_hidden in rows):
         return [
             HiddenNotice(
                 f"Every holiday from {label} is hidden.",
@@ -425,10 +434,14 @@ def _notices(
             )
         ]
     notices = []
-    by_region = _group(found, lambda o: o.subdivision)
-    region_names = subdivision_names(code) if by_region.keys() - {""} else {}
+    by_region = _all_hidden(
+        (subdivisions, is_hidden)
+        for subdivisions, _, is_hidden in rows
+        if "" not in subdivisions
+    )
+    region_names = subdivision_names(code) if by_region else {}
     for region, all_hidden in by_region.items():
-        if region and all_hidden:
+        if all_hidden:
             name = region_names.get(region, region)
             notices.append(
                 HiddenNotice(
@@ -438,7 +451,9 @@ def _notices(
                     f"Remove {name}",
                 )
             )
-    by_type = _group(found, lambda o: o.category)
+    by_type = _all_hidden(
+        (categories, is_hidden) for _, categories, is_hidden in rows
+    )
     if len(by_type) > 1:
         for category, all_hidden in by_type.items():
             if all_hidden:
@@ -454,13 +469,10 @@ def _notices(
     return notices
 
 
-def _group(
-    found: list[tuple[sources.Occurrence, bool]],
-    part: typing.Callable[[sources.Occurrence], str],
-) -> dict[str, bool]:
+def _all_hidden(rows: Iterable[tuple[set[str], bool]]) -> dict[str, bool]:
     """Maps each part (region, type) to whether all its holidays are hidden."""
-    groups: dict[str, bool] = {}
-    for occurrence, is_hidden in found:
-        key = part(occurrence)
-        groups[key] = groups.get(key, True) and is_hidden
-    return groups
+    parts: dict[str, bool] = {}
+    for keys, is_hidden in rows:
+        for key in keys:
+            parts[key] = parts.get(key, True) and is_hidden
+    return parts

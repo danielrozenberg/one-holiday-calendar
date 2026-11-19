@@ -327,3 +327,31 @@ def test_adding_a_source_twice_is_a_no_op():
     parsed = _parse(("s0.kind", "CA"), ("add", "CA"))
 
     assert [s.country for s in parsed.sources] == ["CA"]
+
+
+def test_region_notice_ignores_holidays_also_shown_nationally():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(
+                country="CA",
+                subdivisions=["BC"],
+                categories=["public", "government", "optional"],
+            )
+        ]
+    )
+    events = merge.build(parsed, [2026], include_hidden=True)
+    regional_only = {
+        merge.hide_token(e.occurrences[0])
+        for e in events
+        if {o.subdivision for o in e.occurrences} == {"BC"}
+    }
+    assert any(
+        {o.subdivision for o in e.occurrences} == {"", "BC"} for e in events
+    )
+    parsed.hidden.extend(sorted(regional_only))
+
+    [view] = _views(parsed)
+
+    assert [(n.action, n.value) for n in view.notices] == [
+        ("drop_region", "0:BC")
+    ]
