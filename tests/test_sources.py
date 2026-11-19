@@ -58,3 +58,13 @@ def test_english_prefers_the_countrys_own_variant():
     assert sources.english("CA") == "en_CA"
     assert sources.english("DE") == "en_US"
     assert sources.english("JM") is None
+
+
+def test_country_names_keep_small_words_lowercase():
+    names = sources.country_names()
+
+    assert names["BA"] == "Bosnia and Herzegovina"
+    assert names["IM"] == "Isle of Man"
+    assert names["VC"] == "Saint Vincent and the Grenadines"
+    assert names["HM"] == "Heard Island and McDonald Islands"
+    assert names["AG"] == "Antigua and Barbuda"

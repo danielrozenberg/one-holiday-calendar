@@ -3,6 +3,7 @@
 import dataclasses
 import datetime
 import functools
+import re
 from collections.abc import Iterable, Iterator
 
 import holidays
@@ -15,16 +16,23 @@ FALLBACK_LANGUAGE = "en_US"
 DEFAULT_CATEGORY = "public"
 RELIGION_PREFIX = "@"
 RELIGIOUS_CATEGORY = "religious"
+_SMALL_WORDS = re.compile(r"(?<= )(?:And|Of|The|Da)\b")
+_MC = re.compile(r"\bMc(\w)")
 
 
 @functools.cache
 def country_names() -> dict[str, str]:
     """Returns English country names by code, sorted by name."""
     names = {
-        code: key.replace("_", " ").title()
+        code: _title(key.replace("_", " "))
         for key, (_, code, *_) in registry.COUNTRIES.items()
     }
     return dict(sorted(names.items(), key=lambda item: item[1]))
+
+
+def _title(name: str) -> str:
+    name = _SMALL_WORDS.sub(lambda m: m[0].lower(), name.title())
+    return _MC.sub(lambda m: "Mc" + m[1].upper(), name)
 
 
 def source_name(source: str) -> str:
