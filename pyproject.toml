@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "holidaycal"
-version = "0.1.0"
+version = "1.0.0"
 description = "Merged, configurable holiday calendars served as webcal feeds."
 readme = "docs/DESIGN.md"
 requires-python = ">=3.13"
