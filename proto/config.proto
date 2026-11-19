@@ -15,7 +15,8 @@ message Config {
   bool describe_categories = 5;
   // Show a holiday spanning consecutive days as one event, not one per day.
   bool combine_multiday = 6;
-  // Merge keys (alias ids or normalized names) of holidays to leave out.
+  // Holidays to leave out, per source: "<source>:<merge key>", where source is
+  // a country code or "@<religion>", e.g. "US:independence day".
   repeated string hidden = 7;
 }
 

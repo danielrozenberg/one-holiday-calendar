@@ -207,6 +207,7 @@ table.preview th, table.preview td { padding: 0.35rem 0.4rem; }
 tr.is-hidden td:not(:last-child) { opacity: 0.45; }
 tr.is-hidden .pin { text-decoration: line-through; }
 .eye { padding: 0 0.25rem; }
+.eye[aria-pressed="false"] { filter: grayscale(1); opacity: 0.35; }
 
 .link-button {
   padding: 0;

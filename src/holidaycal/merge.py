@@ -8,7 +8,7 @@ import hashlib
 import importlib.resources
 import re
 import tomllib
-from collections.abc import Iterable
+from collections.abc import Collection, Iterable
 
 from holidaycal import config_pb2
 from holidaycal import sources
@@ -51,6 +51,26 @@ def _tier(name: str) -> int:
     return _aliases().get(unaliased(name), ("", 0))[1]
 
 
+def hide_token(occurrence: sources.Occurrence) -> str:
+    """Identifies a holiday from one source, e.g. "US:independence day".
+
+    Hiding is per source because the same merge key can be a different holiday
+    elsewhere (every country's "Independence Day", May 1 vs US Labor Day).
+    """
+    source = sources.source_id(occurrence.source)
+    return f"{source}:{normalize(occurrence.name)}"
+
+
+def hide_tokens(event: "Event") -> list[str]:
+    """Returns the hide tokens of every source contributing to an event."""
+    return sorted({hide_token(o) for o in event.occurrences})
+
+
+def is_hidden(event: "Event", hidden: Collection[str]) -> bool:
+    """Whether every source's contribution to an event is hidden."""
+    return all(token in hidden for token in hide_tokens(event))
+
+
 def unaliased(name: str) -> str:
     """Returns a holiday name's merge key before aliases are applied."""
     name = _MARKERS.sub(" ", name.lower())
@@ -83,18 +103,17 @@ def build(
 ) -> list[Event]:
     """Collects every configured source's holidays and merges them.
 
-    Holidays whose merge key is in `config.hidden` are left out unless
+    Occurrences whose `hide_token` is in `config.hidden` are left out unless
     `include_hidden` is set.
     """
     years = list(years)
+    hidden = set() if include_hidden else set(config.hidden)
     events = merge(
         o
         for source in config.sources
         for o in sources.occurrences(source, years)
+        if hide_token(o) not in hidden
     )
-    if not include_hidden:
-        hidden = set(config.hidden)
-        events = [e for e in events if e.key not in hidden]
     return combine_multiday(events) if config.combine_multiday else events
 
 

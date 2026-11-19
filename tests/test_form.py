@@ -227,6 +227,8 @@ def test_multiday_card_date_is_a_range():
         ([("hidden", "a"), ("toggle_hidden", "b")], ["a", "b"]),
         ([("hidden", "a"), ("toggle_hidden", "a")], []),
         ([("hidden", "a"), ("unhide_all", "1")], []),
+        ([("hidden", "a"), ("toggle_hidden", "a|b")], ["a", "b"]),
+        ([("hidden", "a"), ("hidden", "b"), ("toggle_hidden", "a|b")], []),
     ],
 )
 def test_hidden(fields, hidden):
@@ -275,7 +277,7 @@ def _keys(parsed: config_pb2.Config, **match: str) -> list[str]:
     events = merge.build(parsed, [2026], include_hidden=True)
     return sorted(
         {
-            e.key
+            merge.hide_token(o)
             for e in events
             for o in e.occurrences
             if all(getattr(o, k) == v for k, v in match.items())

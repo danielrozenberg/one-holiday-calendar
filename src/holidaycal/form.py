@@ -5,6 +5,7 @@ import datetime
 import functools
 import re
 import typing
+from collections.abc import Collection
 
 import holidays
 from werkzeug import datastructures
@@ -16,7 +17,6 @@ from holidaycal import merge
 from holidaycal import religions
 from holidaycal import sources
 
-RELIGION_PREFIX = "@"
 _KIND_FIELD = re.compile(r"s(\d+)\.kind")
 
 
@@ -113,6 +113,7 @@ class EventView:
     sources: list[SourceBadge]
     types: list[TypeBadge]
     hidden: bool = False
+    toggle: str = ""
 
     @property
     def short_date(self) -> str:
@@ -142,7 +143,7 @@ class EventView:
         )
 
 
-def event_view(event: merge.Event, hidden: bool = False) -> EventView:
+def event_view(event: merge.Event, hidden: Collection[str] = ()) -> EventView:
     """Describes an event's sources, regions and categories for display."""
     regions: dict[str, set[str]] = {}
     for o in event.occurrences:
@@ -162,7 +163,8 @@ def event_view(event: merge.Event, hidden: bool = False) -> EventView:
     categories = dict.fromkeys(o.category for o in event.occurrences)
     return EventView(
         event=event,
-        hidden=hidden,
+        hidden=merge.is_hidden(event, hidden),
+        toggle="|".join(merge.hide_tokens(event)),
         sources=badges,
         types=[
             TypeBadge(
@@ -264,8 +266,9 @@ def _hidden(form: datastructures.MultiDict[str, str]) -> set[str]:
     if form.get("unhide_all"):
         return set()
     hidden = set(form.getlist("hidden"))
-    if toggled := form.get("toggle_hidden"):
-        hidden ^= {toggled}
+    if toggle := form.get("toggle_hidden"):
+        tokens = set(toggle.split("|"))
+        hidden = hidden - tokens if tokens <= hidden else hidden | tokens
     return hidden
 
 
@@ -334,14 +337,16 @@ def _default_categories(source: config_pb2.Source) -> None:
 def religion_names() -> dict[str, str]:
     """Returns religion names by form value."""
     return {
-        RELIGION_PREFIX + key: label
+        sources.RELIGION_PREFIX + key: label
         for key, (label, _, _) in religions.RELIGIONS.items()
     }
 
 
 def _new_source(kind: str) -> config_pb2.Source:
-    if kind.startswith(RELIGION_PREFIX):
-        return config_pb2.Source(religion=kind.removeprefix(RELIGION_PREFIX))
+    if kind.startswith(sources.RELIGION_PREFIX):
+        return config_pb2.Source(
+            religion=kind.removeprefix(sources.RELIGION_PREFIX)
+        )
     return config_pb2.Source(country=kind)
 
 
@@ -363,7 +368,7 @@ def _view(
     hidden: set[str],
 ) -> SourceView:
     if source.HasField("religion"):
-        kind = RELIGION_PREFIX + source.religion
+        kind = sources.RELIGION_PREFIX + source.religion
         label = religion_names()[kind]
         return SourceView(
             index=index,
@@ -403,7 +408,7 @@ def _notices(
 ) -> list[HiddenNotice]:
     """Flags a source, region or type whose holidays are all hidden."""
     found = [
-        (o, event.key in hidden)
+        (o, merge.hide_token(o) in hidden)
         for event in events
         for o in event.occurrences
         if o.source == code

@@ -150,7 +150,7 @@
         <div class="card-head">
           <h2 id="preview-heading">Next 12 months</h2>
           {% if config.hidden %}
-          <span class="muted hint">{{ config.hidden | length }} hidden · <button type="submit" class="link-button" name="unhide_all" value="1">Show all</button></span>
+          <span class="muted hint">{{ hidden_count }} hidden · <button type="submit" class="link-button" name="unhide_all" value="1">Show all</button></span>
           {% endif %}
         </div>
         {% if events %}
@@ -167,7 +167,7 @@
               <td class="clip"><button type="button" class="pin" aria-pressed="false" title="{{ event.name }}">{{ event.name }}</button></td>
               <td class="clip" title="{{ from_label }}"><span class="visually-hidden">{{ from_label }}</span><span aria-hidden="true">{% for badge in view.sources %}<span class="flag">{{ badge.flag }}</span>{% if badge.regions %}<span class="regions"> ({{ badge.regions | join(", ") }})</span>{% endif %}{% if not loop.last %} {% endif %}{% endfor %}</span></td>
               <td class="types">{% for type in view.types %}<abbr title="{{ type.name | capitalize }}">{{ type.letter }}</abbr>{% endfor %}</td>
-              <td><button type="submit" class="icon-button eye" name="toggle_hidden" value="{{ event.key }}" aria-pressed="{{ 'false' if view.hidden else 'true' }}" aria-label="Show {{ event.name }} in the calendar" title="{{ 'Hidden: click to show' if view.hidden else 'Shown: click to hide' }}">{{ "🙈" if view.hidden else "👁️" }}</button></td>
+              <td><button type="submit" class="icon-button eye" name="toggle_hidden" value="{{ view.toggle }}" aria-pressed="{{ 'false' if view.hidden else 'true' }}" aria-label="Show {{ event.name }} in the calendar" title="{{ 'Hidden: click to show' if view.hidden else 'Shown: click to hide' }}">👁️</button></td>
             </tr>
             {% endfor %}
           </tbody>

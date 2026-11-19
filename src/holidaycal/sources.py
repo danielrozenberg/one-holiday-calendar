@@ -13,6 +13,7 @@ from holidaycal import religions
 
 FALLBACK_LANGUAGE = "en_US"
 DEFAULT_CATEGORY = "public"
+RELIGION_PREFIX = "@"
 RELIGIOUS_CATEGORY = "religious"
 
 
@@ -29,6 +30,14 @@ def country_names() -> dict[str, str]:
 def source_name(source: str) -> str:
     """Returns the display name of an occurrence's source."""
     return country_names().get(source, source)
+
+
+def source_id(source: str) -> str:
+    """Returns an occurrence's source as configured: "CA" or "@christian"."""
+    for key, religion in religions.RELIGIONS.items():
+        if religion.label == source:
+            return RELIGION_PREFIX + key
+    return source
 
 
 def flag(source: str) -> str:

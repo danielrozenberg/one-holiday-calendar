@@ -39,8 +39,10 @@ encoded as unpadded base64url. It holds:
 
 - **Sources**: each one is either a country, with optional subdivisions (or
   all of them) and categories (`public` when empty); or a religion.
-- **Hidden holidays**: merge keys (alias ids or normalized names) left out of
-  the calendar, whichever sources contribute them.
+- **Hidden holidays**: entries of the form `<source>:<merge key>` (e.g.
+  `US:independence day`, `@christian:christmas_day`). Hiding is per source
+  because a merge key can mean different holidays elsewhere, such as every
+  country's "Independence Day".
 - **Title style**: plain (`Christmas Eve`) or prefixed with the contributing
   sources (`[CA, US] Christmas Eve`), using codes or names.
 - **Description options**: whether each event's description lists the
@@ -144,8 +146,8 @@ and focus, and updates the address bar. Sources are submitted in page order, so
 reordering (↑/↓ buttons, which also work without JavaScript, or the drag
 handle) just moves them in the page before submitting.
 
-Each preview row has an eye button that toggles the holiday's key in the
-hidden list. Hidden holidays stay in the preview, dimmed, so they can be shown
+Each preview row has an eye button (greyed out while hidden) that hides or
+shows the row for every source contributing to it. Hidden holidays stay in the preview, dimmed, so they can be shown
 again; a "Show all" button clears the list. When every holiday a country, one of
 its regions, or one of its types contributes (over the feed's years) is hidden,
 that source's card shows a notice with a button to remove the country, region or

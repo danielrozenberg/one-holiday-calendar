@@ -66,12 +66,47 @@ def test_hidden_holidays_are_dropped_for_every_source():
             config_pb2.Source(country="CA"),
             config_pb2.Source(country="US"),
         ],
-        hidden=["christmas_day", "labor_day"],
+        hidden=["CA:christmas_day", "US:christmas_day", "US:labor_day"],
     )
 
     assert not _on(merge.build(parsed, [2026]), 12, 25)
-    assert not _on(merge.build(parsed, [2026]), 9, 7)
+    [labor_day] = _on(merge.build(parsed, [2026]), 9, 7)
+    assert {o.source for o in labor_day.occurrences} == {"CA"}
     assert _on(merge.build(parsed, [2026], include_hidden=True), 12, 25)
+
+
+def test_hiding_is_per_source():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="US"),
+            config_pb2.Source(country="PH"),
+            config_pb2.Source(religion="christian"),
+        ],
+        hidden=["US:independence day", "@christian:christmas_day"],
+    )
+    events = merge.build(parsed, [2026])
+
+    assert not _on(events, 7, 4)
+    assert [e.name for e in _on(events, 6, 12)] == ["Independence Day"]
+    [christmas] = _on(events, 12, 25)
+    assert {o.source for o in christmas.occurrences} == {"US", "PH"}
+
+
+def test_event_is_hidden_when_every_source_is():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="CA"),
+            config_pb2.Source(country="US"),
+        ]
+    )
+    [christmas] = _on(merge.build(parsed, [2026]), 12, 25)
+
+    assert merge.hide_tokens(christmas) == [
+        "CA:christmas_day",
+        "US:christmas_day",
+    ]
+    assert not merge.is_hidden(christmas, {"CA:christmas_day"})
+    assert merge.is_hidden(christmas, set(merge.hide_tokens(christmas)))
 
 
 def test_uid_is_stable_and_depends_on_key():

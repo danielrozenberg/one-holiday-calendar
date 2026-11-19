@@ -133,7 +133,7 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
     all_events = merge.build(parsed, years, include_hidden=True)
     hidden = set(parsed.hidden)
     views = [
-        form.event_view(e, e.key in hidden)
+        form.event_view(e, hidden)
         for e in all_events
         if today < e.end and e.date < end
     ]
@@ -141,6 +141,7 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
     return flask.render_template(
         "index.html",
         events=views,
+        hidden_count=sum(v.hidden for v in views),
         featured=form.representative([v for v in views if not v.hidden])
         or form.event_view(form.sample_event(today.year)),
         config=parsed,
