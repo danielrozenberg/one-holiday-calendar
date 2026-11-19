@@ -100,7 +100,11 @@ after next, with a one-day refresh hint (`REFRESH-INTERVAL`,
 
 - Environment: pyenv Python 3.13 with a `.venv` built from it
   (`pip install -e '.[dev]'`).
-- `./tools/ci.sh`: format check, lint, type check, protobuf freshness, tests.
+- `./tools/ci.sh`: format check, lint, type check, protobuf freshness, tests,
+  and browser tests (`tests/browser/run.mjs`, when `node` and `google-chrome`
+  are installed). The browser tests start the app and a headless Chrome on
+  free local ports and drive the page over the DevTools protocol; the page
+  fires `app:updated` after each in-place update so they can wait for it.
 - `./tools/genproto.sh`: regenerates `config_pb2.py` after editing the proto.
 - `./tools/dev.sh`: local server in debug mode, restarting whenever Python
   code, templates, static assets or `aliases.toml` change.

@@ -52,7 +52,8 @@ async function networkFirst(request) {
 
 async function trim(cache) {
   const pages = (await cache.keys()).filter((request) => !isAsset(request.url));
+  const excess = Math.max(pages.length - MAX_PAGES, 0);
   await Promise.all(
-    pages.slice(0, -MAX_PAGES).map((request) => cache.delete(request)),
+    pages.slice(0, excess).map((request) => cache.delete(request)),
   );
 }

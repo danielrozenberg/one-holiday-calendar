@@ -54,8 +54,10 @@ document.addEventListener("submit", async (event) => {
     form.submit();
     return;
   }
-  transition(() => swap(next));
   history.replaceState(null, "", response.url);
+  await transition(() => swap(next));
+  // Fired once the page takes input again, after any transition.
+  document.dispatchEvent(new Event("app:updated"));
 });
 
 function showError(form, message) {
@@ -146,9 +148,12 @@ document.addEventListener("dragend", () => {
 
 // Event format card: previews the hovered or focused holiday.
 
-function transition(update) {
-  if (document.startViewTransition) document.startViewTransition(update);
-  else update();
+async function transition(update) {
+  if (document.startViewTransition) {
+    await document.startViewTransition(update).finished;
+  } else {
+    update();
+  }
 }
 
 function showCard(data, hint) {

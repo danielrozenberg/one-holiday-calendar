@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 #
-# Full local gate: format check, lint, type-check, tests. Run before committing.
+# Full local gate: format check, lint, type-check, tests, browser tests. Run
+# before committing.
 #
-# It only checks the repo (no writes, no network), so it is safe to add to your
-# Claude Code always-allow list as `Bash(./tools/ci.sh)`.
+# It only checks the repo (writes only to temp dirs, uses only localhost), so it
+# is safe to add to your Claude Code always-allow list as `Bash(./tools/ci.sh)`.
 #
 # Usage:  ./tools/ci.sh
 set -euo pipefail
@@ -37,5 +38,12 @@ for f in "$GEN"/*; do
 done
 
 run python -m pytest -q
+
+# Browser tests start the app and a headless Chrome on free local ports.
+if command -v node > /dev/null && command -v "${CHROME:-google-chrome}" > /dev/null; then
+  run node tests/browser/run.mjs
+else
+  echo ":: skipping browser tests (needs node and google-chrome)"
+fi
 
 echo "OK: all gate checks passed."
