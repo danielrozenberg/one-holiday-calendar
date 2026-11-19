@@ -177,7 +177,7 @@
             {% for view in events %}
             {% set event = view.event %}
             {% set from_label = view.sources | map(attribute="label") | join("; ") %}
-            <tr class="previewable{% if view.hidden %} is-hidden{% endif %}" data-uid="{{ event.uid }}" data-card='{{ view.card | tojson }}'>
+            <tr class="previewable{% if view.hidden %} is-hidden{% endif %}" data-card='{{ view.card | tojson }}'>
               <td class="date" title="{{ view.card.date }}">{{ view.short_date }}</td>
               <td class="clip name" title="{{ event.name }}">{{ event.name }}</td>
               <td class="clip" title="{{ from_label }}"><span class="visually-hidden">{{ from_label }}</span><span aria-hidden="true">{% for badge in view.sources %}<span class="flag">{{ badge.flag }}</span>{% if badge.regions %}<span class="regions"> ({{ badge.regions | join(", ") }})</span>{% endif %}{% if not loop.last %} {% endif %}{% endfor %}</span></td>

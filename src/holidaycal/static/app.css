@@ -440,7 +440,6 @@ tr.previewable:hover, tr.previewable:focus-within { background: color-mix(in srg
   background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
 
-.combobox-empty { padding: 0.5rem; color: var(--muted); }
 
 .form-error {
   grid-column: 1 / -1;

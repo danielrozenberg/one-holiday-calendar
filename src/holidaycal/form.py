@@ -98,7 +98,6 @@ class TypeBadge:
 class Card(typing.TypedDict):
     """The event format card's content, sent to the page as JSON."""
 
-    uid: str
     titles: dict[str, str]
     date: str
     sources: str
@@ -132,7 +131,6 @@ class EventView:
         event = self.event
         lines = ics.description_lines(event)
         return Card(
-            uid=event.uid,
             titles={
                 name: ics.title(event, value)
                 for name, value in config_pb2.TitleStyle.items()
