@@ -84,7 +84,14 @@ body {
   gap: 0.5rem;
 }
 
-.source-name { font-weight: 600; flex: 1; }
+.source-name {
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .tag {
   font-size: 0.75rem;
@@ -95,7 +102,12 @@ body {
 }
 
 details { border-top: 1px solid var(--border); margin-top: 0.5rem; padding-top: 0.5rem; }
-summary { cursor: pointer; }
+summary {
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 summary .muted { font-size: 0.9rem; margin-left: 0.25rem; }
 
 .options {

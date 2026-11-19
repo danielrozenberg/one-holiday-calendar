@@ -37,7 +37,7 @@
           <input type="hidden" name="{{ prefix }}kind" value="{{ source.kind }}">
           <div class="source-header">
             <span class="handle" draggable="true" aria-hidden="true" title="Drag to reorder">⠿</span>
-            <span class="source-name">{{ source.label }}</span>
+            <span class="source-name" title="{{ source.label }}">{{ source.label }}</span>
             <span class="tag">{{ "Religion" if source.kind.startswith("@") else source.kind }}</span>
             <button type="submit" class="icon-button" name="move" value="{{ source.index }}:up" aria-label="Move {{ source.label }} up" title="Move up"{% if loop.first %} disabled{% endif %}>↑</button>
             <button type="submit" class="icon-button" name="move" value="{{ source.index }}:down" aria-label="Move {{ source.label }} down" title="Move down"{% if loop.last %} disabled{% endif %}>↓</button>
@@ -47,11 +47,12 @@
           {% if source.subdivisions %}
           {% set picked = source.subdivisions | selectattr("checked") | list %}
           <details data-key="{{ source.kind }}:regions">
-            <summary>Regions <span class="muted">{{ "all" if source.all_subdivisions else (picked | length ~ " selected" if picked else "national only") }}</span></summary>
+            {% set regions_summary = "all" if source.all_subdivisions else (picked | length ~ " selected" if picked else "national only") %}
+            <summary title="Regions: {{ regions_summary }}">Regions <span class="muted">{{ regions_summary }}</span></summary>
             <label class="choice"><input type="checkbox" name="{{ prefix }}all_subdivisions" value="1" data-all-regions{% if source.all_subdivisions %} checked{% endif %}> All regions</label>
             <div class="options">
               {% for option in source.subdivisions %}
-              <label><input type="checkbox" name="{{ prefix }}subdivision" value="{{ option.value }}" data-region="{{ source.kind }}:{{ option.value }}"{% if option.checked %} checked{% endif %}{% if source.all_subdivisions %} disabled{% endif %}> {{ option.label }}</label>
+              <label class="one-line" title="{{ option.label }}"><input type="checkbox" name="{{ prefix }}subdivision" value="{{ option.value }}" data-region="{{ source.kind }}:{{ option.value }}"{% if option.checked %} checked{% endif %}{% if source.all_subdivisions %} disabled{% endif %}> <span>{{ option.label }}</span></label>
               {% endfor %}
             </div>
           </details>
@@ -59,10 +60,11 @@
 
           {% if source.categories %}
           <details data-key="{{ source.kind }}:types">
-            <summary>Holiday types <span class="muted">{{ source.categories | selectattr("checked") | map(attribute="label") | join(", ") }}</span></summary>
+            {% set types_summary = source.categories | selectattr("checked") | map(attribute="label") | join(", ") %}
+            <summary title="Holiday types: {{ types_summary }}">Holiday types <span class="muted">{{ types_summary }}</span></summary>
             <div class="options">
               {% for option in source.categories %}
-              <label><input type="checkbox" name="{{ prefix }}category" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+              <label class="one-line" title="{{ option.label }}"><input type="checkbox" name="{{ prefix }}category" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> <span>{{ option.label }}</span></label>
               {% endfor %}
             </div>
           </details>
@@ -124,7 +126,7 @@
             <fieldset>
               <legend>Title format</legend>
               {% for name in title_styles.keys() %}
-              <label class="title-option"><input type="radio" name="title_style" value="{{ name }}"{% if current == name %} checked{% endif %}> <span data-title-style="{{ name }}">{{ card.titles[name] }}</span></label>
+              <label class="title-option one-line"><input type="radio" name="title_style" value="{{ name }}"{% if current == name %} checked{% endif %}> <span data-title-style="{{ name }}" title="{{ card.titles[name] }}">{{ card.titles[name] }}</span></label>
               {% endfor %}
             </fieldset>
           </div>
@@ -140,7 +142,7 @@
 
           <div class="gcal-row">
             <span class="gcal-icon" aria-hidden="true">↔</span>
-            <label class="switch-label"><input type="checkbox" role="switch" name="combine_multiday" value="1"{% if config.combine_multiday %} checked{% endif %}> Show multi-day holidays as one event</label>
+            <label class="switch-label one-line" title="Show multi-day holidays as one event"><input type="checkbox" role="switch" name="combine_multiday" value="1"{% if config.combine_multiday %} checked{% endif %}> <span>Show multi-day holidays as one event</span></label>
           </div>
         </article>
         <noscript><button type="submit">Update</button></noscript>

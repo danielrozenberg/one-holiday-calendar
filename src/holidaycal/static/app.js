@@ -171,7 +171,7 @@ function showCard(data) {
     element.textContent = element.title = fields[element.dataset.field];
   }
   for (const element of card.querySelectorAll("[data-title-style]")) {
-    element.textContent = data.titles[element.dataset.titleStyle];
+    element.textContent = element.title = data.titles[element.dataset.titleStyle];
   }
 }
 
