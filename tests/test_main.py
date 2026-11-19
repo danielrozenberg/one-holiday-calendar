@@ -1,8 +1,11 @@
+from unittest import mock
+
 import pytest
 
 from holidaycal import config
 from holidaycal import config_pb2
 from holidaycal import main
+from holidaycal import merge
 
 BLOB = config.encode(
     config_pb2.Config(sources=[config_pb2.Source(country="CA")])
@@ -77,3 +80,42 @@ def test_https_behind_proxy(client):
     )
 
     assert f"https://localhost/c/{BLOB}".encode() in response.data
+
+
+@pytest.fixture
+def cold_cache():
+    main._feed.cache_clear()
+    main._page_data.cache_clear()
+
+
+@pytest.mark.usefixtures("cold_cache")
+@pytest.mark.parametrize("accept", ["*/*", BROWSER_ACCEPT])
+def test_repeat_requests_are_cached(client, accept):
+    with mock.patch.object(merge, "build", wraps=merge.build) as build:
+        first = client.get(f"/c/{BLOB}", headers={"Accept": accept})
+        second = client.get(f"/c/{BLOB}", headers={"Accept": accept})
+
+    assert build.call_count == 1
+    assert first.data == second.data
+
+
+def test_feed_etag(client):
+    first = client.get(f"/c/{BLOB}")
+    second = client.get(
+        f"/c/{BLOB}", headers={"If-None-Match": first.headers["ETag"]}
+    )
+
+    assert first.headers["ETag"]
+    assert second.status_code == 304
+    assert not second.data
+
+
+def test_feed_etag_changes_with_data_version(client):
+    first = client.get(f"/c/{BLOB}")
+    with mock.patch.object(main, "DATA_VERSION", "other"):
+        second = client.get(
+            f"/c/{BLOB}", headers={"If-None-Match": first.headers["ETag"]}
+        )
+
+    assert second.status_code == 200
+    assert second.headers["ETag"] != first.headers["ETag"]

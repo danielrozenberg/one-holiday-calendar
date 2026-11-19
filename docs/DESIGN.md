@@ -85,3 +85,12 @@ pinned in `pyproject.toml` alone. `.gcloudignore` keeps tests and tooling out
 of the upload.
 
     gcloud app deploy
+
+## Caching
+
+Each instance keeps the last 32 built feeds and page data in memory, keyed by
+the blob and the covered years. Feeds also carry an `ETag` derived from the
+python-holidays version, the App Engine deployment (`GAE_VERSION`), the blob
+and the covered years, so calendar apps that revalidate get `304 Not Modified`
+until the data or the year window changes. Responses are not marked publicly
+cacheable, because the same URL serves HTML or ICS depending on `Accept`.
