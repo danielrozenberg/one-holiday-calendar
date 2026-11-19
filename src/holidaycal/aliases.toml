@@ -1,0 +1,14 @@
+# Normalized holiday names that refer to the same holiday as another name.
+# Keys and values are in `merge.normalize` form, without aliasing.
+# Keep keys in alphabetical order.
+
+[aliases]
+"assumption of mary day" = "assumption day"
+"christmas" = "christmas day"
+"easter" = "easter sunday"
+"eid ul adha" = "eid al adha"
+"eid ul fitr" = "eid al fitr"
+"international labor day" = "labor day"
+"international workers day" = "labor day"
+"labour day" = "labor day"
+"workers day" = "labor day"
