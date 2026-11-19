@@ -75,7 +75,8 @@ after next, with a one-day refresh hint (`REFRESH-INTERVAL`,
   (`pip install -e '.[dev]'`).
 - `./tools/ci.sh`: format check, lint, type check, protobuf freshness, tests.
 - `./tools/genproto.sh`: regenerates `config_pb2.py` after editing the proto.
-- `flask --app holidaycal.main run`: local server.
+- `./tools/dev.sh`: local server in debug mode, restarting whenever Python
+  code, templates, static assets or `aliases.toml` change.
 
 ## Deployment
 
