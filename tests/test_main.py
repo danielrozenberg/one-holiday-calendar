@@ -280,3 +280,13 @@ def test_favicon(client):
 
     assert b'rel="icon"' in page.data
     assert icon.mimetype == "image/svg+xml"
+
+
+def test_subscribe_box_offers_webcal_and_https_feed_urls(client):
+    page = client.get(f"/c/{BLOB}", headers={"Accept": BROWSER_ACCEPT}).text
+
+    webcal = f"webcal://localhost/c/{BLOB}?format=ics"
+    https = f"http://localhost/c/{BLOB}?format=ics"
+    assert f'value="{webcal}" aria-label="Calendar URL"' in page
+    assert f'data-url="{https}"' in page
+    assert "delete it and add this new one" in page

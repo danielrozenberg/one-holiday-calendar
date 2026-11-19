@@ -23,11 +23,15 @@
       <section class="card" aria-labelledby="subscribe-heading">
         <h2 id="subscribe-heading">Subscribe</h2>
         <a class="button primary" href="{{ webcal_url }}">Add to calendar app</a>
-        <div class="copy-row">
-          <input type="text" readonly value="{{ https_url }}" aria-label="Calendar URL">
-          <button type="button" data-copy="{{ https_url }}">Copy</button>
+        <div class="url-scheme" role="radiogroup" aria-label="Calendar URL type">
+          <label><input type="radio" name="url_scheme" value="webcal" data-url="{{ webcal_url }}" checked> webcal://</label>
+          <label><input type="radio" name="url_scheme" value="https" data-url="{{ https_url }}"> https://</label>
         </div>
-        <p class="muted">Changing the options above gives a new URL.</p>
+        <div class="copy-row">
+          <input type="text" readonly value="{{ webcal_url }}" aria-label="Calendar URL" data-calendar-url>
+          <button type="button" class="copy-button">Copy</button>
+        </div>
+        <p class="muted">Changes on this page generate a new calendar URL. If you already added a previous URL to your calendar app, delete it and add this new one.</p>
       </section>
       {% endif %}
 

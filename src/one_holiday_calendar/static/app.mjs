@@ -8,6 +8,11 @@ document.documentElement.classList.add("js");
 
 document.addEventListener("change", (event) => {
   if (event.target.matches(".combobox-input")) return;
+  if (event.target.matches('[name="url_scheme"]')) {
+    urlScheme = event.target.value;
+    showCalendarUrl();
+    return;
+  }
   const all = event.target.closest?.("[data-all-regions]");
   if (all) {
     // Disabled boxes keep their ticks but are left out of the submitted form.
@@ -112,10 +117,27 @@ function swap(next) {
   }
 }
 
+// The subscribe box shows the webcal:// or https:// calendar URL, as chosen;
+// the choice survives in-place updates.
+let urlScheme = "webcal";
+
+function showCalendarUrl() {
+  const radio = document.querySelector(
+    `[name="url_scheme"][value="${urlScheme}"]`,
+  );
+  const input = document.querySelector("[data-calendar-url]");
+  if (!radio || !input) return;
+  radio.checked = true;
+  input.value = radio.dataset.url;
+}
+
+document.addEventListener("app:updated", showCalendarUrl);
+
 document.addEventListener("click", async (event) => {
-  const button = event.target.closest("[data-copy]");
+  const button = event.target.closest(".copy-button");
   if (!button) return;
-  await navigator.clipboard.writeText(button.dataset.copy);
+  const input = button.closest(".copy-row").querySelector("input");
+  await navigator.clipboard.writeText(input.value);
   button.textContent = "Copied";
 });
 

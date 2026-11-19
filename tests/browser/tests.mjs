@@ -160,6 +160,19 @@ export const tests = [
     },
   },
   {
+    name: "subscribe box switches between webcal and https URLs",
+    async run(page, check) {
+      await page.add("CA");
+      const url = `document.querySelector("[data-calendar-url]").value`;
+      check("webcal by default", (await page.evaluate(url)).startsWith("webcal://"));
+      await page.evaluate(`document.querySelector('[name="url_scheme"][value="https"]').click()`);
+      check("https when chosen", (await page.evaluate(url)).startsWith("http"));
+      check("feed format", (await page.evaluate(url)).endsWith("?format=ics"));
+      await page.add("US");
+      check("choice survives updates", (await page.evaluate(url)).startsWith("http"));
+    },
+  },
+  {
     name: "back and forward undo and redo changes",
     async run(page, check) {
       await page.add("CA");
