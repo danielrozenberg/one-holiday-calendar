@@ -192,5 +192,5 @@ def test_multiday_card_date_is_a_range():
     [passover] = [e for e in merge.build(parsed, [2026]) if e.key == "passover"]
 
     assert form.event_view(passover).card["date"] == (
-        "Thursday, April 2 \u2013 Thursday, April 9, 2026"
+        "Thu, Apr 2 \u2013 Thu, Apr 9, 2026"
     )

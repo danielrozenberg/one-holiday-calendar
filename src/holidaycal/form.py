@@ -136,7 +136,7 @@ def _long_date(event: merge.Event) -> str:
     if event.days == 1:
         return first.strftime("%A, %B %-d, %Y")
     last = event.end - datetime.timedelta(days=1)
-    return f"{first:%A, %B %-d} \u2013 {last:%A, %B %-d, %Y}"
+    return f"{first:%a, %b %-d} \u2013 {last:%a, %b %-d, %Y}"
 
 
 @functools.cache

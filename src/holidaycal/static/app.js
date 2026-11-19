@@ -153,7 +153,7 @@ function showCard(data) {
     "TITLE_STYLE_PLAIN";
   const fields = { ...data, title: data.titles[style] };
   for (const element of card.querySelectorAll("[data-field]")) {
-    element.textContent = fields[element.dataset.field];
+    element.textContent = element.title = fields[element.dataset.field];
   }
   for (const element of card.querySelectorAll("[data-title-style]")) {
     element.textContent = data.titles[element.dataset.titleStyle];

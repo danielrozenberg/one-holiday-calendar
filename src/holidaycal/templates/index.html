@@ -104,7 +104,7 @@
       <section class="card event-format" aria-labelledby="format-heading">
         <div class="card-head">
           <h2 id="format-heading">Event format</h2>
-          <span class="muted hint" data-field="hint" data-default-hint="{{ 'Most varied holiday' if events else 'Example' }}">{{ "Most varied holiday" if events else "Example" }}</span>
+          <span class="muted hint" data-field="hint" data-default-hint="{{ 'Previewing' if events else 'Example' }}">{{ "Previewing" if events else "Example" }}</span>
         </div>
         {% set card = featured.card %}
         {% set current = title_styles.Name(config.title_style) %}
@@ -113,10 +113,10 @@
             <span class="swatch" aria-hidden="true"></span>
             <div>
               <button type="button" class="gcal-title" popovertarget="title-formats" title="Change the title format">
-                <span data-field="title">{{ card.titles[current] }}</span>
+                <span class="line" data-field="title" title="{{ card.titles[current] }}">{{ card.titles[current] }}</span>
                 <span class="edit-icon" aria-hidden="true">✎</span>
               </button>
-              <div class="gcal-date"><span data-field="date">{{ card.date }}</span> · All day</div>
+              <div class="gcal-date line"><span data-field="date" title="{{ card.date }}">{{ card.date }}</span> · All day</div>
             </div>
           </div>
 
@@ -132,8 +132,8 @@
           <div class="gcal-row">
             <span class="gcal-icon" aria-hidden="true">☰</span>
             <div class="gcal-description">
-              <label class="desc-line"><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> <span data-field="sources">{{ card.sources }}</span></label>
-              <label class="desc-line"><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> <span data-field="categories">{{ card.categories }}</span></label>
+              <label class="desc-line"><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> <span class="line" data-field="sources" title="{{ card.sources }}">{{ card.sources }}</span></label>
+              <label class="desc-line"><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> <span class="line" data-field="categories" title="{{ card.categories }}">{{ card.categories }}</span></label>
               <p class="muted small">Tick the lines to include in every event's description.</p>
             </div>
           </div>
