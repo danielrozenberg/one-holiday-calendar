@@ -66,3 +66,23 @@ def test_decode_rejects_unknown_title_style():
 
     with pytest.raises(config.InvalidConfigError, match="title style"):
         config.decode(blob)
+
+
+def test_decode_rejects_too_many_sources():
+    countries = "CA US DE FR IT ES GB MX BR AR JP KR CN IN AU NZ ZA EG IL TR SE"
+    sources = [config_pb2.Source(country=c) for c in countries.split()]
+    blob = config.encode(config_pb2.Config(sources=sources))
+
+    with pytest.raises(config.InvalidConfigError, match="sources"):
+        config.decode(blob)
+
+
+def test_decode_rejects_duplicate_sources():
+    sources = [
+        config_pb2.Source(country="US", excluded=["christmas day"]),
+        config_pb2.Source(country="US", excluded=["new years day"]),
+    ]
+    blob = config.encode(config_pb2.Config(sources=sources))
+
+    with pytest.raises(config.InvalidConfigError, match="Duplicate"):
+        config.decode(blob)

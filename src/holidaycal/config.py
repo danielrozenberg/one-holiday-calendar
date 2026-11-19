@@ -10,6 +10,7 @@ from holidaycal import config_pb2
 from holidaycal import religions
 
 MAX_BLOB_LENGTH = 2048
+MAX_SOURCES = 20
 
 
 class InvalidConfigError(ValueError):
@@ -52,6 +53,12 @@ def validate(config: config_pb2.Config) -> None:
         raise InvalidConfigError(f"Unsupported config version {config.v}")
     if config.title_style not in config_pb2.TitleStyle.values():
         raise InvalidConfigError(f"Unknown title style {config.title_style}")
+    if len(config.sources) > MAX_SOURCES:
+        raise InvalidConfigError(f"More than {MAX_SOURCES} sources")
+    if len({(s.country, s.religion) for s in config.sources}) != len(
+        config.sources
+    ):
+        raise InvalidConfigError("Duplicate sources")
     for source in config.sources:
         match source.WhichOneof("kind"):
             case "country":
