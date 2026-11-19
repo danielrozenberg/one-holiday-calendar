@@ -1,2 +1,6 @@
 runtime: python313
 entrypoint: gunicorn -b :$PORT holidaycal.main:app
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 2
