@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Holiday Calendar</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 60rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; padding: 0.25rem 0.5rem; border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent); }
+    code { word-break: break-all; }
+  </style>
+</head>
+<body>
+  <h1>Holiday Calendar</h1>
+
+  {% if webcal_url %}
+  <section aria-labelledby="subscribe">
+    <h2 id="subscribe">Subscribe</h2>
+    <p><a href="{{ webcal_url }}">Add to your calendar app</a></p>
+    <p>Or copy this URL: <code>{{ https_url }}</code></p>
+  </section>
+  {% endif %}
+
+  <section aria-labelledby="preview">
+    <h2 id="preview">Next 12 months</h2>
+    {% if events %}
+    <table>
+      <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th></tr></thead>
+      <tbody>
+        {% for event in events %}
+        <tr>
+          <td>{{ event.date.strftime("%a %b %-d, %Y") }}</td>
+          <td>{{ event.name }}</td>
+          <td>{{ event.occurrences | map(attribute="source") | unique | join(", ") }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No holidays selected yet.</p>
+    {% endif %}
+  </section>
+</body>
+</html>
