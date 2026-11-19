@@ -19,6 +19,9 @@ never sees the scheme. Instead it negotiates on the request:
 `/` shows an empty configuration page. The form submits to `/build`, which
 encodes the configuration and redirects to `/c/<blob>`.
 
+`/versionz` returns `{"version": "<version>"}`, the `version` in
+`pyproject.toml` of the deployed package.
+
 ## Data source
 
 Holidays come from [python-holidays](https://github.com/vacanza/holidays):

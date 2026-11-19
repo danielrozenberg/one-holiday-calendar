@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import importlib.metadata
 import re
 from unittest import mock
 
@@ -263,3 +264,11 @@ def test_preview_keeps_today_for_visitors_behind_utc(client):
         page = client.get(f"/c/{blob}?format=html").text
 
     assert "Thanksgiving Day" in page
+
+
+def test_versionz(client):
+    response = client.get("/versionz")
+
+    assert response.json == {
+        "version": importlib.metadata.version("holidaycal")
+    }

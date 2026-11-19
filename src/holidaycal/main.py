@@ -2,6 +2,7 @@
 
 import datetime
 import hashlib
+import importlib.metadata
 import pathlib
 
 import flask
@@ -64,6 +65,12 @@ def service_worker() -> flask.Response:
     )
     response.cache_control.no_cache = True
     return response
+
+
+@app.get("/versionz")
+def versionz() -> dict[str, str]:
+    """Reports the deployed version, from the package's `pyproject.toml`."""
+    return {"version": importlib.metadata.version("holidaycal")}
 
 
 @app.get("/")
