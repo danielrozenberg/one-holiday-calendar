@@ -75,3 +75,34 @@ def test_uid_is_stable_and_depends_on_key():
     [ca_christmas] = _on(second, 12, 25)
     assert us_christmas.uid == ca_christmas.uid
     assert len({e.uid for e in first}) == len(first)
+
+
+def _passover(combine: bool) -> list[merge.Event]:
+    config = config_pb2.Config(
+        sources=[config_pb2.Source(religion="jewish")],
+        combine_multiday=combine,
+    )
+    return [e for e in merge.build(config, [2026]) if e.key == "passover"]
+
+
+def test_multiday_holidays_stay_separate_by_default():
+    assert [e.days for e in _passover(combine=False)] == [1] * 8
+
+
+def test_combine_multiday():
+    [passover] = _passover(combine=True)
+
+    assert passover.date == datetime.date(2026, 4, 2)
+    assert passover.days == 8
+    assert passover.end == datetime.date(2026, 4, 10)
+    assert len(passover.occurrences) == 8
+
+
+def test_combine_multiday_keeps_observed_days_apart():
+    config = config_pb2.Config(
+        sources=[config_pb2.Source(country="US")], combine_multiday=True
+    )
+    events = merge.build(config, [2027])
+
+    christmas = [e for e in events if e.key == "christmas day"]
+    assert [(e.date.day, e.days) for e in christmas] == [(24, 1), (25, 1)]

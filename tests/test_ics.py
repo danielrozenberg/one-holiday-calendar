@@ -115,3 +115,17 @@ def test_description_is_empty_by_default():
     event, config = _christmas()
 
     assert ics.description(event, config) == ""
+
+
+def test_multiday_event_spans_its_days():
+    config = config_pb2.Config(
+        sources=[config_pb2.Source(religion="jewish")], combine_multiday=True
+    )
+    events = merge.build(config, [2026])
+    calendar = icalendar.Calendar.from_ical(ics.render(events, config, NOW))
+
+    [passover] = [
+        e for e in calendar.walk("VEVENT") if e["summary"] == "Passover"
+    ]
+    assert passover.decoded("dtstart") == datetime.date(2026, 4, 2)
+    assert passover.decoded("dtend") == datetime.date(2026, 4, 10)

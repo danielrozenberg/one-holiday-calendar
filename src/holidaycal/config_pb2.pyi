@@ -48,11 +48,14 @@ class Config(_message.Message):
     TITLE_STYLE_FIELD_NUMBER: _builtins.int
     DESCRIBE_SOURCES_FIELD_NUMBER: _builtins.int
     DESCRIBE_CATEGORIES_FIELD_NUMBER: _builtins.int
+    COMBINE_MULTIDAY_FIELD_NUMBER: _builtins.int
     v: _builtins.int
     """Schema version. 0 is the current schema."""
     title_style: Global___TitleStyle.ValueType
     describe_sources: _builtins.bool
     describe_categories: _builtins.bool
+    combine_multiday: _builtins.bool
+    """Show a holiday spanning consecutive days as one event, not one per day."""
     @_builtins.property
     def sources(self) -> _containers.RepeatedCompositeFieldContainer[Global___Source]: ...
     def __init__(
@@ -63,10 +66,11 @@ class Config(_message.Message):
         title_style: Global___TitleStyle.ValueType = ...,
         describe_sources: _builtins.bool = ...,
         describe_categories: _builtins.bool = ...,
+        combine_multiday: _builtins.bool = ...,
     ) -> None: ...
     _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["describe_categories", b"describe_categories", "describe_sources", b"describe_sources", "sources", b"sources", "title_style", b"title_style", "v", b"v"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["combine_multiday", b"combine_multiday", "describe_categories", b"describe_categories", "describe_sources", b"describe_sources", "sources", b"sources", "title_style", b"title_style", "v", b"v"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
     def WhichOneof(self, oneof_group: _Never) -> None: ...
 

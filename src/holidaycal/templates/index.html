@@ -100,6 +100,11 @@
           <label class="choice"><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> List countries and regions</label>
           <label class="choice"><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> List holiday types</label>
         </fieldset>
+        <fieldset>
+          <legend>Multi-day holidays</legend>
+          <label class="choice"><input type="radio" name="combine_multiday" value=""{% if not config.combine_multiday %} checked{% endif %}> One event per day</label>
+          <label class="choice"><input type="radio" name="combine_multiday" value="1"{% if config.combine_multiday %} checked{% endif %}> One event spanning all days</label>
+        </fieldset>
         <noscript><button type="submit">Update</button></noscript>
       </section>
     </form>
@@ -125,7 +130,7 @@
           <tbody>
             {% for event in events %}
             <tr>
-              <td class="date">{{ event.date.strftime("%a, %b %-d") }}</td>
+              <td class="date">{{ event.date.strftime("%a, %b %-d") }}{% if event.days > 1 %} – {{ (event.end - one_day).strftime("%a, %b %-d") }}{% endif %}</td>
               <td>{{ title(event, config.title_style) }}</td>
               <td class="muted">{{ event.occurrences | map(attribute="source") | unique | join(", ") }}</td>
             </tr>

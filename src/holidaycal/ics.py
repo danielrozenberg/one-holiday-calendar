@@ -82,7 +82,7 @@ def render(
         vevent.add("uid", event.uid)
         vevent.add("dtstamp", now)
         vevent.add("dtstart", event.date)
-        vevent.add("dtend", event.date + datetime.timedelta(days=1))
+        vevent.add("dtend", event.end)
         vevent.add("summary", title(event, parsed.title_style))
         if text := description(event, parsed):
             vevent.add("description", text)

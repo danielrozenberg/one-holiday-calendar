@@ -130,3 +130,8 @@ def test_move(move, expected):
 def test_invalid_move(move):
     with pytest.raises(config.InvalidConfigError):
         _parse(("s0.kind", "CA"), ("s1.kind", "US"), ("move", move))
+
+
+def test_combine_multiday_option():
+    assert _parse(("add", "CA"), ("combine_multiday", "1")).combine_multiday
+    assert not _parse(("add", "CA"), ("combine_multiday", "")).combine_multiday

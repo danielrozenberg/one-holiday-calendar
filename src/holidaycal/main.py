@@ -130,13 +130,16 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
     parsed = config.decode(blob)
     years = ics.years(today)
     end = today + datetime.timedelta(days=settings.CURRENT.page.preview_days)
-    events = [e for e in merge.build(parsed, years) if today <= e.date < end]
+    events = [
+        e for e in merge.build(parsed, years) if today < e.end and e.date < end
+    ]
     path = flask.url_for("calendar", blob=blob) if blob else ""
     return flask.render_template(
         "index.html",
         events=events,
         config=parsed,
         title=ics.title,
+        one_day=datetime.timedelta(days=1),
         title_styles=config_pb2.TitleStyle,
         sources=form.views(parsed, years),
         countries=sources.country_names(),

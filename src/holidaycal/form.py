@@ -67,6 +67,7 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         title_style=title_style,
         describe_sources=bool(form.get("describe_sources")),
         describe_categories=bool(form.get("describe_categories")),
+        combine_multiday=bool(form.get("combine_multiday")),
     )
     indices = [
         match[1]

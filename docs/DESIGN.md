@@ -44,6 +44,9 @@ encoded as unpadded base64url. It holds:
   sources (`[CA, US] Christmas Eve`), using codes or names.
 - **Description options**: whether each event's description lists the
   countries (with regions, for regional holidays) and the holiday types.
+- **Multi-day holidays**: one event per day (default), or one event spanning
+  consecutive days that share the same name (e.g. Passover). Days whose names
+  differ only by "(observed)" stay separate.
 
 Empty and default fields cost no bytes, so a typical blob is about 40–60
 characters. Field numbers are never reused; removed fields are `reserved`. The `v` field
