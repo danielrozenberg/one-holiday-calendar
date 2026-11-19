@@ -120,7 +120,7 @@ def religion_names() -> dict[str, str]:
     """Returns religion names by form value."""
     return {
         RELIGION_PREFIX + key: label
-        for key, (label, _) in religions.RELIGIONS.items()
+        for key, (label, _, _) in religions.RELIGIONS.items()
     }
 
 

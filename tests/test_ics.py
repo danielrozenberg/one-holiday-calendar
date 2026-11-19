@@ -80,6 +80,16 @@ def _christmas(**kwargs) -> tuple[merge.Event, config_pb2.Config]:
             config_pb2.TITLE_STYLE_PREFIX_NAMES,
             "[Canada, United States, Christian] Christmas Day",
         ),
+        (
+            config_pb2.TITLE_STYLE_SUFFIX_CODES,
+            "Christmas Day [CA, US, Christian]",
+        ),
+        (
+            config_pb2.TITLE_STYLE_SUFFIX_NAMES,
+            "Christmas Day [Canada, United States, Christian]",
+        ),
+        (config_pb2.TITLE_STYLE_PREFIX_FLAGS, "🇨🇦🇺🇸✝️ Christmas Day"),
+        (config_pb2.TITLE_STYLE_SUFFIX_FLAGS, "Christmas Day 🇨🇦🇺🇸✝️"),
     ],
 )
 def test_title(style, expected):

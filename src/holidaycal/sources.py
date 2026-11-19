@@ -26,6 +26,21 @@ def country_names() -> dict[str, str]:
     return dict(sorted(names.items(), key=lambda item: item[1]))
 
 
+def source_name(source: str) -> str:
+    """Returns the display name of an occurrence's source."""
+    return country_names().get(source, source)
+
+
+def flag(source: str) -> str:
+    """Returns a flag emoji for a country, or a religion's symbol."""
+    for religion in religions.RELIGIONS.values():
+        if religion.label == source:
+            return religion.symbol
+    if len(source) == 2 and source.isascii() and source.isalpha():
+        return "".join(chr(0x1F1E6 + ord(c) - ord("A")) for c in source.upper())
+    return source
+
+
 @dataclasses.dataclass(frozen=True)
 class Occurrence:
     """A single holiday on a single date, as reported by one source."""
@@ -46,9 +61,13 @@ def occurrences(
         case "country":
             yield from _country_occurrences(source, years)
         case "religion":
-            label, calendar = religions.RELIGIONS[source.religion]
+            religion = religions.RELIGIONS[source.religion]
             yield from _emit(
-                calendar(years=years), label, "", RELIGIOUS_CATEGORY, None
+                religion.calendar(years=years),
+                religion.label,
+                "",
+                RELIGIOUS_CATEGORY,
+                None,
             )
         case None:
             raise ValueError("Source has no kind")

@@ -22,11 +22,21 @@ def years(today: datetime.date) -> range:
 def title(event: merge.Event, style: config_pb2.TitleStyle.ValueType) -> str:
     """Formats an event's title in the configured style."""
     codes = list(dict.fromkeys(o.source for o in event.occurrences))
+    names = ", ".join(map(sources.source_name, codes))
+    flags = "".join(map(sources.flag, codes))
     match style:
         case config_pb2.TITLE_STYLE_PREFIX_CODES:
             return f"[{', '.join(codes)}] {event.name}"
+        case config_pb2.TITLE_STYLE_SUFFIX_CODES:
+            return f"{event.name} [{', '.join(codes)}]"
         case config_pb2.TITLE_STYLE_PREFIX_NAMES:
-            return f"[{', '.join(map(_source_name, codes))}] {event.name}"
+            return f"[{names}] {event.name}"
+        case config_pb2.TITLE_STYLE_SUFFIX_NAMES:
+            return f"{event.name} [{names}]"
+        case config_pb2.TITLE_STYLE_PREFIX_FLAGS:
+            return f"{flags} {event.name}"
+        case config_pb2.TITLE_STYLE_SUFFIX_FLAGS:
+            return f"{event.name} {flags}"
         case _:
             return event.name
 
@@ -51,12 +61,8 @@ def description(event: merge.Event, parsed: config_pb2.Config) -> str:
     return "\n".join(lines)
 
 
-def _source_name(code: str) -> str:
-    return sources.country_names().get(code, code)
-
-
 def _with_regions(code: str, subdivisions: list[str]) -> str:
-    name = _source_name(code)
+    name = sources.source_name(code)
     if "" in subdivisions:
         return name
     return f"{name} ({', '.join(sorted(set(subdivisions)))})"

@@ -47,3 +47,8 @@ def test_names_are_english_when_supported():
     found = _occurrences(country="DE")
 
     assert _find(found, "Christmas Day")
+
+
+def test_flag():
+    assert sources.flag("CA") == "\U0001f1e8\U0001f1e6"
+    assert sources.flag("Jewish") == "✡️"

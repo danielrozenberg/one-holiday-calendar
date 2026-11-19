@@ -31,12 +31,20 @@ class _TitleStyleEnumTypeWrapper(_enum_type_wrapper._EnumTypeWrapper[_TitleStyle
     TITLE_STYLE_PLAIN: _TitleStyle.ValueType  # 0
     TITLE_STYLE_PREFIX_CODES: _TitleStyle.ValueType  # 1
     TITLE_STYLE_PREFIX_NAMES: _TitleStyle.ValueType  # 2
+    TITLE_STYLE_SUFFIX_CODES: _TitleStyle.ValueType  # 3
+    TITLE_STYLE_SUFFIX_NAMES: _TitleStyle.ValueType  # 4
+    TITLE_STYLE_PREFIX_FLAGS: _TitleStyle.ValueType  # 5
+    TITLE_STYLE_SUFFIX_FLAGS: _TitleStyle.ValueType  # 6
 
 class TitleStyle(_TitleStyle, metaclass=_TitleStyleEnumTypeWrapper): ...
 
 TITLE_STYLE_PLAIN: TitleStyle.ValueType  # 0
 TITLE_STYLE_PREFIX_CODES: TitleStyle.ValueType  # 1
 TITLE_STYLE_PREFIX_NAMES: TitleStyle.ValueType  # 2
+TITLE_STYLE_SUFFIX_CODES: TitleStyle.ValueType  # 3
+TITLE_STYLE_SUFFIX_NAMES: TitleStyle.ValueType  # 4
+TITLE_STYLE_PREFIX_FLAGS: TitleStyle.ValueType  # 5
+TITLE_STYLE_SUFFIX_FLAGS: TitleStyle.ValueType  # 6
 Global___TitleStyle: _TypeAlias = TitleStyle  # noqa: Y015
 
 @_typing.final

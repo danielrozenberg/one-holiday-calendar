@@ -1,5 +1,7 @@
 """Religious holiday calendars built from python-holidays' calendar mixins."""
 
+import typing
+
 from holidays import groups
 from holidays import holiday_base
 from holidays.calendars import julian
@@ -99,10 +101,18 @@ class _Hindu(holiday_base.HolidayBase, groups.HinduCalendarHolidays):
         self._add_diwali("Diwali")
 
 
-RELIGIONS: dict[str, tuple[str, type[holiday_base.HolidayBase]]] = {
-    "christian": ("Christian", _Christian),
-    "orthodox": ("Orthodox Christian", _Orthodox),
-    "jewish": ("Jewish", _Jewish),
-    "islamic": ("Islamic", _Islamic),
-    "hindu": ("Hindu", _Hindu),
+class Religion(typing.NamedTuple):
+    """A religion's display label, symbol and holiday calendar."""
+
+    label: str
+    symbol: str
+    calendar: type[holiday_base.HolidayBase]
+
+
+RELIGIONS: dict[str, Religion] = {
+    "christian": Religion("Christian", "\u271d\ufe0f", _Christian),
+    "orthodox": Religion("Orthodox Christian", "\u2626\ufe0f", _Orthodox),
+    "jewish": Religion("Jewish", "\u2721\ufe0f", _Jewish),
+    "islamic": Religion("Islamic", "\u262a\ufe0f", _Islamic),
+    "hindu": Religion("Hindu", "\U0001f549\ufe0f", _Hindu),
 }
