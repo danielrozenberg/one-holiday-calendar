@@ -24,8 +24,11 @@
         <div class="source">
           <input type="hidden" name="{{ prefix }}kind" value="{{ source.kind }}">
           <div class="source-header">
+            <span class="handle" draggable="true" aria-hidden="true" title="Drag to reorder">⠿</span>
             <span class="source-name">{{ source.label }}</span>
             <span class="tag">{{ "Religion" if source.kind.startswith("@") else source.kind }}</span>
+            <button type="submit" class="icon-button" name="move" value="{{ source.index }}:up" aria-label="Move {{ source.label }} up" title="Move up"{% if loop.first %} disabled{% endif %}>↑</button>
+            <button type="submit" class="icon-button" name="move" value="{{ source.index }}:down" aria-label="Move {{ source.label }} down" title="Move down"{% if loop.last %} disabled{% endif %}>↓</button>
             <button type="submit" class="icon-button remove" name="remove" value="{{ source.index }}" aria-label="Remove {{ source.label }}" title="Remove {{ source.label }}">✕</button>
           </div>
 

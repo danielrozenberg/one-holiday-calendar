@@ -2,6 +2,7 @@
 
 import dataclasses
 import functools
+import re
 from collections.abc import Iterable
 
 import holidays
@@ -14,6 +15,7 @@ from holidaycal import religions
 from holidaycal import sources
 
 RELIGION_PREFIX = "@"
+_KIND_FIELD = re.compile(r"s(\d+)\.kind")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -66,15 +68,38 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         describe_sources=bool(form.get("describe_sources")),
         describe_categories=bool(form.get("describe_categories")),
     )
-    index = 0
-    while (kind := form.get(f"s{index}.kind")) is not None:
-        if str(index) != removed:
-            parsed.sources.append(_parse_source(form, f"s{index}.", kind))
-        index += 1
+    indices = [
+        match[1]
+        for key in form
+        if (match := _KIND_FIELD.fullmatch(key)) and match[1] != removed
+    ]
+    if move := form.get("move"):
+        _move(indices, move)
+    parsed.sources.extend(
+        _parse_source(form, f"s{index}.", form[f"s{index}.kind"])
+        for index in indices
+    )
     if added := form.get("add"):
         parsed.sources.append(_new_source(added))
     config.validate(parsed)
     return parsed
+
+
+def _move(indices: list[str], move: str) -> None:
+    index, _, direction = move.partition(":")
+    match direction:
+        case "up":
+            delta = -1
+        case "down":
+            delta = 1
+        case _:
+            raise config.InvalidConfigError(f"Unknown move {move}")
+    if index not in indices:
+        raise config.InvalidConfigError(f"Unknown source {index}")
+    position = indices.index(index)
+    target = position + delta
+    if 0 <= target < len(indices):
+        indices[position], indices[target] = indices[target], indices[position]
 
 
 def _parse_source(

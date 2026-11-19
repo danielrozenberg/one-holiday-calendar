@@ -97,3 +97,36 @@ def test_format_options():
 def test_invalid_title_style():
     with pytest.raises(config.InvalidConfigError):
         _parse(("add", "CA"), ("title_style", "BOLD"))
+
+
+def _countries(parsed: config_pb2.Config) -> list[str]:
+    return [s.country for s in parsed.sources]
+
+
+def test_sources_follow_form_order():
+    parsed = _parse(("s1.kind", "US"), ("s0.kind", "CA"), ("s2.kind", "DE"))
+
+    assert _countries(parsed) == ["US", "CA", "DE"]
+
+
+@pytest.mark.parametrize(
+    ("move", "expected"),
+    [
+        ("1:up", ["US", "CA", "DE"]),
+        ("1:down", ["CA", "DE", "US"]),
+        ("0:up", ["CA", "US", "DE"]),
+        ("2:down", ["CA", "US", "DE"]),
+    ],
+)
+def test_move(move, expected):
+    parsed = _parse(
+        ("s0.kind", "CA"), ("s1.kind", "US"), ("s2.kind", "DE"), ("move", move)
+    )
+
+    assert _countries(parsed) == expected
+
+
+@pytest.mark.parametrize("move", ["1:left", "7:up", "up"])
+def test_invalid_move(move):
+    with pytest.raises(config.InvalidConfigError):
+        _parse(("s0.kind", "CA"), ("s1.kind", "US"), ("move", move))

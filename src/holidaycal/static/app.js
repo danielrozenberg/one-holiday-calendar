@@ -65,3 +65,44 @@ document.addEventListener("click", async (event) => {
   await navigator.clipboard.writeText(button.dataset.copy);
   button.textContent = "Copied";
 });
+
+let dragged;
+let orderBefore;
+
+const sourceOrder = () =>
+  [...document.querySelectorAll(".source input[name$='.kind']")]
+    .map((input) => input.name)
+    .join();
+
+document.addEventListener("dragstart", (event) => {
+  const handle = event.target.closest?.(".handle");
+  if (!handle) return;
+  dragged = handle.closest(".source");
+  orderBefore = sourceOrder();
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setDragImage(dragged, 16, 16);
+  dragged.classList.add("dragging");
+});
+
+document.addEventListener("dragover", (event) => {
+  const over = dragged && event.target.closest?.(".source");
+  if (!over) return;
+  event.preventDefault();
+  if (over === dragged) return;
+  const box = over.getBoundingClientRect();
+  const before = event.clientY < box.top + box.height / 2;
+  over.before(dragged);
+  if (!before) over.after(dragged);
+});
+
+document.addEventListener("drop", (event) => {
+  if (dragged) event.preventDefault();
+});
+
+document.addEventListener("dragend", () => {
+  if (!dragged) return;
+  const form = dragged.closest("form");
+  dragged.classList.remove("dragging");
+  dragged = null;
+  if (sourceOrder() !== orderBefore) form.requestSubmit();
+});
