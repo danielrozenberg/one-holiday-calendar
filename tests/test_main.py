@@ -197,3 +197,15 @@ def test_build_rejects_configs_too_long_for_a_url(client):
 
     assert response.status_code == 400
     assert "too many hidden holidays" in response.text
+
+
+def test_build_rejects_regions_on_religions(client):
+    data = MultiDict(
+        [
+            ("s0.kind", "@jewish"),
+            ("s0.all_subdivisions", "1"),
+            ("drop_region", "0:XX"),
+        ]
+    )
+
+    assert client.post("/build", data=data).status_code == 400

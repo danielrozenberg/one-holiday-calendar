@@ -52,6 +52,8 @@ def test_decode_rejects_malformed(blob):
         config_pb2.Source(country="CA", subdivisions=["TX"]),
         config_pb2.Source(country="CA", categories=["bank"]),
         config_pb2.Source(religion="pastafarian"),
+        config_pb2.Source(religion="jewish", all_subdivisions=True),
+        config_pb2.Source(religion="jewish", categories=["public"]),
         config_pb2.Source(),
     ],
 )

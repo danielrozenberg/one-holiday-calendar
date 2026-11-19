@@ -290,7 +290,7 @@ def _target(
     by_index: dict[str, config_pb2.Source], value: str
 ) -> tuple[config_pb2.Source, str]:
     index, _, part = value.partition(":")
-    if index not in by_index or not part:
+    if index not in by_index or not part or not by_index[index].country:
         raise config.InvalidConfigError(f"Unknown source part {value}")
     return by_index[index], part
 

@@ -67,6 +67,14 @@ def validate(config: config_pb2.Config) -> None:
                     raise InvalidConfigError(
                         f"Unknown religion {source.religion}"
                     )
+                if (
+                    source.subdivisions
+                    or source.all_subdivisions
+                    or source.categories
+                ):
+                    raise InvalidConfigError(
+                        "Religions have no regions or holiday types"
+                    )
             case None:
                 raise InvalidConfigError("Source has no country or religion")
 
