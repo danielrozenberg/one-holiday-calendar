@@ -17,6 +17,7 @@ const python =
   process.env.PYTHON ??
   (existsSync(".venv/bin/python") ? ".venv/bin/python" : "python");
 const chrome = process.env.CHROME ?? "google-chrome";
+const TEST_TIMEOUT_MS = 60_000;
 
 function freePort() {
   return new Promise((resolve, reject) => {
@@ -109,11 +110,28 @@ try {
     for (const test of tests) {
       console.log(`# ${test.name}`);
       try {
-        await page.goto("/");
-        await test.run(page, (name, ok) => {
-          console.log(`${ok ? "PASS" : "FAIL"} ${name}`);
-          if (!ok) failures++;
+        // A test that hangs fails instead of blocking the run.
+        let timer;
+        const timeout = new Promise((_, reject) => {
+          timer = setTimeout(
+            () => reject(new Error(`Timed out after ${TEST_TIMEOUT_MS / 1000}s`)),
+            TEST_TIMEOUT_MS,
+          );
         });
+        try {
+          await Promise.race([
+            (async () => {
+              await page.goto("/");
+              await test.run(page, (name, ok) => {
+                console.log(`${ok ? "PASS" : "FAIL"} ${name}`);
+                if (!ok) failures++;
+              });
+            })(),
+            timeout,
+          ]);
+        } finally {
+          clearTimeout(timer);
+        }
       } catch (error) {
         console.log(`FAIL ${error instanceof Error ? error.message : String(error)}`);
         failures++;
