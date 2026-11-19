@@ -10,10 +10,69 @@
     table { border-collapse: collapse; width: 100%; }
     th, td { text-align: left; padding: 0.25rem 0.5rem; border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent); }
     code { word-break: break-all; }
+    fieldset { margin-bottom: 1rem; }
+    .options { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.25rem 1rem; }
   </style>
 </head>
 <body>
   <h1>Holiday Calendar</h1>
+
+  <form id="config" method="post" action="{{ url_for('build') }}">
+    <h2>Sources</h2>
+    {% for source in sources %}
+    {% set prefix = "s" ~ source.index ~ "." %}
+    <fieldset>
+      <legend>{{ source.label }}</legend>
+      <input type="hidden" name="{{ prefix }}kind" value="{{ source.kind }}">
+      <button type="submit" name="remove" value="{{ source.index }}">Remove {{ source.label }}</button>
+
+      {% if source.subdivisions %}
+      <details>
+        <summary>Regions</summary>
+        <label><input type="checkbox" name="{{ prefix }}all_subdivisions" value="1"{% if source.all_subdivisions %} checked{% endif %}> All regions</label>
+        <div class="options">
+          {% for option in source.subdivisions %}
+          <label><input type="checkbox" name="{{ prefix }}subdivision" value="{{ option.value }}"{% if option.checked %} checked{% endif %}{% if source.all_subdivisions %} disabled{% endif %}> {{ option.label }}</label>
+          {% endfor %}
+        </div>
+      </details>
+      {% endif %}
+
+      <details>
+        <summary>Holiday types</summary>
+        <div class="options">
+          {% for option in source.categories %}
+          <label><input type="checkbox" name="{{ prefix }}category" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+          {% endfor %}
+        </div>
+      </details>
+
+      <details>
+        <summary>Hide individual holidays</summary>
+        <div class="options">
+          {% for option in source.holidays %}
+          <label><input type="checkbox" name="{{ prefix }}excluded" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+          {% endfor %}
+        </div>
+      </details>
+    </fieldset>
+    {% endfor %}
+
+    <p>
+      <label for="add">Add a country</label>
+      <select id="add" name="add">
+        <option value="">Choose…</option>
+        {% for code, name in countries.items() %}
+        <option value="{{ code }}">{{ name }}</option>
+        {% endfor %}
+      </select>
+    </p>
+    <button type="submit">Update</button>
+  </form>
+  <script>
+    const form = document.getElementById("config");
+    form.addEventListener("change", () => form.requestSubmit());
+  </script>
 
   {% if webcal_url %}
   <section aria-labelledby="subscribe">

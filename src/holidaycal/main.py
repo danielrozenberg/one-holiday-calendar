@@ -3,10 +3,12 @@
 import datetime
 
 import flask
+from werkzeug import wrappers
 from werkzeug.middleware import proxy_fix
 
 from holidaycal import config
 from holidaycal import config_pb2
+from holidaycal import form
 from holidaycal import ics
 from holidaycal import merge
 
@@ -20,6 +22,19 @@ app.wsgi_app = proxy_fix.ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 def index() -> str:
     """Shows an empty config page."""
     return _page(config_pb2.Config(), blob="")
+
+
+@app.post("/build")
+def build() -> wrappers.Response:
+    """Encodes the submitted form and redirects to its calendar URL."""
+    try:
+        parsed = form.parse(flask.request.form)
+    except config.InvalidConfigError as e:
+        flask.abort(400, str(e))
+    if not parsed.sources:
+        return flask.redirect(flask.url_for("index"), code=303)
+    blob = config.encode(parsed)
+    return flask.redirect(flask.url_for("calendar", blob=blob), code=303)
 
 
 @app.get("/c/<blob>")
@@ -50,16 +65,19 @@ def _wanted_format(request: flask.Request) -> str:
 
 def _page(parsed: config_pb2.Config, blob: str) -> str:
     today = datetime.datetime.now(datetime.UTC).date()
+    years = ics.years(today)
     end = today + datetime.timedelta(days=PREVIEW_DAYS)
     events = [
         event
-        for event in merge.build(parsed, ics.years(today))
+        for event in merge.build(parsed, years)
         if today <= event.date < end
     ]
     path = flask.url_for("calendar", blob=blob) if blob else ""
     return flask.render_template(
         "index.html",
         events=events,
+        sources=form.views(parsed, years),
+        countries=form.country_names(),
         https_url=flask.request.host_url.rstrip("/") + path if path else "",
         webcal_url=f"webcal://{flask.request.host}{path}" if path else "",
     )

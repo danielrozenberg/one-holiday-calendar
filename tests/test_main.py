@@ -51,6 +51,19 @@ def test_format_override(client, accept, fmt, mimetype):
     assert response.mimetype == mimetype
 
 
+def test_build_redirects_to_calendar(client):
+    response = client.post("/build", data={"add": "CA"})
+
+    assert response.status_code == 303
+    assert response.location == f"/c/{BLOB}"
+
+
+def test_build_without_sources_redirects_home(client):
+    response = client.post("/build", data={"s0.kind": "CA", "remove": "0"})
+
+    assert response.location == "/"
+
+
 def test_invalid_blob(client):
     response = client.get("/c/not-a-config!")
 
