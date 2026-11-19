@@ -91,7 +91,21 @@ of the upload.
 
 Each instance keeps the last 32 built feeds and page data in memory, keyed by
 the blob and the covered years. Feeds also carry an `ETag` derived from the
-python-holidays version, the App Engine deployment (`GAE_VERSION`), the blob
-and the covered years, so calendar apps that revalidate get `304 Not Modified`
+python-holidays version, a hash of this package's files (`APP_VERSION`), the
+blob and the covered years, so calendar apps that revalidate get `304 Not Modified`
 until the data or the year window changes. Responses are not marked publicly
 cacheable, because the same URL serves HTML or ICS depending on `Accept`.
+
+## Page behaviour
+
+The config page works without JavaScript: every change is a form POST to
+`/build` followed by a redirect. With JavaScript, `static/app.js` sends the same
+POST in the background, swaps in the new `#app` content, keeps open sections
+and focus, and updates the address bar. Sources are submitted in page order, so
+reordering (↑/↓ buttons, which also work without JavaScript, or the drag
+handle) just moves them in the page before submitting.
+
+A service worker (`/sw.js`, rendered from `templates/sw.js`) serves the CSS and
+JS from cache and pages network-first, falling back to the last 20 cached pages
+offline. Static URLs carry `?v=<APP_VERSION>`, and the worker's cache is named
+after it, so any code or asset change replaces the cache.

@@ -3,7 +3,7 @@
 import datetime
 import functools
 import hashlib
-import os
+import pathlib
 
 import flask
 import holidays
@@ -20,11 +20,45 @@ from holidaycal import sources
 PREVIEW_DAYS = 365
 # shortcut: per-instance LRU caches; use a shared cache if instances multiply.
 CACHE_SIZE = 32
-# Changes whenever the holiday data or this app is redeployed.
-DATA_VERSION = f"{holidays.__version__}/{os.environ.get('GAE_VERSION', 'dev')}"
+STATIC_ASSETS = ("app.css", "app.js")
+
+
+def _app_version() -> str:
+    digest = hashlib.sha256()
+    package = pathlib.Path(__file__).parent
+    for path in sorted(package.rglob("*")):
+        if path.is_file() and "__pycache__" not in path.parts:
+            digest.update(path.relative_to(package).as_posix().encode())
+            digest.update(path.read_bytes())
+    return digest.hexdigest()[:12]
+
+
+APP_VERSION = _app_version()
+# Changes whenever the holiday data or this app's code or assets change.
+DATA_VERSION = f"{holidays.__version__}/{APP_VERSION}"
 
 app = flask.Flask(__name__)
 app.wsgi_app = proxy_fix.ProxyFix(app.wsgi_app, x_proto=1)
+
+
+@app.context_processor
+def _versioned_static() -> dict[str, str]:
+    return {"version": APP_VERSION}
+
+
+@app.get("/sw.js")
+def service_worker() -> flask.Response:
+    """Serves the service worker from the root so it controls every page."""
+    assets = [
+        flask.url_for("static", filename=name, v=APP_VERSION)
+        for name in STATIC_ASSETS
+    ]
+    response = flask.Response(
+        flask.render_template("sw.js", assets=assets),
+        mimetype="text/javascript",
+    )
+    response.cache_control.no_cache = True
+    return response
 
 
 @app.get("/")

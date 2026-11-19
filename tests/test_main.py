@@ -128,3 +128,19 @@ def test_feed_etag_changes_with_data_version(client):
 
     assert second.status_code == 200
     assert second.headers["ETag"] != first.headers["ETag"]
+
+
+def test_service_worker(client):
+    response = client.get("/sw.js")
+
+    assert response.mimetype == "text/javascript"
+    assert response.headers["Cache-Control"] == "no-cache"
+    body = response.get_data(as_text=True)
+    assert f'const VERSION = "{main.APP_VERSION}"' in body
+    assert f"/static/app.css?v={main.APP_VERSION}" in body
+
+
+def test_page_uses_versioned_assets(client):
+    response = client.get("/", headers={"Accept": BROWSER_ACCEPT})
+
+    assert f"/static/app.js?v={main.APP_VERSION}".encode() in response.data
