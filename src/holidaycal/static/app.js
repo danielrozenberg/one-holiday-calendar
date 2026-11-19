@@ -50,10 +50,7 @@ document.addEventListener("submit", async (event) => {
     form.submit();
     return;
   }
-  transition(() => {
-    swap(next);
-    restoreCard();
-  });
+  transition(() => swap(next));
   history.replaceState(null, "", response.url);
 });
 
@@ -132,38 +129,14 @@ document.addEventListener("dragend", () => {
   if (sourceOrder() !== orderBefore) form.requestSubmit();
 });
 
-// Event format card: previews the hovered or pinned holiday.
-
-const PIN_KEY = "pinnedEvent";
+// Event format card: previews the hovered or focused holiday.
 
 function transition(update) {
   if (document.startViewTransition) document.startViewTransition(update);
   else update();
 }
 
-function pinnedUid() {
-  try {
-    return sessionStorage.getItem(PIN_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function setPinnedUid(uid) {
-  try {
-    if (uid) sessionStorage.setItem(PIN_KEY, uid);
-    else sessionStorage.removeItem(PIN_KEY);
-  } catch {
-    // Pinning just won't survive page updates.
-  }
-}
-
-function pinnedRow() {
-  const uid = pinnedUid();
-  return uid && document.querySelector(`tr[data-uid="${CSS.escape(uid)}"]`);
-}
-
-function showCard(data) {
+function showCard(data, hint) {
   const card = document.querySelector(".gcal");
   if (!card || !data) return;
   const style =
@@ -176,26 +149,17 @@ function showCard(data) {
   for (const element of card.querySelectorAll("[data-title-style]")) {
     element.textContent = element.title = data.titles[element.dataset.titleStyle];
   }
-}
-
-function setHint(text) {
-  const hint = document.querySelector('[data-field="hint"]');
-  if (hint) hint.textContent = text ?? hint.dataset.defaultHint;
+  const label = document.querySelector('[data-field="hint"]');
+  if (label) label.textContent = hint ?? label.dataset.defaultHint;
 }
 
 function restoreCard() {
-  const row = pinnedRow();
-  for (const pin of document.querySelectorAll(".pin")) {
-    pin.setAttribute("aria-pressed", String(pin.closest("tr") === row));
-  }
   const card = document.querySelector(".gcal");
-  showCard(JSON.parse((row ?? card)?.dataset.card ?? "null"));
-  setHint(row ? "Pinned" : null);
+  if (card) showCard(JSON.parse(card.dataset.card));
 }
 
 function preview(row) {
-  showCard(JSON.parse(row.dataset.card));
-  setHint(row === pinnedRow() ? "Pinned" : "Previewing");
+  showCard(JSON.parse(row.dataset.card), "Previewing");
 }
 
 document.addEventListener("pointerover", (event) => {
@@ -218,17 +182,12 @@ document.addEventListener("focusout", (event) => {
   if (row && !row.contains(event.relatedTarget)) restoreCard();
 });
 
+// Clicking anywhere on a preview row toggles it, like its eye button.
 document.addEventListener("click", (event) => {
   const row = event.target.closest?.("tr.previewable");
-  if (!row || event.target.closest("button:not(.pin)")) return;
-  setPinnedUid(row === pinnedRow() ? null : row.dataset.uid);
-  transition(() => {
-    restoreCard();
-    preview(row);
-  });
+  if (!row || event.target.closest("button, a, abbr")) return;
+  row.querySelector(".eye")?.click();
 });
-
-restoreCard();
 
 // "Add" autocomplete over the hidden select, following the ARIA combobox pattern.
 

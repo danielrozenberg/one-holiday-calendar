@@ -205,7 +205,7 @@ table.preview th, table.preview td { padding: 0.35rem 0.4rem; }
 .col-eye { width: 2.25rem; }
 
 tr.is-hidden td:not(:last-child) { opacity: 0.45; }
-tr.is-hidden .pin { text-decoration: line-through; }
+tr.is-hidden td.name { text-decoration: line-through; }
 .eye { padding: 0 0.25rem; }
 .eye[aria-pressed="false"] { filter: grayscale(1); opacity: 0.35; }
 
@@ -237,14 +237,6 @@ tr.is-hidden .pin { text-decoration: line-through; }
 .notice button { padding: 0.25rem 0.75rem; }
 
 td.clip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-td.clip .pin {
-  display: block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .flag { font-size: 1.1em; }
 .regions { color: var(--muted); }
 
@@ -398,17 +390,8 @@ input[role="switch"]:checked::after { translate: 1rem; }
 
 tr.previewable { cursor: pointer; }
 tr.previewable:hover, tr.previewable:focus-within { background: color-mix(in srgb, var(--accent) 6%, transparent); }
-tr.previewable:has(.pin[aria-pressed="true"]) { background: color-mix(in srgb, var(--accent) 14%, transparent); }
 
-.pin {
-  padding: 0;
-  border: 0;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-}
 
-.pin[aria-pressed="true"]::before { content: "📌 "; }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none; }

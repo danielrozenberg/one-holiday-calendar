@@ -179,7 +179,7 @@
             {% set from_label = view.sources | map(attribute="label") | join("; ") %}
             <tr class="previewable{% if view.hidden %} is-hidden{% endif %}" data-uid="{{ event.uid }}" data-card='{{ view.card | tojson }}'>
               <td class="date" title="{{ view.card.date }}">{{ view.short_date }}</td>
-              <td class="clip"><button type="button" class="pin" aria-pressed="false" title="{{ event.name }}">{{ event.name }}</button></td>
+              <td class="clip name" title="{{ event.name }}">{{ event.name }}</td>
               <td class="clip" title="{{ from_label }}"><span class="visually-hidden">{{ from_label }}</span><span aria-hidden="true">{% for badge in view.sources %}<span class="flag">{{ badge.flag }}</span>{% if badge.regions %}<span class="regions"> ({{ badge.regions | join(", ") }})</span>{% endif %}{% if not loop.last %} {% endif %}{% endfor %}</span></td>
               <td class="types">{% for type in view.types %}<abbr title="{{ type.name | capitalize }}">{{ type.letter }}</abbr>{% endfor %}</td>
               <td><button type="submit" class="icon-button eye" name="toggle_hidden" value="{{ view.toggle }}" aria-pressed="{{ 'false' if view.hidden else 'true' }}" aria-label="Show {{ event.name }} in the calendar" title="{{ 'Hidden: click to show' if view.hidden else 'Shown: click to hide' }}">👁️</button></td>
