@@ -93,8 +93,7 @@ def test_https_behind_proxy(client):
 
 @pytest.fixture
 def cold_cache():
-    main._feed.cache_clear()
-    main._page_data.cache_clear()
+    main.RESPONSES.clear()
 
 
 @pytest.mark.usefixtures("cold_cache")

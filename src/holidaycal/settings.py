@@ -39,12 +39,19 @@ class PageSettings(_Section):
     offline_pages: pydantic.NonNegativeInt
 
 
+class CacheSettings(_Section):
+    """The in-memory response cache."""
+
+    budget_mb: pydantic.NonNegativeInt
+
+
 class Settings(_Section):
     """All app settings."""
 
     url: UrlSettings
     feed: FeedSettings
     page: PageSettings
+    cache: CacheSettings
 
 
 def load(path: pathlib.Path = DEFAULT_PATH) -> Settings:

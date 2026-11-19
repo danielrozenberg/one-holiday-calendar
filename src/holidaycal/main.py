@@ -1,7 +1,6 @@
 """Web app serving the config page and the calendar feed from one URL."""
 
 import datetime
-import functools
 import hashlib
 import pathlib
 
@@ -10,6 +9,7 @@ import holidays
 from werkzeug import wrappers
 from werkzeug.middleware import proxy_fix
 
+from holidaycal import cache
 from holidaycal import config
 from holidaycal import config_pb2
 from holidaycal import form
@@ -18,8 +18,6 @@ from holidaycal import merge
 from holidaycal import settings
 from holidaycal import sources
 
-# shortcut: per-instance LRU caches; use a shared cache if instances multiply.
-CACHE_SIZE = 32
 STATIC_ASSETS = ("app.css", "app.js")
 
 
@@ -36,6 +34,9 @@ def _app_version() -> str:
 APP_VERSION = _app_version()
 # Changes whenever the holiday data or this app's code or assets change.
 DATA_VERSION = f"{holidays.__version__}/{APP_VERSION}"
+
+# shortcut: per-instance cache; use a shared cache if instances multiply.
+RESPONSES = cache.ByteCache(settings.CURRENT.cache.budget_mb * 2**20)
 
 app = flask.Flask(__name__)
 app.wsgi_app = proxy_fix.ProxyFix(app.wsgi_app, x_proto=1)
@@ -66,7 +67,7 @@ def service_worker() -> flask.Response:
 
 
 @app.get("/")
-def index() -> str:
+def index() -> bytes:
     """Shows an empty config page."""
     return _page(blob="")
 
@@ -85,7 +86,7 @@ def build() -> wrappers.Response:
 
 
 @app.get("/c/<blob>")
-def calendar(blob: str) -> wrappers.Response | str:
+def calendar(blob: str) -> wrappers.Response | bytes:
     """Serves the config page to browsers and the feed to calendar apps."""
     try:
         config.decode(blob)
@@ -94,9 +95,10 @@ def calendar(blob: str) -> wrappers.Response | str:
     match _wanted_format(flask.request):
         case "ics":
             years = ics.years(datetime.datetime.now(datetime.UTC).date())
-            response = flask.Response(
-                _feed(blob, years), mimetype="text/calendar"
+            body = RESPONSES.get(
+                ("feed", blob, years), lambda: _render_feed(blob, years)
             )
+            response = flask.Response(body, mimetype="text/calendar")
             etag = f"{DATA_VERSION}|{blob}|{years.start}-{years.stop}"
             response.set_etag(hashlib.sha256(etag.encode()).hexdigest())
             return response.make_conditional(flask.request)
@@ -112,26 +114,23 @@ def _wanted_format(request: flask.Request) -> str:
     return "html" if "text/html" in accepted else "ics"
 
 
-@functools.lru_cache(maxsize=CACHE_SIZE)
-def _feed(blob: str, years: range) -> bytes:
+def _render_feed(blob: str, years: range) -> bytes:
     parsed = config.decode(blob)
     now = datetime.datetime.now(datetime.UTC)
     return ics.render(merge.build(parsed, years), parsed, now)
 
 
-@functools.lru_cache(maxsize=CACHE_SIZE)
-def _page_data(
-    blob: str, years: range
-) -> tuple[config_pb2.Config, list[merge.Event], list[form.SourceView]]:
-    parsed = config.decode(blob)
-    return parsed, merge.build(parsed, years), form.views(parsed, years)
-
-
-def _page(blob: str) -> str:
+def _page(blob: str) -> bytes:
     today = datetime.datetime.now(datetime.UTC).date()
-    parsed, all_events, views = _page_data(blob, ics.years(today))
+    key = ("page", blob, today, flask.request.host_url)
+    return RESPONSES.get(key, lambda: _render_page(blob, today))
+
+
+def _render_page(blob: str, today: datetime.date) -> bytes:
+    parsed = config.decode(blob)
+    years = ics.years(today)
     end = today + datetime.timedelta(days=settings.CURRENT.page.preview_days)
-    events = [e for e in all_events if today <= e.date < end]
+    events = [e for e in merge.build(parsed, years) if today <= e.date < end]
     path = flask.url_for("calendar", blob=blob) if blob else ""
     return flask.render_template(
         "index.html",
@@ -139,9 +138,9 @@ def _page(blob: str) -> str:
         config=parsed,
         title=ics.title,
         title_styles=config_pb2.TitleStyle,
-        sources=views,
+        sources=form.views(parsed, years),
         countries=sources.country_names(),
         religions=form.religion_names(),
         https_url=flask.request.host_url.rstrip("/") + path if path else "",
         webcal_url=f"webcal://{flask.request.host}{path}" if path else "",
-    )
+    ).encode()

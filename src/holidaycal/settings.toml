@@ -20,3 +20,8 @@ years_after = 2
 preview_days = 365
 # How many visited pages the service worker keeps for offline use.
 offline_pages = 20
+
+[cache]
+# Memory budget for cached feeds and pages, per instance. An App Engine F1
+# instance has 384 MB, and the app itself uses about 60 MB.
+budget_mb = 200

@@ -98,12 +98,19 @@ budget. Values that change what existing URLs mean (such as the default
 
 ## Caching
 
-Each instance keeps the last 32 built feeds and page data in memory, keyed by
-the blob and the covered years. Feeds also carry an `ETag` derived from the
-python-holidays version, a hash of this package's files (`APP_VERSION`), the
-blob and the covered years, so calendar apps that revalidate get `304 Not Modified`
-until the data or the year window changes. Responses are not marked publicly
-cacheable, because the same URL serves HTML or ICS depending on `Accept`.
+Each instance keeps rendered feeds and pages in a byte-budgeted LRU cache
+(`cache.ByteCache`, budget `cache.budget_mb` in `settings.toml`). Feeds are
+keyed by the blob and the covered years; pages by the blob, the day and the
+host. Values are the response bytes, so the budget is the real memory used:
+200 MB holds about 100 of the heaviest allowed configs, or thousands of
+typical ones, within an F1 instance's 384 MB. A response larger than the whole
+budget is served but not kept.
+
+Feeds also carry an `ETag` derived from the python-holidays version, a hash of
+this package's files (`APP_VERSION`), the blob and the covered years, so
+calendar apps that revalidate get `304 Not Modified` until the data or the
+year window changes. Responses are not marked publicly cacheable, because the
+same URL serves HTML or ICS depending on `Accept`.
 
 ## Page behaviour
 
