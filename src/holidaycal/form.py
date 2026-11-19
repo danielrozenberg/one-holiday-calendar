@@ -260,8 +260,20 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         new = _new_source(added)
         if new not in parsed.sources:
             parsed.sources.append(new)
+    _drop_stale_hidden(parsed)
     config.validate(parsed)
     return parsed
+
+
+def _drop_stale_hidden(parsed: config_pb2.Config) -> None:
+    """Forgets hidden holidays of sources that are no longer configured."""
+    configured = {
+        s.country or sources.RELIGION_PREFIX + s.religion
+        for s in parsed.sources
+    }
+    kept = [t for t in parsed.hidden if merge.hidden_source(t) in configured]
+    parsed.ClearField("hidden")
+    parsed.hidden.extend(kept)
 
 
 def _hidden(form: datastructures.MultiDict[str, str]) -> set[str]:

@@ -65,6 +65,11 @@ def hide_token(occurrence: sources.Occurrence) -> str:
     return f"{source}:{normalize(occurrence.name)}"
 
 
+def hidden_source(token: str) -> str:
+    """Returns the configured source a hide token belongs to, e.g. "US"."""
+    return token.partition(":")[0].partition("/")[0]
+
+
 def hide_tokens(event: "Event") -> list[str]:
     """Returns the hide tokens of every source contributing to an event."""
     return sorted({hide_token(o) for o in event.occurrences})

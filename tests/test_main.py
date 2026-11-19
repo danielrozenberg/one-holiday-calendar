@@ -2,6 +2,7 @@ import re
 from unittest import mock
 
 import pytest
+from werkzeug.datastructures import MultiDict
 
 from holidaycal import config
 from holidaycal import config_pb2
@@ -184,3 +185,15 @@ def test_add_leaves_out_sources_already_added(client):
     assert 'data-value="CA"' not in page
     assert 'data-value="@jewish"' not in page
     assert 'data-value="US"' in page
+
+
+def test_build_rejects_configs_too_long_for_a_url(client):
+    data = MultiDict(
+        [("s0.kind", "US"), ("s0.all_subdivisions", "1")]
+        + [("hidden", f"US:holiday {i:04d}") for i in range(400)]
+    )
+
+    response = client.post("/build", data=data)
+
+    assert response.status_code == 400
+    assert "too many hidden holidays" in response.text

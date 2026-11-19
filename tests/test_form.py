@@ -223,12 +223,22 @@ def test_multiday_card_date_is_a_range():
 @pytest.mark.parametrize(
     ("fields", "hidden"),
     [
-        ([("hidden", "b"), ("hidden", "a")], ["a", "b"]),
-        ([("hidden", "a"), ("toggle_hidden", "b")], ["a", "b"]),
-        ([("hidden", "a"), ("toggle_hidden", "a")], []),
-        ([("hidden", "a"), ("unhide_all", "1")], []),
-        ([("hidden", "a"), ("toggle_hidden", "a|b")], ["a", "b"]),
-        ([("hidden", "a"), ("hidden", "b"), ("toggle_hidden", "a|b")], []),
+        ([("hidden", "CA:b"), ("hidden", "CA:a")], ["CA:a", "CA:b"]),
+        ([("hidden", "CA:a"), ("toggle_hidden", "CA:b")], ["CA:a", "CA:b"]),
+        ([("hidden", "CA:a"), ("toggle_hidden", "CA:a")], []),
+        ([("hidden", "CA:a"), ("unhide_all", "1")], []),
+        (
+            [("hidden", "CA:a"), ("toggle_hidden", "CA:a|CA:b")],
+            ["CA:a", "CA:b"],
+        ),
+        (
+            [
+                ("hidden", "CA:a"),
+                ("hidden", "CA:b"),
+                ("toggle_hidden", "CA:a|CA:b"),
+            ],
+            [],
+        ),
     ],
 )
 def test_hidden(fields, hidden):
@@ -355,3 +365,16 @@ def test_region_notice_ignores_holidays_also_shown_nationally():
     assert [(n.action, n.value) for n in view.notices] == [
         ("drop_region", "0:BC")
     ]
+
+
+def test_hidden_holidays_of_removed_sources_are_dropped():
+    parsed = _parse(
+        ("s0.kind", "CA"),
+        ("s1.kind", "@jewish"),
+        ("hidden", "CA/ON:family day"),
+        ("hidden", "US:independence day"),
+        ("hidden", "@jewish:purim"),
+        ("remove", "1"),
+    )
+
+    assert list(parsed.hidden) == ["CA/ON:family day"]

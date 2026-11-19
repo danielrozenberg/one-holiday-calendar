@@ -82,6 +82,13 @@ def build() -> wrappers.Response:
     if not parsed.sources:
         return flask.redirect(flask.url_for("index"), code=303)
     blob = config.encode(parsed)
+    if len(blob) > settings.CURRENT.url.max_blob_length:
+        return flask.Response(
+            "This calendar has too many hidden holidays to fit in its URL. "
+            "Show some of them again.",
+            status=400,
+            mimetype="text/plain",
+        )
     return flask.redirect(flask.url_for("calendar", blob=blob), code=303)
 
 

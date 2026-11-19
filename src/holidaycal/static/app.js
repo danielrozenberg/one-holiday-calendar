@@ -37,6 +37,10 @@ document.addEventListener("submit", async (event) => {
     if (error.name !== "AbortError") form.submit();
     return;
   }
+  if (response.status === 400) {
+    showError(form, await response.text());
+    return;
+  }
   if (!response.ok) {
     form.submit();
     return;
@@ -53,6 +57,17 @@ document.addEventListener("submit", async (event) => {
   transition(() => swap(next));
   history.replaceState(null, "", response.url);
 });
+
+function showError(form, message) {
+  let error = form.querySelector(".form-error");
+  if (!error) {
+    error = document.createElement("p");
+    error.className = "form-error";
+    error.setAttribute("role", "alert");
+    form.prepend(error);
+  }
+  error.textContent = message;
+}
 
 function swap(next) {
   const open = new Set(
