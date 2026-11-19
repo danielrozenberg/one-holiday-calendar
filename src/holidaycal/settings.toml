@@ -1,7 +1,7 @@
 # Static settings for the holiday calendar app. Deployed with the code.
 
 [url]
-# Longest accepted config blob, in characters. Hidden holidays take ~40 each.
+# Longest accepted config blob, in characters, after compression.
 max_blob_length = 8192
 # Most countries and religions in one calendar.
 max_sources = 20

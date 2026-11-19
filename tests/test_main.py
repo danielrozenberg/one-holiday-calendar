@@ -1,3 +1,4 @@
+import hashlib
 import re
 from unittest import mock
 
@@ -190,7 +191,11 @@ def test_add_leaves_out_sources_already_added(client):
 def test_build_rejects_configs_too_long_for_a_url(client):
     data = MultiDict(
         [("s0.kind", "US"), ("s0.all_subdivisions", "1")]
-        + [("hidden", f"US:holiday {i:04d}") for i in range(400)]
+        # Random names don't compress, so the URL stays long.
+        + [
+            ("hidden", "US:" + hashlib.sha256(str(i).encode()).hexdigest())
+            for i in range(400)
+        ]
     )
 
     response = client.post("/build", data=data)

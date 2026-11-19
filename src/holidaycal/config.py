@@ -2,6 +2,8 @@
 
 import base64
 import functools
+import importlib.resources
+import zlib
 
 import holidays
 from google.protobuf import message
@@ -15,30 +17,78 @@ class InvalidConfigError(ValueError):
     """Raised when a config blob cannot be decoded or fails validation."""
 
 
+# Each blob starts with a format marker, followed by base64url without padding.
+_RAW = "A"
+_DEFLATE_V1 = "B"
+# Decompressed configs are small; this bounds work on crafted blobs.
+_MAX_RAW_BYTES = 64 * 1024
+
+
 def encode(config: config_pb2.Config) -> str:
-    """Serializes a config into an unpadded base64url string."""
+    """Serializes a config into its shortest URL-safe form.
+
+    That is the protobuf either as is, or compressed with DEFLATE and a preset
+    dictionary of common strings, which shrinks long configs severalfold.
+    """
     raw = config.SerializeToString(deterministic=True)
-    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode("ascii")
+    compressor = zlib.compressobj(
+        level=9, wbits=-15, zdict=_dictionary(_DEFLATE_V1)
+    )
+    compressed = compressor.compress(raw) + compressor.flush()
+    return min(_RAW + _base64(raw), _DEFLATE_V1 + _base64(compressed), key=len)
 
 
 def decode(blob: str) -> config_pb2.Config:
     """Parses and validates a blob produced by `encode`.
 
+    An empty blob is the empty config.
+
     Raises:
         InvalidConfigError: The blob is malformed or describes an unsupported
             config.
     """
+    if not blob:
+        return config_pb2.Config()
     if len(blob) > settings.CURRENT.url.max_blob_length:
         raise InvalidConfigError("Config is too long")
+    marker, body = blob[0], blob[1:]
     try:
-        raw = base64.b64decode(
-            blob + "=" * (-len(blob) % 4), altchars=b"-_", validate=True
+        data = base64.b64decode(
+            body + "=" * (-len(body) % 4), altchars=b"-_", validate=True
         )
+        match marker:
+            case "A":
+                raw = data
+            case "B":
+                raw = _inflate(data, _dictionary(marker))
+            case _:
+                raise InvalidConfigError(f"Unknown config format {marker!r}")
         config = config_pb2.Config.FromString(raw)
-    except (ValueError, message.DecodeError) as e:
+    except InvalidConfigError:
+        raise
+    except (ValueError, zlib.error, message.DecodeError) as e:
         raise InvalidConfigError("Config is not a valid blob") from e
     validate(config)
     return config
+
+
+def _base64(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
+
+
+def _inflate(data: bytes, dictionary: bytes) -> bytes:
+    decompressor = zlib.decompressobj(wbits=-15, zdict=dictionary)
+    raw = decompressor.decompress(data, _MAX_RAW_BYTES)
+    if decompressor.unconsumed_tail or not decompressor.eof:
+        raise InvalidConfigError("Config is too long or truncated")
+    return raw
+
+
+@functools.cache
+def _dictionary(marker: str) -> bytes:
+    """Returns the frozen preset dictionary of a compressed format."""
+    name = {_DEFLATE_V1: "config_dictionary_v1.txt"}[marker]
+    return importlib.resources.files(__package__).joinpath(name).read_bytes()
 
 
 def validate(config: config_pb2.Config) -> None:

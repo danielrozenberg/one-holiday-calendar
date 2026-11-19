@@ -1,0 +1,1381 @@
+AU/ACT:anzac day
+AU/ACT:australia day
+AU/ACT:boxing day
+AU/ACT:canberra day
+AU/ACT:christmas_day
+AU/ACT:easter saturday
+AU/ACT:easter_sunday
+AU/ACT:kings birthday
+AU/ACT:labor_day
+AU/ACT:new years day
+AU/ACT:reconciliation day
+AU/NSW Western:anzac day
+AU/NSW Western:australia day
+AU/NSW Western:boxing day
+AU/NSW Western:christmas_day
+AU/NSW Western:easter saturday
+AU/NSW Western:easter_sunday
+AU/NSW Western:kings birthday
+AU/NSW Western:labor_day
+AU/NSW Western:new years day
+AU/NSW:anzac day
+AU/NSW:australia day
+AU/NSW:boxing day
+AU/NSW:christmas_day
+AU/NSW:easter saturday
+AU/NSW:easter_sunday
+AU/NSW:kings birthday
+AU/NSW:labor_day
+AU/NSW:new years day
+AU/NT:anzac day
+AU/NT:australia day
+AU/NT:boxing day
+AU/NT:christmas_day
+AU/NT:easter saturday
+AU/NT:easter_sunday
+AU/NT:kings birthday
+AU/NT:may day
+AU/NT:new years day
+AU/NT:picnic day
+AU/QLD:anzac day
+AU/QLD:australia day
+AU/QLD:boxing day
+AU/QLD:christmas_day
+AU/QLD:easter saturday
+AU/QLD:easter_sunday
+AU/QLD:kings birthday
+AU/QLD:labor_day
+AU/QLD:new years day
+AU/QLD:the royal queensland show
+AU/SA:adelaide cup day
+AU/SA:australia day
+AU/SA:christmas_day
+AU/SA:easter saturday
+AU/SA:easter_sunday
+AU/SA:kings birthday
+AU/SA:labor_day
+AU/SA:new years day
+AU/SA:proclamation day
+AU/TAS:australia day
+AU/TAS:boxing day
+AU/TAS:christmas_day
+AU/TAS:easter_sunday
+AU/TAS:eight hours day
+AU/TAS:kings birthday
+AU/TAS:new years day
+AU/VIC:australia day
+AU/VIC:boxing day
+AU/VIC:christmas_day
+AU/VIC:easter saturday
+AU/VIC:easter_sunday
+AU/VIC:friday before the afl grand final
+AU/VIC:kings birthday
+AU/VIC:labor_day
+AU/VIC:melbourne cup day
+AU/VIC:new years day
+AU/WA:anzac day
+AU/WA:australia day
+AU/WA:boxing day
+AU/WA:christmas_day
+AU/WA:easter_sunday
+AU/WA:kings birthday
+AU/WA:labor_day
+AU/WA:new years day
+AU/WA:western australia day
+BR/AC:amazonia day
+BR/AC:evangelical day
+BR/AC:founding of acre
+BR/AC:international_womens_day
+BR/AC:signing of the petropolis treaty
+BR/AL:evangelical day
+BR/AL:political emancipation of alagoas
+BR/AL:saint johns day
+BR/AL:saint peters day
+BR/AM:elevation of amazonas to province
+BR/AP:creation of the federal territory
+BR/AP:saint josephs day
+BR/AP:saint_james_day
+BR/BA:bahia independence day
+BR/CE:abolition of slavery in ceará
+BR/CE:our lady of assumption
+BR/CE:saint josephs day
+BR/DF:evangelical day
+BR/DF:founding of brasilia
+BR/ES:our lady of penha
+BR/GO:foundation of goiás city
+BR/GO:foundation of goiânia
+BR/MA:maranhão joining to independence of brazil
+BR/MG:tiradentes_day
+BR/MS:state creation day
+BR/PA:grão pará joining to independence of brazil
+BR/PB:state founding day
+BR/PE:pernambuco revolution of 1817
+BR/PI:piauí day
+BR/PR:our lady of rocio
+BR/RJ:carnival
+BR/RJ:saint georges day
+BR/RN:rio grande do norte day
+BR/RN:uruaçu and cunhaú martyrs day
+BR/RO:evangelical day
+BR/RO:state creation day
+BR/RR:state creation day
+BR/RS:gaucho day
+BR/SC:saint catherine of alexandria day
+BR/SC:santa catarina state day
+BR/SE:sergipe political emancipation day
+BR/SP:constitutionalist revolution
+BR/São Paulo Capital:constitutionalist revolution
+BR/São Paulo Capital:corpus christi
+BR/São Paulo Capital:são paulo city anniversary
+BR/TO:autonomy day
+BR/TO:our lady of nativity
+BR/TO:state creation day
+CA/AB:family day
+CA/AB:remembrance day
+CA/AB:thanksgiving day
+CA/AB:victoria day
+CA/BC:british columbia day
+CA/BC:family day
+CA/BC:national day for truth and reconciliation
+CA/BC:remembrance day
+CA/BC:thanksgiving day
+CA/BC:victoria day
+CA/MB:louis riel day
+CA/MB:national day for truth and reconciliation
+CA/MB:thanksgiving day
+CA/MB:victoria day
+CA/NB:family day
+CA/NB:new brunswick day
+CA/NB:remembrance day
+CA/NL:canada day
+CA/NL:memorial day
+CA/NL:remembrance day
+CA/NS:heritage day
+CA/NS:remembrance day
+CA/NT:civic holiday
+CA/NT:national aboriginal day
+CA/NT:national day for truth and reconciliation
+CA/NT:remembrance day
+CA/NT:thanksgiving day
+CA/NT:victoria day
+CA/NU:civic holiday
+CA/NU:national day for truth and reconciliation
+CA/NU:nunavut day
+CA/NU:remembrance day
+CA/NU:thanksgiving day
+CA/NU:victoria day
+CA/ON:boxing day
+CA/ON:family day
+CA/ON:thanksgiving day
+CA/ON:victoria day
+CA/PE:canada day
+CA/PE:islander day
+CA/PE:national day for truth and reconciliation
+CA/PE:remembrance day
+CA/QC:national patriots day
+CA/QC:saint_john_the_baptist_day
+CA/QC:thanksgiving day
+CA/SK:canada day
+CA/SK:family day
+CA/SK:remembrance day
+CA/SK:saskatchewan day
+CA/SK:thanksgiving day
+CA/SK:victoria day
+CA/YT:canada day
+CA/YT:discovery day
+CA/YT:national aboriginal day
+CA/YT:national day for truth and reconciliation
+CA/YT:remembrance day
+CA/YT:thanksgiving day
+CA/YT:victoria day
+CH/AG:all saints day
+CH/AG:assumption_day
+CH/AG:corpus christi
+CH/AG:easter_monday
+CH/AG:good_friday
+CH/AG:immaculate_conception
+CH/AG:labor_day
+CH/AG:pentecost monday
+CH/AG:saint berchtolds day
+CH/AG:saint stephens day
+CH/AI:all saints day
+CH/AI:assumption_day
+CH/AI:corpus christi
+CH/AI:easter_monday
+CH/AI:good_friday
+CH/AI:immaculate_conception
+CH/AI:pentecost monday
+CH/AI:saint stephens day
+CH/AR:easter_monday
+CH/AR:good_friday
+CH/AR:pentecost monday
+CH/AR:saint stephens day
+CH/BE:easter_monday
+CH/BE:good_friday
+CH/BE:pentecost monday
+CH/BE:saint berchtolds day
+CH/BE:saint stephens day
+CH/BL:easter_monday
+CH/BL:good_friday
+CH/BL:labor_day
+CH/BL:pentecost monday
+CH/BL:saint stephens day
+CH/BS:easter_monday
+CH/BS:good_friday
+CH/BS:labor_day
+CH/BS:pentecost monday
+CH/BS:saint stephens day
+CH/FR:good_friday
+CH/GE:easter_monday
+CH/GE:genevan fast
+CH/GE:good_friday
+CH/GE:pentecost monday
+CH/GE:restoration day
+CH/GL:all saints day
+CH/GL:battle of naefels victory day
+CH/GL:easter_monday
+CH/GL:good_friday
+CH/GL:pentecost monday
+CH/GL:saint stephens day
+CH/GR:easter_monday
+CH/GR:pentecost monday
+CH/GR:saint stephens day
+CH/JU:all saints day
+CH/JU:assumption_day
+CH/JU:corpus christi
+CH/JU:easter_monday
+CH/JU:good_friday
+CH/JU:independence day
+CH/JU:labor_day
+CH/JU:pentecost monday
+CH/JU:saint berchtolds day
+CH/LU:all saints day
+CH/LU:assumption_day
+CH/LU:corpus christi
+CH/LU:easter_monday
+CH/LU:good_friday
+CH/LU:immaculate_conception
+CH/LU:pentecost monday
+CH/LU:saint berchtolds day
+CH/LU:saint stephens day
+CH/NE:corpus christi
+CH/NE:good_friday
+CH/NE:labor_day
+CH/NE:republic day
+CH/NW:all saints day
+CH/NW:assumption_day
+CH/NW:corpus christi
+CH/NW:good_friday
+CH/NW:immaculate_conception
+CH/NW:saint josephs day
+CH/OW:all saints day
+CH/OW:assumption_day
+CH/OW:corpus christi
+CH/OW:good_friday
+CH/OW:immaculate_conception
+CH/OW:saint nicholas of flüe
+CH/SG:all saints day
+CH/SG:easter_monday
+CH/SG:good_friday
+CH/SG:pentecost monday
+CH/SG:saint stephens day
+CH/SH:easter_monday
+CH/SH:good_friday
+CH/SH:labor_day
+CH/SH:pentecost monday
+CH/SH:saint stephens day
+CH/SO:good_friday
+CH/SZ:all saints day
+CH/SZ:assumption_day
+CH/SZ:corpus christi
+CH/SZ:easter_monday
+CH/SZ:epiphany
+CH/SZ:good_friday
+CH/SZ:immaculate_conception
+CH/SZ:pentecost monday
+CH/SZ:saint josephs day
+CH/SZ:saint stephens day
+CH/Stadt Zurich:easter_monday
+CH/Stadt Zurich:good_friday
+CH/Stadt Zurich:knabenschiessen
+CH/Stadt Zurich:labor_day
+CH/Stadt Zurich:pentecost monday
+CH/Stadt Zurich:saint berchtolds day
+CH/Stadt Zurich:saint stephens day
+CH/TG:easter_monday
+CH/TG:good_friday
+CH/TG:labor_day
+CH/TG:pentecost monday
+CH/TG:saint berchtolds day
+CH/TG:saint stephens day
+CH/TI:all saints day
+CH/TI:assumption_day
+CH/TI:corpus christi
+CH/TI:easter_monday
+CH/TI:epiphany
+CH/TI:immaculate_conception
+CH/TI:labor_day
+CH/TI:pentecost monday
+CH/TI:saint josephs day
+CH/TI:saint stephens day
+CH/TI:saints_peter_and_paul_day
+CH/UR:all saints day
+CH/UR:assumption_day
+CH/UR:corpus christi
+CH/UR:easter_monday
+CH/UR:epiphany
+CH/UR:good_friday
+CH/UR:immaculate_conception
+CH/UR:pentecost monday
+CH/UR:saint josephs day
+CH/UR:saint stephens day
+CH/VD:easter_monday
+CH/VD:good_friday
+CH/VD:pentecost monday
+CH/VD:prayer monday
+CH/VD:saint berchtolds day
+CH/VS:all saints day
+CH/VS:assumption_day
+CH/VS:corpus christi
+CH/VS:immaculate_conception
+CH/VS:saint josephs day
+CH/ZG:all saints day
+CH/ZG:assumption_day
+CH/ZG:corpus christi
+CH/ZG:good_friday
+CH/ZG:immaculate_conception
+CH/ZH:easter_monday
+CH/ZH:good_friday
+CH/ZH:labor_day
+CH/ZH:pentecost monday
+CH/ZH:saint stephens day
+DE/Augsburg:all saints day
+DE/Augsburg:assumption_day
+DE/Augsburg:augsburg peace festival
+DE/Augsburg:corpus christi
+DE/Augsburg:epiphany
+DE/BB:easter_sunday
+DE/BB:pentecost
+DE/BB:reformation day
+DE/BE:75th anniversary of the east german uprising of 1953
+DE/BE:80th anniversary of the liberation from nazism and the end of the second world war in europe
+DE/BE:international_womens_day
+DE/BW:all saints day
+DE/BW:corpus christi
+DE/BW:epiphany
+DE/BY:all saints day
+DE/BY:corpus christi
+DE/BY:epiphany
+DE/HB:reformation day
+DE/HE:corpus christi
+DE/HH:reformation day
+DE/MV:international_womens_day
+DE/MV:reformation day
+DE/NI:reformation day
+DE/NW:all saints day
+DE/NW:corpus christi
+DE/RP:all saints day
+DE/RP:corpus christi
+DE/SH:reformation day
+DE/SL:all saints day
+DE/SL:assumption_day
+DE/SL:corpus christi
+DE/SN:reformation day
+DE/SN:repentance and prayer day
+DE/ST:epiphany
+DE/ST:reformation day
+DE/TH:childrens_day
+DE/TH:reformation day
+ES/AN:andalusia day
+ES/AN:maundy_thursday
+ES/AN:monday following all saints day
+ES/AN:monday following andalusia day
+ES/AN:monday following assumption day
+ES/AN:monday following constitution day
+ES/AN:monday following national day
+ES/AR:maundy_thursday
+ES/AR:monday following all saints day
+ES/AR:monday following assumption day
+ES/AR:monday following constitution day
+ES/AR:monday following national day
+ES/AR:monday following saint georges day
+ES/AR:saint georges day
+ES/AS:asturias day
+ES/AS:maundy_thursday
+ES/AS:monday following all saints day
+ES/AS:monday following assumption day
+ES/AS:monday following constitution day
+ES/AS:monday following national day
+ES/Barcelona:easter_monday
+ES/Barcelona:monday following our lady of mercy
+ES/Barcelona:national day of catalonia
+ES/Barcelona:our lady of mercy
+ES/Barcelona:pentecost monday
+ES/Barcelona:saint stephens day
+ES/Barcelona:saint_john_the_baptist_day
+ES/CB:cantabria institutions day
+ES/CB:maundy_thursday
+ES/CB:monday following constitution day
+ES/CB:our lady of bien aparecida
+ES/CE:ceuta day
+ES/CE:eid_al_adha
+ES/CE:eid_al_fitr
+ES/CE:maundy_thursday
+ES/CE:monday following saint anthonys day
+ES/CE:saint_anthonys_day
+ES/CE:santa maria of africa
+ES/CL:castile and león day
+ES/CL:maundy_thursday
+ES/CL:monday following all saints day
+ES/CL:monday following assumption day
+ES/CL:monday following castile and león day
+ES/CL:monday following constitution day
+ES/CL:monday following national day
+ES/CM:castilla la mancha day
+ES/CM:corpus christi
+ES/CM:easter_monday
+ES/CM:maundy_thursday
+ES/CM:monday following all saints day
+ES/CN:day of the canary islands
+ES/CN:maundy_thursday
+ES/CN:monday following all saints day
+ES/CN:monday following assumption day
+ES/CN:monday following day of the canary islands
+ES/CT:easter_monday
+ES/CT:national day of catalonia
+ES/CT:saint stephens day
+ES/CT:saint_john_the_baptist_day
+ES/EX:extremadura day
+ES/EX:maundy_thursday
+ES/EX:monday following all saints day
+ES/EX:monday following constitution day
+ES/EX:monday following national day
+ES/GA:galician literature day
+ES/GA:galician national day
+ES/GA:maundy_thursday
+ES/GA:saint josephs day
+ES/GA:saint_john_the_baptist_day
+ES/IB:day of the balearic islands
+ES/IB:easter_monday
+ES/IB:maundy_thursday
+ES/IB:monday following day of the balearic islands
+ES/IB:saint stephens day
+ES/MC:maundy_thursday
+ES/MC:monday following constitution day
+ES/MC:murcia day
+ES/MC:saint josephs day
+ES/MD:madrid day
+ES/MD:maundy_thursday
+ES/MD:monday following all saints day
+ES/MD:monday following constitution day
+ES/MD:monday following madrid day
+ES/MD:saint josephs day
+ES/MD:saint_james_day
+ES/ML:day of our lady of victory
+ES/ML:eid_al_adha
+ES/ML:eid_al_fitr
+ES/ML:maundy_thursday
+ES/ML:melilla day
+ES/ML:monday following constitution day
+ES/ML:monday following melilla day
+ES/NC:easter_monday
+ES/NC:maundy_thursday
+ES/NC:monday following all saints day
+ES/NC:monday following saint francis xaviers day
+ES/NC:saint francis xaviers day
+ES/NC:saint josephs day
+ES/NC:saint_james_day
+ES/PV:easter_monday
+ES/PV:maundy_thursday
+ES/PV:saint josephs day
+ES/PV:saint_james_day
+ES/RI:easter_monday
+ES/RI:la rioja day
+ES/RI:maundy_thursday
+ES/RI:monday following constitution day
+ES/VC:easter_monday
+ES/VC:saint josephs day
+ES/VC:saint_john_the_baptist_day
+ES/VC:valencian community day
+FR/57:good_friday
+FR/57:saint stephens day
+FR/6AE:good_friday
+FR/6AE:saint stephens day
+FR/971:abolition of slavery
+FR/971:good_friday
+FR/971:mi careme
+FR/971:victor schoelcher day
+FR/972:abolition of slavery
+FR/972:victor schoelcher day
+FR/973:abolition of slavery
+FR/974:abolition of slavery
+FR/976:abolition of slavery
+FR/BL:abolition of slavery
+FR/MF:abolition of slavery
+FR/MF:victor schoelcher day
+FR/NC:citizenship day
+FR/PF:good_friday
+FR/PF:matārii
+FR/PF:missionary day
+FR/WF:feast of saint peter chanel
+FR/WF:saints_peter_and_paul_day
+FR/WF:territory day
+GB/ENG:easter_monday
+GB/ENG:summer_bank_holiday
+GB/NIR:battle of the boyne
+GB/NIR:easter_monday
+GB/NIR:saint patricks day
+GB/NIR:summer_bank_holiday
+GB/SCT:new year holiday
+GB/SCT:saint andrews day
+GB/SCT:scotlands participation in the fifa world cup final
+GB/SCT:summer_bank_holiday
+GB/WLS:easter_monday
+GB/WLS:summer_bank_holiday
+IN/AN:onam
+IN/AR:bahag bihu
+IN/AR:indigenous faith day
+IN/AR:mahashtami
+IN/AR:statehood day
+IN/AS:bahag bihu
+IN/AS:magh bihu
+IN/AS:may day
+IN/AS:netaji subhas chandra boses jayanti
+IN/CH:guru gobind singhs jayanti
+IN/CH:maharshi valmikis jayanti
+IN/DH:chaitra sukladi
+IN/DH:cheti chand
+IN/DH:ganesh_chaturthi
+IN/DH:govardhan_puja
+IN/DH:gudi padwa
+IN/DH:magh bihu
+IN/DH:makar_sankranti
+IN/DH:parsi_new_year
+IN/DH:pongal
+IN/DH:pratihar shashthi or surya shashthi chhath puja
+IN/DH:raksha bandhan
+IN/DH:ugadi
+IN/GA:ganesh chaturthi day 2
+IN/GA:ganesh_chaturthi
+IN/GA:goa liberation day
+IN/GA:gudi padwa
+IN/GA:saint francis xaviers day
+IN/GJ:bhagvan shri parshurams jayanti
+IN/GJ:bhai duj
+IN/GJ:cheti chand
+IN/GJ:parsi_new_year
+IN/GJ:raksha bandhan
+IN/GJ:samvatsari day
+IN/GJ:sardar vallabhbhai patels jayanti
+IN/GJ:uttarayan
+IN/GJ:vikram samvat new year
+IN/HP:bhagvan shri parshurams jayanti
+IN/HP:guru ravi dass jayanti
+IN/HP:himachal day
+IN/HP:maharana prataps jayanti
+IN/HP:maharshi valmikis jayanti
+IN/HP:sant kabirs jayanti
+IN/HP:statehood day
+IN/HR:akshay tritiya
+IN/HR:bhagvan shri parshurams jayanti
+IN/HR:haryana day
+IN/HR:haryana war heroes shaheedi diwas
+IN/HR:maharaj agrasens jayanti
+IN/HR:maharana prataps jayanti
+IN/HR:maharshi valmikis jayanti
+IN/HR:raksha bandhan
+IN/HR:sant kabirs jayanti
+IN/HR:shaheed e azam bhagat singh sukhdev and rajgurus shaheedi diwas
+IN/HR:shaheed udham singhs shaheedi diwas
+IN/HR:sir chottu rams jayanti
+IN/HR:vaisakhi
+IN/HR:vishwakarma day
+IN/JH:chhath puja
+IN/JH:karma puja
+IN/JK:1st navratra
+IN/JK:accession day
+IN/JK:mahanavami
+IN/JK:maharaja hari singhs jayanti
+IN/JK:nauroz
+IN/JK:shab i miraj
+IN/JK:vaisakhi
+IN/KA:ganesh_chaturthi
+IN/KA:karnataka rajyotsava
+IN/KA:makar_sankranti
+IN/KA:may day
+IN/KA:ugadi
+IN/KL:ayyankalis jayanti
+IN/KL:dussehra
+IN/KL:easter_sunday
+IN/KL:karkadaka vavu
+IN/KL:kerala assembly election day
+IN/KL:mahanavami
+IN/KL:mannams jayanti
+IN/KL:maundy_thursday
+IN/KL:may day
+IN/KL:onam day 1
+IN/KL:onam day 2
+IN/KL:onam day 3
+IN/KL:onam day 4
+IN/KL:shri narayana gurus death anniversary
+IN/KL:shri narayana gurus jayanti
+IN/KL:vishu
+IN/LA:nauroz
+IN/LD:ganesh_chaturthi
+IN/LD:makar_sankranti
+IN/LD:onam
+IN/MH:chhatrapati shivaji maharajs jayanti
+IN/MH:diwali bali pratipada
+IN/MH:ganesh_chaturthi
+IN/MH:gudi padwa
+IN/MH:holi
+IN/MH:maharashtra day
+IN/MH:parsi_new_year
+IN/MP:govardhan_puja
+IN/MP:raksha bandhan
+IN/MP:veerangana avantibais shaheedi diwas
+IN/MZ:christmas_eve
+IN/MZ:missionary day
+IN/MZ:mizo hmeichhe insuihkhawm pawls day
+IN/MZ:new_years_eve
+IN/MZ:post christmas
+IN/MZ:post new year
+IN/MZ:remna ni
+IN/MZ:young mizo associations day
+IN/OD:ram navami
+IN/PB:bhagvan shri parshurams jayanti
+IN/PB:guru arjun devs shaheedi diwas
+IN/PB:guru gobind singhs jayanti
+IN/PB:guru nabha dasss jayanti
+IN/PB:guru tegh bahadurs shaheedi diwas
+IN/PB:jor mela fatehgarh sahib
+IN/PB:kartar singh sarabhas shaheedi diwas
+IN/PB:maharaj agrasens jayanti
+IN/PB:maharshi valmikis jayanti
+IN/PB:sant kabirs jayanti
+IN/PB:shaheed e azam bhagat singh sukhdev and rajgurus shaheedi diwas
+IN/PB:shaheed udham singhs shaheedi diwas
+IN/PB:vaisakhi
+IN/PB:vishwakarma day
+IN/PY:ayudha puja
+IN/PY:ganesh_chaturthi
+IN/PY:may day
+IN/PY:onam day 1
+IN/PY:onam day 2
+IN/PY:pongal
+IN/PY:puducherry de jure transfer day
+IN/PY:puducherry liberation day
+IN/PY:puthandu
+IN/PY:thiruvalluvar day
+IN/PY:vishu
+IN/PY:vishu day 2
+IN/RJ:bhagvan shri parshurams jayanti
+IN/RJ:bhai duj
+IN/RJ:cheti chand
+IN/RJ:durgashtami
+IN/RJ:govardhan_puja
+IN/RJ:holika dahan
+IN/RJ:international day of adivasi peoples
+IN/RJ:khejarlis shaheedi diwas
+IN/RJ:maharaj agrasens jayanti
+IN/RJ:maharana prataps jayanti
+IN/RJ:mahatma jyotiba phules jayanti
+IN/RJ:raksha bandhan
+IN/RJ:sharad navratri
+IN/SK:akhil sikkim khas chettri bahun kalyan sanghs foundation day
+IN/SK:bhanus jayanti
+IN/SK:hartalika teej
+IN/SK:late nar bahadur bhandaris jayanti
+IN/SK:makar_sankranti
+IN/SK:nepali bhasa manyata diwas
+IN/SK:sikkim state day
+IN/SK:sonam_lhochhar
+IN/SK:tamu_lhochhar
+IN/TN:ayudha puja
+IN/TN:ganesh_chaturthi
+IN/TN:may day
+IN/TN:pongal
+IN/TN:puthandu
+IN/TN:thiruvalluvar day
+IN/TN:uzhavar thirunal
+IN/TR:garia puja
+IN/TR:ker puja
+IN/TR:kharchi puja
+IN/TR:maharaja bir bikram kishore manikya bahadurs jayanti
+IN/TR:mahasaptami
+IN/TR:mahashtami
+IN/TR:netaji subhas chandra boses jayanti
+IN/TR:pohela boishakh
+IN/UK:cheti chand
+IN/UK:guru tegh bahadurs shaheedi diwas
+IN/UK:harela
+IN/UK:holika dahan
+IN/UK:maharshi valmikis jayanti
+IN/UK:raksha bandhan
+IN/UK:vishwakarma puja
+IN/UP:bhai duj
+IN/UP:chitragupts jayanti
+IN/UP:govardhan_puja
+IN/UP:raksha bandhan
+IN/WB:bhai duj
+IN/WB:birsa mundas jayanti
+IN/WB:chhath puja
+IN/WB:dussehra
+IN/WB:kali puja
+IN/WB:mahalaya
+IN/WB:mahanavami
+IN/WB:mahasaptami
+IN/WB:mahashtami
+IN/WB:may day
+IN/WB:netaji subhas chandra boses jayanti
+IN/WB:pohela boishakh
+IN/WB:rabindranath tagores jayanti
+IN/WB:swami vivekanandas jayanti
+IT/AG:saint gerlands day
+IT/AL:saint baudolinos day
+IT/AN:saint cyriacuss day
+IT/AO:saint grats day
+IT/AP:saint emidiuss day
+IT/AQ:saint maximus of aveias day
+IT/AR:saint donatus of arezzos day
+IT/AT:saint secundus of astis day
+IT/AV:saint modestinuss day
+IT/Andria:saint richard of andrias day
+IT/BA:saint nicholass day
+IT/BG:saint alexander of bergamos day
+IT/BL:saint martins day
+IT/BN:saint bartholomews day
+IT/BO:saint petroniuss day
+IT/BR:saint theodore of amasea and saint lawrence of brindisis day
+IT/BS:saints faustinus and jovitas day
+IT/BT:saint nicholas the pilgrims day
+IT/BT:saint richard of andrias day
+IT/BT:saint rogers day
+IT/BZ:pentecost monday
+IT/Barletta:saint rogers day
+IT/CA:saint saturninus of cagliaris day
+IT/CB:saint georges day
+IT/CE:saint sebastians day
+IT/CH:saint justin of chietis day
+IT/CL:saint michael the archangels day
+IT/CN:saint michael the archangels day
+IT/CO:saint abbondiuss day
+IT/CR:saint homobonuss day
+IT/CS:our lady of the pilerio
+IT/CT:saint agathas day
+IT/CZ:saint vitalians day
+IT/Cesena:saint johns day
+IT/EN:visitation of mary day
+IT/FC:our lady of the fire
+IT/FC:saint johns day
+IT/FE:saint georges day
+IT/FG:our lady of the seven veils
+IT/FI:saint johns day
+IT/FM:assumption_day
+IT/FR:saint silveriuss day
+IT/Forli:our lady of the fire
+IT/GE:saint johns day
+IT/GO:saints hilary and tatians day
+IT/GR:saint lawrences day
+IT/IM:saint leonard of porto maurizios day
+IT/IS:saint peter celestines day
+IT/KR:saint dionysiuss day
+IT/LC:saint nicholass day
+IT/LE:saint orontiuss day
+IT/LI:saint julias day
+IT/LO:saint bassianuss day
+IT/LT:saint maria gorettis day
+IT/LT:saint marks day
+IT/LU:saint paulinus of luccas day
+IT/MB:saint johns day
+IT/MC:saint julian the hospitallers day
+IT/ME:our lady of the letter
+IT/MI:saint ambroses day
+IT/MN:saint anselm of baggios day
+IT/MO:saint geminianuss day
+IT/MS:saint francis of assisis day
+IT/MT:our lady of the bruna
+IT/NA:saint januariuss day
+IT/NO:saint gaudentiuss day
+IT/NU:our lady of the snows
+IT/OR:saint archelauss day
+IT/PA:saint rosalias day
+IT/PC:saint antoninus of piacenzas day
+IT/PD:saint_anthonys_day
+IT/PE:saint cetteuss day
+IT/PG:saint clare of assisis day
+IT/PG:saint francis of assisis day
+IT/PI:saint ranieris day
+IT/PN:our lady of graces
+IT/PN:saint marks day
+IT/PR:saint hilary of poitierss day
+IT/PT:saint_james_day
+IT/PU:saint crescentinuss day
+IT/PU:saint terentius of pesaros day
+IT/PV:saint syruss day
+IT/PZ:saint gerard of potenzas day
+IT/Pesaro:saint terentius of pesaros day
+IT/RA:saint apollinariss day
+IT/RC:saint georges day
+IT/RE:saint prosper of reggios day
+IT/RG:saint georges day
+IT/RG:saint johns day
+IT/RI:saint barbaras day
+IT/RM:saints_peter_and_paul_day
+IT/RN:saint gaudentiuss day
+IT/RO:saint bellinuss day
+IT/SA:saint matthews day
+IT/SI:saint ansanuss day
+IT/SO:saints gervasius and protasiuss day
+IT/SP:saint josephs day
+IT/SR:saint lucys day
+IT/SS:saint nicholass day
+IT/SU:saint pontians day
+IT/SV:our lady of mercy
+IT/TA:saint catalds day
+IT/TE:saint berardos day
+IT/TN:saint vigiliuss day
+IT/TO:saint johns day
+IT/TP:saint albert of trapanis day
+IT/TR:valentines_day
+IT/TS:saint justuss day
+IT/TV:saint liberals day
+IT/Trani:saint nicholas the pilgrims day
+IT/UD:saints hermagoras and fortunatuss day
+IT/Urbino:saint crescentinuss day
+IT/VA:saint victor the moors day
+IT/VB:saint victor the moors day
+IT/VC:saint eusebius of vercellis day
+IT/VE:our lady of health
+IT/VE:saint marks day
+IT/VI:our lady of monte berico
+IT/VR:saint zenos day
+IT/VT:saint rose of viterbos day
+IT/VV:saint leolucas day
+NZ/AUK:auckland anniversary day
+NZ/CAN:canterbury anniversary day
+NZ/CIT:chatham islands anniversary day
+NZ/HKB:hawkes bay anniversary day
+NZ/MBH:marlborough anniversary day
+NZ/NSN:nelson anniversary day
+NZ/NTL:auckland anniversary day
+NZ/OTA:otago anniversary day
+NZ/STL:southland anniversary day
+NZ/South Canterbury:south canterbury anniversary day
+NZ/TKI:taranaki anniversary day
+NZ/WGN:wellington anniversary day
+NZ/WTC:west coast anniversary day
+US/AK:alaska day
+US/AK:indigenous peoples day
+US/AK:martin_luther_king_jr_day
+US/AK:presidents day
+US/AK:sewards day
+US/AL:columbus day american indian heritage day fraternal day
+US/AL:confederate memorial day
+US/AL:george washington thomas jeffersons birthday
+US/AL:jefferson davis birthday
+US/AL:martin_luther_king_jr_day
+US/AR:george washingtons birthday and daisy gatson bates day
+US/AS:american samoa flag day
+US/AS:manua islands cession day
+US/AS:white sunday
+US/AZ:martin_luther_king_jr_day
+US/AZ:washingtons_birthday
+US/CA:cesar chavez day
+US/CA:day_after_thanksgiving
+US/CA:diwali
+US/CA:presidents day
+US/CA:susan b anthony day
+US/CO:cesar chavez day
+US/CO:frances xavier cabrini day
+US/CO:washingtons_birthday
+US/CT:good_friday
+US/CT:lincolns birthday
+US/DC:emancipation_day
+US/DC:inauguration day
+US/DC:indigenous peoples day
+US/DE:day_after_thanksgiving
+US/DE:election day
+US/DE:good_friday
+US/FL:day_after_thanksgiving
+US/FL:susan b anthony day
+US/GA:state holiday
+US/GA:washingtons_birthday
+US/GU:all_souls_day
+US/GU:good_friday
+US/GU:guam discovery day
+US/GU:lady of camarin day
+US/GU:liberation day guam
+US/HI:election day
+US/HI:kamehameha day
+US/HI:presidents day
+US/HI:prince jonah kuhio kalanianaole day
+US/HI:statehood day
+US/IA:lincolns birthday
+US/ID:martin_luther_king_jr_day
+US/ID:presidents day
+US/IL:casimir pulaski day
+US/IL:election day
+US/IL:lincolns birthday
+US/IN:election day
+US/IN:good_friday
+US/IN:lincolns birthday
+US/IN:primary election day
+US/IN:washingtons_birthday
+US/KS:christmas_eve
+US/KY:good_friday
+US/KY:new_years_eve
+US/LA:election day
+US/LA:good_friday
+US/LA:mardi gras
+US/MA:patriots day
+US/MD:inauguration day
+US/MD:native_american_heritage_day
+US/MD:presidents day
+US/ME:indigenous peoples day
+US/ME:patriots day
+US/MI:christmas_eve
+US/MI:day_after_thanksgiving
+US/MI:election day
+US/MI:new_years_eve
+US/MN:washingtons_birthday
+US/MO:truman day
+US/MP:citizenship day
+US/MP:commonwealth covenant day
+US/MP:commonwealth cultural day
+US/MP:constitution day
+US/MP:election day
+US/MP:good_friday
+US/MS:confederate memorial day
+US/MS:martin_luther_king_jr_day
+US/MT:election day
+US/MT:washingtons_birthday
+US/NC:christmas_eve
+US/NC:day_after_christmas
+US/NC:day_after_thanksgiving
+US/NC:good_friday
+US/NE:arbor day
+US/NE:indigenous peoples day
+US/NH:day_after_thanksgiving
+US/NH:election day
+US/NH:martin_luther_king_jr_day
+US/NJ:election day
+US/NJ:good_friday
+US/NJ:lincolns birthday
+US/NJ:presidents day
+US/NM:indigenous peoples day
+US/NM:presidents day
+US/NV:family day
+US/NV:nevada day
+US/NY:election day
+US/NY:lincolns birthday
+US/NY:susan b anthony day
+US/OH:washingtons_birthday
+US/OK:day_after_thanksgiving
+US/OK:presidents day
+US/OR:presidents day
+US/PA:day_after_thanksgiving
+US/PA:presidents day
+US/PR:emancipation_day
+US/PR:epiphany
+US/PR:george washington day presidents day and the day of the women and men heroes of puerto rico
+US/PR:good_friday
+US/PR:puerto rican identity day
+US/PR:puerto rico constitution day
+US/RI:indigenous peoples day columbus day
+US/RI:victory_day
+US/SC:confederate memorial day
+US/SC:presidents day
+US/SD:native americans day
+US/TN:good_friday
+US/TN:presidents day
+US/TX:cesar chavez day
+US/TX:christmas_eve
+US/TX:confederate memorial day
+US/TX:day_after_christmas
+US/TX:day_after_thanksgiving
+US/TX:emancipation day in texas
+US/TX:good_friday
+US/TX:lyndon baines johnson day
+US/TX:presidents day
+US/TX:san jacinto day
+US/TX:texas independence day
+US/UT:pioneer day
+US/UT:washingtons_birthday
+US/VA:day_after_thanksgiving
+US/VA:election day
+US/VA:george washington day
+US/VA:inauguration day
+US/VA:indigenous peoples day
+US/VI:columbus day and puerto rico friendship day
+US/VI:easter_monday
+US/VI:emancipation_day
+US/VI:good_friday
+US/VI:holy thursday
+US/VI:liberty day
+US/VI:presidents day
+US/VI:second_day_of_christmas
+US/VI:three kings day
+US/VI:transfer day
+US/VT:bennington battle day
+US/VT:presidents day
+US/VT:town meeting day
+US/WA:native_american_heritage_day
+US/WA:presidents day
+US/WI:christmas_eve
+US/WI:new_years_eve
+US/WI:susan b anthony day
+US/WV:day_after_thanksgiving
+US/WV:election day
+US/WV:presidents day
+US/WV:west virginia day
+US/WY:presidents day
+africa_day
+all_souls_day
+alphabet_day
+ashura
+assumption_day
+buddhas_birthday
+childrens_day
+chinese_new_year
+chinese_new_year_second_day
+chinese_new_year_third_day
+chinese_new_years_eve
+christmas_day
+christmas_eve
+chung_yeung_festival
+day_after_christmas
+day_after_new_years_day
+day_after_thanksgiving
+day_before_ascension_day
+day_following_mid_autumn_festival
+diwali
+dragon_boat_festival
+dussehra
+easter_monday
+easter_sunday
+eid_al_adha
+eid_al_fitr
+emancipation_day
+ethiopian_new_year
+finding_of_the_true_cross
+ganesh_chaturthi
+good_friday
+govardhan_puja
+immaculate_conception
+international_womens_day
+islamic_new_year
+janmashtami
+karwa_chauth
+labor_day
+laylat_al_qadr
+maha_shivaratri
+mahanavami
+mahashtami
+makar_sankranti
+martin_luther_king_jr_day
+maundy_thursday
+may_day_bank_holiday
+midwinter_day
+native_american_heritage_day
+new_years_eve
+nowruz
+orthodox_christmas_day
+orthodox_easter_sunday
+orthodox_new_years_day
+parsi_new_year
+passover
+prophets_birthday
+ramadan_begins
+saint_anthonys_day
+saint_james_day
+saint_john_the_baptist_day
+saints_peter_and_paul_day
+second_day_of_christmas
+shemini_atzeret
+sonam_lhochhar
+struggle_for_freedom_and_democracy_day
+summer_bank_holiday
+tamu_lhochhar
+tiradentes_day
+ugadi
+vaisakhi
+valentines_day
+victory_day
+victory_over_fascism_day
+washingtons_birthday
+AT:all saints day
+AT:ascension day
+AT:assumption_day
+AT:christmas_day
+AT:corpus christi
+AT:easter_monday
+AT:epiphany
+AT:immaculate_conception
+AT:labor_day
+AT:national day
+AT:new years day
+AT:pentecost monday
+AT:saint stephens day
+AU:anzac day
+AU:australia day
+AU:boxing day
+AU:christmas_day
+AU:easter_monday
+AU:good_friday
+AU:new years day
+BE:all saints day
+BE:armistice day
+BE:ascension day
+BE:assumption_day
+BE:christmas_day
+BE:easter_monday
+BE:easter_sunday
+BE:labor_day
+BE:national day
+BE:new years day
+BE:pentecost
+BE:pentecost monday
+BR:all_souls_day
+BR:christmas_day
+BR:good_friday
+BR:independence day
+BR:labor_day
+BR:national day of zumbi and black awareness
+BR:our lady of aparecida
+BR:republic proclamation day
+BR:tiradentes_day
+BR:universal fraternization day
+CA:canada day
+CA:christmas_day
+CA:good_friday
+CA:labor_day
+CA:new years day
+CH:ascension day
+CH:christmas_day
+CH:national day
+CH:new years day
+DE:ascension day
+DE:christmas_day
+DE:easter_monday
+DE:german unity day
+DE:good_friday
+DE:labor_day
+DE:new years day
+DE:pentecost monday
+DE:second_day_of_christmas
+ES:all saints day
+ES:assumption_day
+ES:christmas_day
+ES:constitution day
+ES:epiphany
+ES:good_friday
+ES:immaculate_conception
+ES:labor_day
+ES:national day
+ES:new years day
+FR:all saints day
+FR:armistice day
+FR:ascension day
+FR:assumption_day
+FR:christmas_day
+FR:easter_monday
+FR:labor_day
+FR:national day
+FR:new years day
+FR:pentecost monday
+FR:victory_day
+GB:boxing day
+GB:christmas_day
+GB:good_friday
+GB:may day
+GB:new years day
+GB:spring bank holiday
+IE:august bank holiday
+IE:christmas_day
+IE:easter_monday
+IE:june bank holiday
+IE:may_day_bank_holiday
+IE:new years day
+IE:october bank holiday
+IE:saint brigids day
+IE:saint patricks day
+IE:saint stephens day
+IL:independence day
+IL:passover
+IL:rosh hashanah
+IL:shavuot
+IL:shemini_atzeret
+IL:sukkot
+IL:yom kippur
+IN:buddha purnima
+IN:christmas_day
+IN:diwali
+IN:dr b r ambedkars jayanti
+IN:dussehra
+IN:eid_al_fitr
+IN:good_friday
+IN:guru nanaks jayanti
+IN:holi
+IN:id ul zuha bakrid
+IN:independence day
+IN:janmashtami
+IN:maha_shivaratri
+IN:mahatma gandhis jayanti
+IN:mahavir jayanti
+IN:muharram
+IN:prophets_birthday
+IN:ram navami
+IN:republic day
+IT:all saints day
+IT:assumption_day
+IT:christmas_day
+IT:easter_monday
+IT:easter_sunday
+IT:epiphany
+IT:immaculate_conception
+IT:labor_day
+IT:liberation day
+IT:national unity day
+IT:new years day
+IT:republic day
+IT:saint francis of assisi patron saint of italy
+IT:saint stephens day
+JP:autumnal equinox day
+JP:childrens_day
+JP:coming of age day
+JP:constitution day
+JP:culture day
+JP:emperors birthday
+JP:foundation day
+JP:greenery day
+JP:labor thanksgiving day
+JP:marine day
+JP:mountain day
+JP:national holiday
+JP:new years day
+JP:respect for the aged day
+JP:showa day
+JP:sports day
+JP:substitute holiday
+JP:vernal equinox day
+MX:benito juárezs birthday
+MX:christmas_day
+MX:constitution day
+MX:independence day
+MX:labor_day
+MX:new years day
+MX:revolution day
+NL:ascension day
+NL:christmas_day
+NL:easter_monday
+NL:easter_sunday
+NL:good_friday
+NL:kings day
+NL:liberation day
+NL:new years day
+NL:pentecost
+NL:pentecost monday
+NL:second_day_of_christmas
+NZ:anzac day
+NZ:boxing day
+NZ:christmas_day
+NZ:day_after_new_years_day
+NZ:easter_monday
+NZ:good_friday
+NZ:kings birthday
+NZ:labor_day
+NZ:matariki
+NZ:new years day
+NZ:waitangi day
+PH:additional special non working day
+PH:all saints day
+PH:all saints day eve
+PH:all_souls_day
+PH:araw ng kagitingan
+PH:black saturday
+PH:bonifacio day
+PH:chinese_new_year
+PH:christmas_day
+PH:christmas_eve
+PH:eid_al_adha
+PH:eid_al_fitr
+PH:elections special non working day
+PH:good_friday
+PH:immaculate_conception
+PH:independence day
+PH:labor_day
+PH:last day of the year
+PH:maundy_thursday
+PH:national heroes day
+PH:new years day
+PH:ninoy aquino day
+PH:rizal day
+PL:all saints day
+PL:assumption_day
+PL:christmas_day
+PL:christmas_eve
+PL:corpus christi
+PL:easter_monday
+PL:easter_sunday
+PL:epiphany
+PL:national day
+PL:national day of the third of may
+PL:national independence day
+PL:new years day
+PL:pentecost
+PL:second_day_of_christmas
+SE:all saints day
+SE:ascension day
+SE:christmas_day
+SE:easter_monday
+SE:easter_sunday
+SE:epiphany
+SE:good_friday
+SE:may day
+SE:midsummer day
+SE:national day
+SE:new years day
+SE:pentecost
+SE:second_day_of_christmas
+SG:chinese_new_year
+SG:christmas_day
+SG:diwali
+SG:good_friday
+SG:hari raya haji
+SG:hari raya puasa
+SG:labor_day
+SG:national day
+SG:new years day
+SG:polling day
+SG:vesak day
+US:christmas_day
+US:columbus day
+US:independence day
+US:juneteenth national independence day
+US:labor_day
+US:martin_luther_king_jr_day
+US:memorial day
+US:new years day
+US:thanksgiving day
+US:veterans day
+US:washingtons_birthday
+ZA:christmas_day
+ZA:day of goodwill
+ZA:day of reconciliation
+ZA:family day
+ZA:freedom day
+ZA:good_friday
+ZA:heritage day
+ZA:human rights day
+ZA:labor_day
+ZA:local government elections
+ZA:national womens day
+ZA:new years day
+ZA:youth day
+public
+optional
+government
+unofficial
+bank
+school

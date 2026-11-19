@@ -34,8 +34,21 @@ where possible, so they merge.
 
 ## Configuration
 
-The configuration is a protobuf message (`proto/config.proto`), serialized and
-encoded as unpadded base64url. It holds:
+The configuration is a protobuf message (`proto/config.proto`), carried in the
+URL as a one-character format marker followed by unpadded base64url:
+
+- `A`: the serialized protobuf as is.
+- `B`: the serialized protobuf compressed with raw DEFLATE and the preset
+  dictionary `src/holidaycal/config_dictionary_v1.txt` (common hide tokens,
+  alias ids and category names, built by `tools/build_dictionary.py`).
+
+`encode` picks the shorter. Measured on random realistic configs, `B` halves
+the median URL and cuts the longest ones by about 70% (hidden holidays
+compress best); tiny configs stay `A`. Compressing JSON instead of protobuf, or
+using bzip2, LZMA, Brotli or Zstandard without a dictionary, did worse. A
+dictionary is frozen once deployed (a test pins its hash): an improved one gets
+a new marker, and old markers keep decoding. Decoding caps the decompressed
+size at 64 KiB. It holds:
 
 - **Sources**: each one is either a country, with optional subdivisions (or
   all of them) and categories (`public` when empty); or a religion.

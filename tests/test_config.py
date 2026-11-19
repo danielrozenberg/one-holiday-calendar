@@ -1,3 +1,7 @@
+import base64
+import hashlib
+import zlib
+
 import pytest
 
 from holidaycal import config
@@ -96,3 +100,73 @@ def test_decode_rejects_duplicate_sources():
 
     with pytest.raises(config.InvalidConfigError, match="Duplicate"):
         config.decode(blob)
+
+
+def _hidden_heavy() -> config_pb2.Config:
+    tokens = [
+        "US:independence day",
+        "US:labor_day",
+        "US:thanksgiving day",
+        "US/CA:cesar chavez day",
+        "US/TX:emancipation day in texas",
+    ]
+    return config_pb2.Config(
+        sources=[config_pb2.Source(country="US", all_subdivisions=True)],
+        hidden=sorted(tokens),
+    )
+
+
+def test_tiny_configs_stay_uncompressed():
+    blob = config.encode(
+        config_pb2.Config(sources=[config_pb2.Source(country="CA")])
+    )
+
+    assert blob.startswith("A")
+
+
+def test_long_configs_are_compressed():
+    original = _hidden_heavy()
+    raw = original.SerializeToString(deterministic=True)
+
+    blob = config.encode(original)
+
+    assert blob.startswith("B")
+    assert len(blob) < len(raw)
+    assert config.decode(blob) == original
+
+
+def test_empty_blob_is_the_empty_config():
+    assert config.decode("") == config_pb2.Config()
+
+
+def _deflate_blob(data: bytes) -> str:
+    compressor = zlib.compressobj(
+        level=9, wbits=-15, zdict=config._dictionary("B")
+    )
+    compressed = compressor.compress(data) + compressor.flush()
+    encoded = base64.urlsafe_b64encode(compressed).rstrip(b"=").decode()
+    return "B" + encoded
+
+
+@pytest.mark.parametrize(
+    "blob",
+    [
+        "Z" + config.encode(config_pb2.Config())[1:],
+        _deflate_blob(b"\0" * 1_000_000),
+        _deflate_blob(_hidden_heavy().SerializeToString())[:-4],
+    ],
+    ids=["unknown format", "decompression bomb", "truncated"],
+)
+def test_decode_rejects_bad_formats(blob):
+    with pytest.raises(config.InvalidConfigError):
+        config.decode(blob)
+
+
+def test_dictionary_is_frozen():
+    # Changing a deployed dictionary breaks existing URLs; add a new format.
+    digest = hashlib.sha256(config._dictionary("B")).hexdigest()
+
+    assert (
+        digest
+        == "31768c73f5fe98cc2e455b82159c1b7b40698c19178895d24bc817f16c5326c9"
+    )
