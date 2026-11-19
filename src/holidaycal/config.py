@@ -55,7 +55,7 @@ def validate(config: config_pb2.Config) -> None:
                 _validate_country(source)
             case "religion":
                 raise InvalidConfigError(f"Unknown religion {source.religion}")
-            case _:
+            case None:
                 raise InvalidConfigError("Source has no country or religion")
 
 

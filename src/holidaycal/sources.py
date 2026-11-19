@@ -31,7 +31,7 @@ def occurrences(
     match source.WhichOneof("kind"):
         case "country":
             yield from _country_occurrences(source, years)
-        case kind:
+        case "religion" | None as kind:
             raise ValueError(f"Unsupported source kind {kind}")
 
 
