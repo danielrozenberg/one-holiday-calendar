@@ -145,7 +145,7 @@ def test_service_worker(client):
 def test_page_uses_versioned_assets(client):
     response = client.get("/", headers={"Accept": BROWSER_ACCEPT})
 
-    assert f"/static/app.js?v={main.APP_VERSION}".encode() in response.data
+    assert f"/static/app.mjs?v={main.APP_VERSION}".encode() in response.data
 
 
 def test_all_regions_disables_region_boxes(client):

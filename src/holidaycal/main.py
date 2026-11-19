@@ -18,7 +18,7 @@ from holidaycal import merge
 from holidaycal import settings
 from holidaycal import sources
 
-STATIC_ASSETS = ("app.css", "app.js")
+STATIC_ASSETS = ("app.css", "app.mjs")
 
 
 def _app_version() -> str:

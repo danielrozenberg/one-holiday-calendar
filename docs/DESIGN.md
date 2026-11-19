@@ -159,7 +159,7 @@ same URL serves HTML or ICS depending on `Accept`.
 ## Page behaviour
 
 The config page works without JavaScript: every change is a form POST to
-`/build` followed by a redirect. With JavaScript, `static/app.js` sends the same
+`/build` followed by a redirect. With JavaScript, `static/app.mjs` sends the same
 POST in the background, swaps in the new `#app` content, keeps open sections
 and focus, and pushes the new URL as a history entry; Back and Forward fetch
 that entry's URL and swap its content in the same way. Sources are submitted in page order, so
