@@ -140,6 +140,12 @@ of the upload.
 It runs the CI gate, then `gcloud app deploy` to the `one-holiday-calendar`
 project; extra flags (e.g. `--no-promote`) are passed through.
 
+Monitoring mirrors nyc-city-bike-at-a-glance and is set up once with
+`ALERT_EMAIL=… ./tools/setup_monitoring.sh`: an email channel, an uptime check
+on `/versionz` every minute, and alerts when that check fails, when more than
+two errors are logged in 5 minutes, or when a second instance is billed for
+2×15 minutes (`min_instances: 1` keeps one running, within the free tier).
+
 ## Settings
 
 Tunable values live in `src/holidaycal/settings.toml`, which is deployed with
