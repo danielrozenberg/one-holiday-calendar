@@ -8,9 +8,7 @@ from google.protobuf import message
 
 from holidaycal import config_pb2
 from holidaycal import religions
-
-MAX_BLOB_LENGTH = 2048
-MAX_SOURCES = 20
+from holidaycal import settings
 
 
 class InvalidConfigError(ValueError):
@@ -30,7 +28,7 @@ def decode(blob: str) -> config_pb2.Config:
         InvalidConfigError: The blob is malformed or describes an unsupported
             config.
     """
-    if len(blob) > MAX_BLOB_LENGTH:
+    if len(blob) > settings.CURRENT.url.max_blob_length:
         raise InvalidConfigError("Config is too long")
     try:
         raw = base64.b64decode(
@@ -53,8 +51,9 @@ def validate(config: config_pb2.Config) -> None:
         raise InvalidConfigError(f"Unsupported config version {config.v}")
     if config.title_style not in config_pb2.TitleStyle.values():
         raise InvalidConfigError(f"Unknown title style {config.title_style}")
-    if len(config.sources) > MAX_SOURCES:
-        raise InvalidConfigError(f"More than {MAX_SOURCES} sources")
+    max_sources = settings.CURRENT.url.max_sources
+    if len(config.sources) > max_sources:
+        raise InvalidConfigError(f"More than {max_sources} sources")
     if len({(s.country, s.religion) for s in config.sources}) != len(
         config.sources
     ):

@@ -2,6 +2,7 @@ import pytest
 
 from holidaycal import config
 from holidaycal import config_pb2
+from holidaycal import settings
 
 
 def _config(**kwargs) -> config_pb2.Config:
@@ -30,7 +31,14 @@ def test_round_trip():
 
 
 @pytest.mark.parametrize(
-    "blob", ["!!!", "a", "ä", "_" * 7, "x" * (config.MAX_BLOB_LENGTH + 1)]
+    "blob",
+    [
+        "!!!",
+        "a",
+        "ä",
+        "_" * 7,
+        "x" * (settings.CURRENT.url.max_blob_length + 1),
+    ],
 )
 def test_decode_rejects_malformed(blob):
     with pytest.raises(config.InvalidConfigError):

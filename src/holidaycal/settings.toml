@@ -1,0 +1,22 @@
+# Static settings for the holiday calendar app. Deployed with the code.
+
+[url]
+# Longest accepted config blob, in characters.
+max_blob_length = 2048
+# Most countries and religions in one calendar.
+max_sources = 20
+
+[feed]
+# Calendar name shown by calendar apps.
+calendar_name = "Holidays"
+# How often calendar apps are asked to refetch the feed.
+refresh_hours = 24
+# The feed covers this many years before and after the current one.
+years_before = 1
+years_after = 2
+
+[page]
+# How far ahead the preview table looks.
+preview_days = 365
+# How many visited pages the service worker keeps for offline use.
+offline_pages = 20

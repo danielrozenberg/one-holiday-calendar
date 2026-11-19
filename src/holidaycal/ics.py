@@ -7,15 +7,16 @@ import icalendar
 
 from holidaycal import config_pb2
 from holidaycal import merge
+from holidaycal import settings
 from holidaycal import sources
-
-CALENDAR_NAME = "Holidays"
-REFRESH = datetime.timedelta(days=1)
 
 
 def years(today: datetime.date) -> range:
-    """Returns the years a feed covers: last year to the year after next."""
-    return range(today.year - 1, today.year + 3)
+    """Returns the years a feed covers around the current one."""
+    feed = settings.CURRENT.feed
+    return range(
+        today.year - feed.years_before, today.year + feed.years_after + 1
+    )
 
 
 def title(event: merge.Event, style: config_pb2.TitleStyle.ValueType) -> str:
@@ -71,9 +72,11 @@ def render(
     calendar.add("prodid", "-//holidaycal//EN")
     calendar.add("version", "2.0")
     calendar.add("calscale", "GREGORIAN")
-    calendar.add("x-wr-calname", CALENDAR_NAME)
-    calendar.add("refresh-interval", REFRESH, parameters={"VALUE": "DURATION"})
-    calendar.add("x-published-ttl", REFRESH)
+    feed = settings.CURRENT.feed
+    refresh = datetime.timedelta(hours=feed.refresh_hours)
+    calendar.add("x-wr-calname", feed.calendar_name)
+    calendar.add("refresh-interval", refresh, parameters={"VALUE": "DURATION"})
+    calendar.add("x-published-ttl", refresh)
     for event in events:
         vevent = icalendar.Event()
         vevent.add("uid", event.uid)

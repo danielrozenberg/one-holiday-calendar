@@ -87,6 +87,15 @@ of the upload.
 
     gcloud app deploy
 
+## Settings
+
+Tunable values live in `src/holidaycal/settings.toml`, which is deployed with
+the code and validated at startup by `settings.py` (pydantic models; unknown
+keys are rejected). They cover URL limits, the feed's name, refresh interval
+and year window, the preview length, the offline page count and the cache
+budget. Values that change what existing URLs mean (such as the default
+`public` category) stay in code.
+
 ## Caching
 
 Each instance keeps the last 32 built feeds and page data in memory, keyed by

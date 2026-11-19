@@ -15,9 +15,9 @@ from holidaycal import config_pb2
 from holidaycal import form
 from holidaycal import ics
 from holidaycal import merge
+from holidaycal import settings
 from holidaycal import sources
 
-PREVIEW_DAYS = 365
 # shortcut: per-instance LRU caches; use a shared cache if instances multiply.
 CACHE_SIZE = 32
 STATIC_ASSETS = ("app.css", "app.js")
@@ -54,7 +54,11 @@ def service_worker() -> flask.Response:
         for name in STATIC_ASSETS
     ]
     response = flask.Response(
-        flask.render_template("sw.js", assets=assets),
+        flask.render_template(
+            "sw.js",
+            assets=assets,
+            max_pages=settings.CURRENT.page.offline_pages,
+        ),
         mimetype="text/javascript",
     )
     response.cache_control.no_cache = True
@@ -126,7 +130,7 @@ def _page_data(
 def _page(blob: str) -> str:
     today = datetime.datetime.now(datetime.UTC).date()
     parsed, all_events, views = _page_data(blob, ics.years(today))
-    end = today + datetime.timedelta(days=PREVIEW_DAYS)
+    end = today + datetime.timedelta(days=settings.CURRENT.page.preview_days)
     events = [e for e in all_events if today <= e.date < end]
     path = flask.url_for("calendar", blob=blob) if blob else ""
     return flask.render_template(

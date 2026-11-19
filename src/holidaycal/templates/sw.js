@@ -1,6 +1,6 @@
 const VERSION = "{{ version }}";
 const ASSETS = {{ assets | tojson }};
-const MAX_PAGES = 20;
+const MAX_PAGES = {{ max_pages }};
 
 const isAsset = (url) => {
   const { pathname, search } = new URL(url);
