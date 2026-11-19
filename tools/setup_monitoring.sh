@@ -13,7 +13,7 @@ HOST="${PROJECT}.appspot.com"
 EMAIL="${ALERT_EMAIL:?Set ALERT_EMAIL to the address that gets alerts}"
 
 channel="$(gcloud alpha monitoring channels list --project="$PROJECT" \
-  --filter="type=email AND labels.email_address=$EMAIL" \
+  --filter="type=\"email\" AND labels.email_address=\"$EMAIL\"" \
   --format="value(name)" | head -n 1)"
 if [[ -z "$channel" ]]; then
   channel="$(gcloud alpha monitoring channels create --project="$PROJECT" \
