@@ -7,6 +7,8 @@ name = "holidaycal"
 version = "1.0.0"
 description = "Merged, configurable holiday calendars served as webcal feeds."
 readme = "docs/DESIGN.md"
+license = "ISC"
+license-files = ["LICENSE"]
 requires-python = ">=3.13"
 dependencies = [
     "holidays==0.109",
