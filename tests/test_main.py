@@ -1,3 +1,4 @@
+import re
 from unittest import mock
 
 import pytest
@@ -31,6 +32,14 @@ def test_browser_gets_page(client):
     assert response.mimetype == "text/html"
     assert b"Canada Day" in response.data
     assert f"webcal://localhost/c/{BLOB}".encode() in response.data
+
+
+def test_page_has_remove_buttons_after_default_submit(client):
+    response = client.get(f"/c/{BLOB}", headers={"Accept": BROWSER_ACCEPT})
+
+    buttons = re.findall(r"<button [^>]*>", response.get_data(as_text=True))
+    assert 'name="remove"' not in buttons[0]
+    assert any('aria-label="Remove Canada"' in b for b in buttons)
 
 
 @pytest.mark.parametrize("accept", ["*/*", "text/calendar", ""])
