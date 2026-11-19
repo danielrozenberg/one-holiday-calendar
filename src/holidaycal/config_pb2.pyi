@@ -69,8 +69,9 @@ class Config(_message.Message):
     def sources(self) -> _containers.RepeatedCompositeFieldContainer[Global___Source]: ...
     @_builtins.property
     def hidden(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
-        """Holidays to leave out, per source: "<source>:<merge key>", where source is
-        a country code or "@<religion>", e.g. "US:independence day".
+        """Holidays to leave out, per source and region: "<source>[/<region>]:<key>",
+        where source is a country code or "@<religion>" and key a merge key, e.g.
+        "US:independence day" or "US/PR:emancipation_day".
         """
 
     def __init__(

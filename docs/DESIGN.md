@@ -39,10 +39,12 @@ encoded as unpadded base64url. It holds:
 
 - **Sources**: each one is either a country, with optional subdivisions (or
   all of them) and categories (`public` when empty); or a religion.
-- **Hidden holidays**: entries of the form `<source>:<merge key>` (e.g.
-  `US:independence day`, `@christian:christmas_day`). Hiding is per source
-  because a merge key can mean different holidays elsewhere, such as every
-  country's "Independence Day".
+- **Hidden holidays**: entries of the form `<source>[/<region>]:<merge key>`
+  (e.g. `US:independence day`, `US/PR:emancipation_day`,
+  `@christian:christmas_day`). Hiding is per source and region because a merge
+  key can mean different holidays elsewhere, such as every country's
+  "Independence Day", or Emancipation Day in Puerto Rico, DC and the Virgin
+  Islands.
 - **Title style**: plain (`Christmas Eve`) or prefixed with the contributing
   sources (`[CA, US] Christmas Eve`), using codes or names.
 - **Description options**: whether each event's description lists the

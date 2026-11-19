@@ -413,18 +413,16 @@ def _notices(
     A holiday counts toward a region only when the source has no national
     occurrence of it, matching how the preview shows it.
     """
-    rows: list[tuple[set[str], set[str], bool]] = []
-    for event in events:
-        mine = [o for o in event.occurrences if o.source == code]
-        if mine:
-            rows.append(
-                (
-                    {o.subdivision for o in mine},
-                    {o.category for o in mine},
-                    merge.hide_token(mine[0]) in hidden,
-                )
-            )
-    if rows and all(is_hidden for _, _, is_hidden in rows):
+    rows = [
+        [
+            (o, merge.hide_token(o) in hidden)
+            for o in event.occurrences
+            if o.source == code
+        ]
+        for event in events
+    ]
+    rows = [row for row in rows if row]
+    if rows and all(is_hidden for row in rows for _, is_hidden in row):
         return [
             HiddenNotice(
                 f"Every holiday from {label} is hidden.",
@@ -435,9 +433,10 @@ def _notices(
         ]
     notices = []
     by_region = _all_hidden(
-        (subdivisions, is_hidden)
-        for subdivisions, _, is_hidden in rows
-        if "" not in subdivisions
+        (o.subdivision, is_hidden)
+        for row in rows
+        if all(o.subdivision for o, _ in row)
+        for o, is_hidden in row
     )
     region_names = subdivision_names(code) if by_region else {}
     for region, all_hidden in by_region.items():
@@ -452,7 +451,7 @@ def _notices(
                 )
             )
     by_type = _all_hidden(
-        (categories, is_hidden) for _, categories, is_hidden in rows
+        (o.category, is_hidden) for row in rows for o, is_hidden in row
     )
     if len(by_type) > 1:
         for category, all_hidden in by_type.items():
@@ -469,10 +468,9 @@ def _notices(
     return notices
 
 
-def _all_hidden(rows: Iterable[tuple[set[str], bool]]) -> dict[str, bool]:
+def _all_hidden(parts: Iterable[tuple[str, bool]]) -> dict[str, bool]:
     """Maps each part (region, type) to whether all its holidays are hidden."""
-    parts: dict[str, bool] = {}
-    for keys, is_hidden in rows:
-        for key in keys:
-            parts[key] = parts.get(key, True) and is_hidden
-    return parts
+    result: dict[str, bool] = {}
+    for part, is_hidden in parts:
+        result[part] = result.get(part, True) and is_hidden
+    return result

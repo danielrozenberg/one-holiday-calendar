@@ -52,12 +52,16 @@ def _tier(name: str) -> int:
 
 
 def hide_token(occurrence: sources.Occurrence) -> str:
-    """Identifies a holiday from one source, e.g. "US:independence day".
+    """Identifies a holiday from one source and region.
 
-    Hiding is per source because the same merge key can be a different holiday
-    elsewhere (every country's "Independence Day", May 1 vs US Labor Day).
+    E.g. "US:independence day" nationally, "US/PR:emancipation_day" in Puerto
+    Rico. Hiding is per source and region because the same merge key can be a
+    different holiday elsewhere: every country's "Independence Day", or
+    Emancipation Day in Puerto Rico, DC and the Virgin Islands.
     """
     source = sources.source_id(occurrence.source)
+    if occurrence.subdivision:
+        source = f"{source}/{occurrence.subdivision}"
     return f"{source}:{normalize(occurrence.name)}"
 
 

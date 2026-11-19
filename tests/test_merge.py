@@ -213,3 +213,15 @@ def test_religion_names_merge_with_country_names():
     [passover] = [e for e in _on(events, 4, 2) if e.key == "passover"]
     assert passover.name == "Pesach"
     assert {o.source for o in passover.occurrences} == {"AR", "Jewish"}
+
+
+def test_hiding_is_per_region():
+    parsed = config_pb2.Config(
+        sources=[config_pb2.Source(country="US", all_subdivisions=True)],
+        hidden=["US/PR:emancipation_day"],
+    )
+    events = merge.build(parsed, [2026])
+
+    assert not [e for e in _on(events, 3, 23) if e.key == "emancipation_day"]
+    [dc] = [e for e in _on(events, 4, 16) if e.key == "emancipation_day"]
+    assert {o.subdivision for o in dc.occurrences} == {"DC"}
