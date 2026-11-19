@@ -8,6 +8,7 @@ from one_holiday_calendar import ics
 from one_holiday_calendar import merge
 
 NOW = datetime.datetime(2026, 11, 19, tzinfo=datetime.UTC)
+PAGE_URL = "https://example.com/c/blob"
 
 
 def _render() -> icalendar.Calendar:
@@ -18,7 +19,9 @@ def _render() -> icalendar.Calendar:
         ]
     )
     events = merge.build(config, ics.years(NOW.date()))
-    return icalendar.Calendar.from_ical(ics.render(events, config, NOW))
+    return icalendar.Calendar.from_ical(
+        ics.render(events, config, NOW, PAGE_URL)
+    )
 
 
 def test_years():
@@ -132,7 +135,9 @@ def test_multiday_event_spans_its_days():
         sources=[config_pb2.Source(religion="jewish")], combine_multiday=True
     )
     events = merge.build(config, [2026])
-    calendar = icalendar.Calendar.from_ical(ics.render(events, config, NOW))
+    calendar = icalendar.Calendar.from_ical(
+        ics.render(events, config, NOW, PAGE_URL)
+    )
 
     [passover] = [
         e for e in calendar.walk("VEVENT") if e["summary"] == "Passover"
@@ -174,3 +179,11 @@ def test_description_says_global_from_four_sources():
     lines = ics.description_lines(_global_christmas())
 
     assert lines["sources"] == "Observed in: Global"
+
+
+def test_calendar_links_to_its_config_page():
+    calendar = _render()
+
+    assert calendar["url"] == PAGE_URL
+    assert PAGE_URL in str(calendar["description"])
+    assert PAGE_URL in str(calendar["x-wr-caldesc"])

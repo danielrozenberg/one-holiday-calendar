@@ -4,6 +4,7 @@ import importlib.metadata
 import re
 from unittest import mock
 
+import icalendar
 import pytest
 from werkzeug.datastructures import MultiDict
 
@@ -290,3 +291,10 @@ def test_subscribe_box_offers_webcal_and_https_feed_urls(client):
     assert f'value="{webcal}" aria-label="Calendar URL"' in page
     assert f'data-url="{https}"' in page
     assert "delete it and add this new one" in page
+
+
+def test_feed_links_to_the_page_it_was_served_from(client):
+    response = client.get(f"/c/{BLOB}", headers={"X-Forwarded-Proto": "https"})
+
+    calendar = icalendar.Calendar.from_ical(response.data)
+    assert calendar["url"] == f"https://localhost/c/{BLOB}"

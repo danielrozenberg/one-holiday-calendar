@@ -112,11 +112,13 @@ def calendar(blob: str) -> wrappers.Response | bytes:
     match _wanted_format(flask.request):
         case "ics":
             years = ics.years(datetime.datetime.now(datetime.UTC).date())
+            page_url = flask.url_for("calendar", blob=blob, _external=True)
             body = RESPONSES.get(
-                ("feed", blob, years), lambda: _render_feed(blob, years)
+                ("feed", blob, years, page_url),
+                lambda: _render_feed(blob, years, page_url),
             )
             response = flask.Response(body, mimetype="text/calendar")
-            etag = f"{DATA_VERSION}|{blob}|{years.start}-{years.stop}"
+            etag = f"{DATA_VERSION}|{page_url}|{years.start}-{years.stop}"
             response.set_etag(hashlib.sha256(etag.encode()).hexdigest())
             return response.make_conditional(flask.request)
         case _:
@@ -131,10 +133,10 @@ def _wanted_format(request: flask.Request) -> str:
     return "html" if "text/html" in accepted else "ics"
 
 
-def _render_feed(blob: str, years: range) -> bytes:
+def _render_feed(blob: str, years: range, page_url: str) -> bytes:
     parsed = config.decode(blob)
     now = datetime.datetime.now(datetime.UTC)
-    return ics.render(merge.build(parsed, years), parsed, now)
+    return ics.render(merge.build(parsed, years), parsed, now, page_url)
 
 
 def _page(blob: str) -> bytes:

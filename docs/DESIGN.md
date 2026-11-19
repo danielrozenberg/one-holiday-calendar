@@ -116,7 +116,8 @@ refreshes and across configurations.
 
 All-day events from the start of the previous year to the end of the year
 after next, with a one-day refresh hint (`REFRESH-INTERVAL`,
-`X-PUBLISHED-TTL`).
+`X-PUBLISHED-TTL`). The calendar's description (`DESCRIPTION`, `X-WR-CALDESC`)
+and `URL` link back to its config page, on the host the feed was served from.
 
 ## Development
 

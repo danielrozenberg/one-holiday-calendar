@@ -88,8 +88,13 @@ def render(
     events: Iterable[merge.Event],
     parsed: config_pb2.Config,
     now: datetime.datetime,
+    page_url: str,
 ) -> bytes:
-    """Renders events as all-day VEVENTs in a VCALENDAR."""
+    """Renders events as all-day VEVENTs in a VCALENDAR.
+
+    The calendar's description and URL point at `page_url`, where its
+    configuration can be changed.
+    """
     calendar = icalendar.Calendar()
     calendar.add("prodid", "-//one-holiday-calendar//EN")
     calendar.add("version", "2.0")
@@ -99,6 +104,12 @@ def render(
     calendar.add("x-wr-calname", feed.calendar_name)
     calendar.add("refresh-interval", refresh, parameters={"VALUE": "DURATION"})
     calendar.add("x-published-ttl", refresh)
+    about = (
+        f"Holidays from One Holiday Calendar. To change them, open {page_url}"
+    )
+    calendar.add("description", about)
+    calendar.add("x-wr-caldesc", about)
+    calendar.add("url", page_url)
     for event in events:
         vevent = icalendar.Event()
         vevent.add("uid", event.uid)
