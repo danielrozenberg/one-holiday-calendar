@@ -3,128 +3,137 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
   <title>Holiday Calendar</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 60rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { text-align: left; padding: 0.25rem 0.5rem; border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent); }
-    code { word-break: break-all; }
-    fieldset { margin-bottom: 1rem; }
-    legend { font-weight: 600; }
-    .remove { margin-left: 0.5rem; padding: 0 0.5rem; border-radius: 1rem; cursor: pointer; }
-    .default-submit { position: absolute; left: -9999px; }
-    .options { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.25rem 1rem; }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
 </head>
 <body>
-  <h1>Holiday Calendar</h1>
+  <header class="site">
+    <h1>Holiday Calendar</h1>
+    <p class="lede">Combine holidays from countries, regions and religions into one calendar you can subscribe to.</p>
+  </header>
 
-  <form id="config" method="post" action="{{ url_for('build') }}">
-    <button type="submit" class="default-submit" tabindex="-1" aria-hidden="true">Update</button>
-    <h2>Sources</h2>
-    {% for source in sources %}
-    {% set prefix = "s" ~ source.index ~ "." %}
-    <fieldset>
-      <legend>
-        {{ source.label }}
-        <button type="submit" class="remove" name="remove" value="{{ source.index }}" aria-label="Remove {{ source.label }}" title="Remove {{ source.label }}">✕</button>
-      </legend>
-      <input type="hidden" name="{{ prefix }}kind" value="{{ source.kind }}">
+  <main id="app" class="layout">
+    <form id="config" method="post" action="{{ url_for('build') }}">
+      <button type="submit" class="default-submit" tabindex="-1" aria-hidden="true">Update</button>
 
-      {% if source.subdivisions %}
-      <details>
-        <summary>Regions</summary>
-        <label><input type="checkbox" name="{{ prefix }}all_subdivisions" value="1"{% if source.all_subdivisions %} checked{% endif %}> All regions</label>
-        <div class="options">
-          {% for option in source.subdivisions %}
-          <label><input type="checkbox" name="{{ prefix }}subdivision" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
-          {% endfor %}
+      <section class="card" aria-labelledby="sources-heading">
+        <h2 id="sources-heading">Countries and religions</h2>
+        {% for source in sources %}
+        {% set prefix = "s" ~ source.index ~ "." %}
+        <div class="source">
+          <input type="hidden" name="{{ prefix }}kind" value="{{ source.kind }}">
+          <div class="source-header">
+            <span class="source-name">{{ source.label }}</span>
+            <span class="tag">{{ "Religion" if source.kind.startswith("@") else source.kind }}</span>
+            <button type="submit" class="icon-button remove" name="remove" value="{{ source.index }}" aria-label="Remove {{ source.label }}" title="Remove {{ source.label }}">✕</button>
+          </div>
+
+          {% if source.subdivisions %}
+          {% set picked = source.subdivisions | selectattr("checked") | list %}
+          <details>
+            <summary>Regions <span class="muted">{{ "all" if source.all_subdivisions else (picked | length ~ " selected" if picked else "national only") }}</span></summary>
+            <label class="choice"><input type="checkbox" name="{{ prefix }}all_subdivisions" value="1"{% if source.all_subdivisions %} checked{% endif %}> All regions</label>
+            <div class="options">
+              {% for option in source.subdivisions %}
+              <label><input type="checkbox" name="{{ prefix }}subdivision" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+              {% endfor %}
+            </div>
+          </details>
+          {% endif %}
+
+          {% if source.categories %}
+          <details>
+            <summary>Holiday types <span class="muted">{{ source.categories | selectattr("checked") | map(attribute="label") | join(", ") }}</span></summary>
+            <div class="options">
+              {% for option in source.categories %}
+              <label><input type="checkbox" name="{{ prefix }}category" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+              {% endfor %}
+            </div>
+          </details>
+          {% endif %}
+
+          {% set hidden = source.holidays | selectattr("checked") | list %}
+          <details>
+            <summary>Hide holidays <span class="muted">{{ hidden | length ~ " hidden" if hidden else "none hidden" }}</span></summary>
+            <div class="options">
+              {% for option in source.holidays %}
+              <label><input type="checkbox" name="{{ prefix }}excluded" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+              {% endfor %}
+            </div>
+          </details>
         </div>
-      </details>
+        {% endfor %}
+
+        <div class="add">
+          <label for="add">{{ "Add another" if sources else "Add a country or religion" }}</label>
+          <select id="add" name="add">
+            <option value="">Choose…</option>
+            <optgroup label="Religions">
+              {% for value, name in religions.items() %}
+              <option value="{{ value }}">{{ name }}</option>
+              {% endfor %}
+            </optgroup>
+            <optgroup label="Countries">
+              {% for code, name in countries.items() %}
+              <option value="{{ code }}">{{ name }}</option>
+              {% endfor %}
+            </optgroup>
+          </select>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="format-heading">
+        <h2 id="format-heading">Event format</h2>
+        <fieldset>
+          <legend>Titles</legend>
+          {% set current = title_styles.Name(config.title_style) %}
+          {% for value, label in [("TITLE_STYLE_PLAIN", "Christmas Eve"), ("TITLE_STYLE_PREFIX_CODES", "[CA, US] Christmas Eve"), ("TITLE_STYLE_PREFIX_NAMES", "[Canada, United States] Christmas Eve")] %}
+          <label class="choice"><input type="radio" name="title_style" value="{{ value }}"{% if current == value %} checked{% endif %}> {{ label }}</label>
+          {% endfor %}
+        </fieldset>
+        <fieldset>
+          <legend>Descriptions</legend>
+          <label class="choice"><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> List countries and regions</label>
+          <label class="choice"><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> List holiday types</label>
+        </fieldset>
+        <noscript><button type="submit">Update</button></noscript>
+      </section>
+    </form>
+
+    <div class="results">
+      {% if webcal_url %}
+      <section class="card" aria-labelledby="subscribe-heading">
+        <h2 id="subscribe-heading">Subscribe</h2>
+        <a class="button primary" href="{{ webcal_url }}">Add to calendar app</a>
+        <div class="copy-row">
+          <input type="text" readonly value="{{ https_url }}" aria-label="Calendar URL">
+          <button type="button" data-copy="{{ https_url }}">Copy</button>
+        </div>
+        <p class="muted">Changing the options above gives a new URL.</p>
+      </section>
       {% endif %}
 
-      <details>
-        <summary>Holiday types</summary>
-        <div class="options">
-          {% for option in source.categories %}
-          <label><input type="checkbox" name="{{ prefix }}category" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
-          {% endfor %}
-        </div>
-      </details>
-
-      <details>
-        <summary>Hide individual holidays</summary>
-        <div class="options">
-          {% for option in source.holidays %}
-          <label><input type="checkbox" name="{{ prefix }}excluded" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
-          {% endfor %}
-        </div>
-      </details>
-    </fieldset>
-    {% endfor %}
-
-    <p>
-      <label for="add">Add a country or religion</label>
-      <select id="add" name="add">
-        <option value="">Choose…</option>
-        <optgroup label="Religions">
-          {% for value, name in religions.items() %}
-          <option value="{{ value }}">{{ name }}</option>
-          {% endfor %}
-        </optgroup>
-        <optgroup label="Countries">
-          {% for code, name in countries.items() %}
-          <option value="{{ code }}">{{ name }}</option>
-          {% endfor %}
-        </optgroup>
-      </select>
-    </p>
-    <fieldset>
-      <legend>Event titles</legend>
-      {% set current = title_styles.Name(config.title_style) %}
-      {% for value, label in [("TITLE_STYLE_PLAIN", "Christmas Eve"), ("TITLE_STYLE_PREFIX_CODES", "[CA, US] Christmas Eve"), ("TITLE_STYLE_PREFIX_NAMES", "[Canada, United States] Christmas Eve")] %}
-      <label><input type="radio" name="title_style" value="{{ value }}"{% if current == value %} checked{% endif %}> {{ label }}</label>
-      {% endfor %}
-    </fieldset>
-    <fieldset>
-      <legend>Event descriptions</legend>
-      <label><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> List countries and regions</label>
-      <label><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> List holiday types</label>
-    </fieldset>
-    <button type="submit">Update</button>
-  </form>
-  <script>
-    const form = document.getElementById("config");
-    form.addEventListener("change", () => form.requestSubmit());
-  </script>
-
-  {% if webcal_url %}
-  <section aria-labelledby="subscribe">
-    <h2 id="subscribe">Subscribe</h2>
-    <p><a href="{{ webcal_url }}">Add to your calendar app</a></p>
-    <p>Or copy this URL: <code>{{ https_url }}</code></p>
-  </section>
-  {% endif %}
-
-  <section aria-labelledby="preview">
-    <h2 id="preview">Next 12 months</h2>
-    {% if events %}
-    <table>
-      <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th></tr></thead>
-      <tbody>
-        {% for event in events %}
-        <tr>
-          <td>{{ event.date.strftime("%a %b %-d, %Y") }}</td>
-          <td>{{ title(event, config.title_style) }}</td>
-          <td>{{ event.occurrences | map(attribute="source") | unique | join(", ") }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <p>No holidays selected yet.</p>
-    {% endif %}
-  </section>
+      <section class="card" aria-labelledby="preview-heading">
+        <h2 id="preview-heading">Next 12 months</h2>
+        {% if events %}
+        <table>
+          <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th></tr></thead>
+          <tbody>
+            {% for event in events %}
+            <tr>
+              <td class="date">{{ event.date.strftime("%a, %b %-d") }}</td>
+              <td>{{ title(event, config.title_style) }}</td>
+              <td class="muted">{{ event.occurrences | map(attribute="source") | unique | join(", ") }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No holidays selected yet.</p>
+        {% endif %}
+      </section>
+    </div>
+  </main>
 </body>
 </html>
