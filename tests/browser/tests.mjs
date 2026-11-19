@@ -160,6 +160,22 @@ export const tests = [
     },
   },
   {
+    name: "back and forward undo and redo changes",
+    async run(page, check) {
+      await page.add("CA");
+      const withCanada = await page.evaluate("location.href");
+      await page.add("US");
+      check("two sources", (await page.evaluate(names)) === "Canada,United States");
+      await page.update("history.back()");
+      check("back undoes", (await page.evaluate(names)) === "Canada");
+      check("back restores url", (await page.evaluate("location.href")) === withCanada);
+      await page.update("history.back()");
+      check("back to empty", (await page.evaluate(names)) === "");
+      await page.update("history.forward()");
+      check("forward redoes", (await page.evaluate(names)) === "Canada");
+    },
+  },
+  {
     name: "serves pages offline through the service worker",
     async run(page, check) {
       await page.add("CA");

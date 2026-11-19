@@ -18,47 +18,61 @@ document.addEventListener("change", (event) => {
   event.target.form?.requestSubmit();
 });
 
-document.addEventListener("submit", async (event) => {
+document.addEventListener("submit", (event) => {
   const form = event.target;
   if (form.id !== "config") return;
   event.preventDefault();
+  const body = new URLSearchParams(new FormData(form, event.submitter));
+  load(form.action, { method: "POST", body }, {
+    push: true,
+    fallback: () => form.submit(),
+    onRejected: (message) => showError(form, message),
+  });
+});
+
+// Back and forward restore the config of that history entry.
+window.addEventListener("popstate", () => {
+  load(location.href, {}, { push: false, fallback: () => location.reload() });
+});
+
+/**
+ * Fetches a page and swaps its content in, falling back to a full load.
+ *
+ * With `push`, the page's URL becomes a new history entry.
+ */
+async function load(url, init, { push, fallback, onRejected }) {
   pending?.abort();
   pending = new AbortController();
-  const body = new URLSearchParams(new FormData(form, event.submitter));
   let response;
   try {
-    response = await fetch(form.action, {
-      method: "POST",
+    response = await fetch(url, {
+      ...init,
       headers: { Accept: "text/html" },
-      body,
       signal: pending.signal,
     });
   } catch (error) {
-    if (error.name !== "AbortError") form.submit();
+    if (error.name !== "AbortError") fallback();
     return;
   }
-  if (response.status === 400) {
-    showError(form, await response.text());
+  if (response.status === 400 && onRejected) {
+    onRejected(await response.text());
     return;
   }
-  if (!response.ok) {
-    form.submit();
-    return;
-  }
-  const page = new DOMParser().parseFromString(
-    await response.text(),
-    "text/html",
-  );
-  const next = page.getElementById("app");
+  const page = response.ok
+    ? new DOMParser().parseFromString(await response.text(), "text/html")
+    : null;
+  const next = page?.getElementById("app");
   if (!next) {
-    form.submit();
+    fallback();
     return;
   }
-  history.replaceState(null, "", response.url);
+  if (push && response.url !== location.href) {
+    history.pushState(null, "", response.url);
+  }
   await transition(() => swap(next));
   // Fired once the page takes input again, after any transition.
   document.dispatchEvent(new Event("app:updated"));
-});
+}
 
 function showError(form, message) {
   let error = form.querySelector(".form-error");
