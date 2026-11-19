@@ -272,3 +272,11 @@ def test_versionz(client):
     assert response.json == {
         "version": importlib.metadata.version("holidaycal")
     }
+
+
+def test_favicon(client):
+    page = client.get("/", headers={"Accept": BROWSER_ACCEPT})
+    icon = client.get("/static/favicon.svg")
+
+    assert b'rel="icon"' in page.data
+    assert icon.mimetype == "image/svg+xml"
