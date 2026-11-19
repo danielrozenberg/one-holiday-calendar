@@ -35,7 +35,7 @@ def test_browser_gets_page(client):
 
     assert response.mimetype == "text/html"
     assert b"Canada Day" in response.data
-    assert f"webcal://localhost/c/{BLOB}".encode() in response.data
+    assert f"webcal://localhost/c/{BLOB}?format=ics".encode() in response.data
 
 
 def test_page_has_remove_buttons_after_default_submit(client):

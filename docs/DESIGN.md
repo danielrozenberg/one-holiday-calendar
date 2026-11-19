@@ -16,6 +16,9 @@ never sees the scheme. Instead it negotiates on the request:
 - Everything else (Apple Calendar, Google Calendar, Outlook, Thunderbird) gets
   the `text/calendar` feed.
 
+The page's "Add to calendar app" link is the `webcal://` URL with
+`?format=ics`, so calendar apps get the feed whatever `Accept` header they send.
+
 `/` shows an empty configuration page. The form submits to `/build`, which
 encodes the configuration and redirects to `/c/<blob>`.
 

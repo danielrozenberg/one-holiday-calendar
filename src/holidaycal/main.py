@@ -173,5 +173,8 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
         max_sources=settings.CURRENT.url.max_sources,
         flag=sources.flag,
         https_url=flask.request.host_url.rstrip("/") + path if path else "",
-        webcal_url=f"webcal://{flask.request.host}{path}" if path else "",
+        # Asks for the feed outright, whatever Accept header the app sends.
+        webcal_url=(
+            f"webcal://{flask.request.host}{path}?format=ics" if path else ""
+        ),
     ).encode()
