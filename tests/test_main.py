@@ -166,3 +166,21 @@ def test_add_offers_a_select_and_an_autocomplete(client):
     assert 'role="combobox"' in page
     assert 'data-value="CA" data-search="Canada CA"' in page
     assert 'data-value="@jewish"' in page
+
+
+def test_add_leaves_out_sources_already_added(client):
+    blob = config.encode(
+        config_pb2.Config(
+            sources=[
+                config_pb2.Source(country="CA"),
+                config_pb2.Source(religion="jewish"),
+            ]
+        )
+    )
+
+    page = client.get(f"/c/{blob}", headers={"Accept": BROWSER_ACCEPT}).text
+
+    assert '<option value="CA">' not in page
+    assert 'data-value="CA"' not in page
+    assert 'data-value="@jewish"' not in page
+    assert 'data-value="US"' in page

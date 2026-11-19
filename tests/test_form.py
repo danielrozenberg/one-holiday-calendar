@@ -321,3 +321,9 @@ def test_notice_when_every_holiday_of_a_type_is_hidden():
     assert [(n.action, n.value) for n in view.notices] == [
         ("drop_type", "0:optional")
     ]
+
+
+def test_adding_a_source_twice_is_a_no_op():
+    parsed = _parse(("s0.kind", "CA"), ("add", "CA"))
+
+    assert [s.country for s in parsed.sources] == ["CA"]

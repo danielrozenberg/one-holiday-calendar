@@ -257,7 +257,9 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         _drop_type(by_index, drop)
     parsed.sources.extend(by_index.values())
     if added := form.get("add"):
-        parsed.sources.append(_new_source(added))
+        new = _new_source(added)
+        if new not in parsed.sources:
+            parsed.sources.append(new)
     config.validate(parsed)
     return parsed
 
