@@ -179,7 +179,40 @@ table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
 th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
 th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
 td.date { white-space: nowrap; }
-td.flags { font-size: 1.15rem; letter-spacing: 0.1em; white-space: nowrap; }
+
+table.preview { table-layout: fixed; font-size: 0.85rem; }
+table.preview th, table.preview td { padding: 0.35rem 0.4rem; }
+.col-date { width: 6.5rem; }
+.col-from { width: 30%; }
+.col-type { width: 3.5rem; }
+
+td.clip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td.clip .pin {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flag { font-size: 1.1em; }
+.regions { color: var(--muted); }
+
+td.types abbr {
+  margin-right: 0.3em;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 .empty { color: var(--muted); margin: 0; }
 

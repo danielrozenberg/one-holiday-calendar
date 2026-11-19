@@ -43,11 +43,43 @@ class SourceView:
     holidays: list[Option]
 
 
+_TYPE_LETTERS = {
+    "armed_forces": "A",
+    "bank": "B",
+    "de_facto": "D",
+    "government": "G",
+    "half_day": "\u00bd",
+    "optional": "O",
+    "public": "P",
+    sources.RELIGIOUS_CATEGORY: "R",
+    "school": "S",
+    "unofficial": "U",
+    "workday": "W",
+}
+
+
 @dataclasses.dataclass(frozen=True)
 class SourceBadge:
-    """A source's flag or symbol, with its name for tooltips and readers."""
+    """A source's flag or symbol and the regions an event applies to."""
 
     flag: str
+    name: str
+    regions: list[str]
+    region_names: list[str]
+
+    @property
+    def label(self) -> str:
+        """The full description, for tooltips and screen readers."""
+        if not self.region_names:
+            return self.name
+        return f"{self.name}: {', '.join(self.region_names)}"
+
+
+@dataclasses.dataclass(frozen=True)
+class TypeBadge:
+    """A holiday category as a single letter, with its name for tooltips."""
+
+    letter: str
     name: str
 
 
@@ -67,8 +99,18 @@ class EventView:
 
     event: merge.Event
     sources: list[SourceBadge]
-    regions: list[str]
-    categories: list[str]
+    types: list[TypeBadge]
+
+    @property
+    def short_date(self) -> str:
+        """The event's date, or date range, in as few characters as possible."""
+        first = self.event.date
+        if self.event.days == 1:
+            return f"{first:%a, %b %-d}"
+        last = self.event.end - datetime.timedelta(days=1)
+        if last.month == first.month:
+            return f"{first:%b %-d}\u2013{last:%-d}"
+        return f"{first:%b %-d}\u2013{last:%b %-d}"
 
     @property
     def card(self) -> Card:
@@ -89,23 +131,32 @@ class EventView:
 
 def event_view(event: merge.Event) -> EventView:
     """Describes an event's sources, regions and categories for display."""
-    codes = dict.fromkeys(o.source for o in event.occurrences)
-    regions = dict.fromkeys(
-        subdivision_names(o.source).get(o.subdivision, o.subdivision)
-        for o in event.occurrences
-        if o.subdivision
-    )
-    categories = dict.fromkeys(
-        o.category.replace("_", " ") for o in event.occurrences
-    )
+    regions: dict[str, set[str]] = {}
+    for o in event.occurrences:
+        regions.setdefault(o.source, set()).add(o.subdivision)
+    badges = []
+    for code, subdivisions in regions.items():
+        regional = [] if "" in subdivisions else sorted(subdivisions)
+        names = subdivision_names(code) if regional else {}
+        badges.append(
+            SourceBadge(
+                flag=sources.flag(code),
+                name=sources.source_name(code),
+                regions=regional,
+                region_names=[names.get(r, r) for r in regional],
+            )
+        )
+    categories = dict.fromkeys(o.category for o in event.occurrences)
     return EventView(
         event=event,
-        sources=[
-            SourceBadge(sources.flag(code), sources.source_name(code))
-            for code in codes
+        sources=badges,
+        types=[
+            TypeBadge(
+                _TYPE_LETTERS.get(category, category[:1].upper()),
+                category.replace("_", " "),
+            )
+            for category in categories
         ],
-        regions=list(regions),
-        categories=list(categories),
     )
 
 
@@ -113,7 +164,11 @@ def representative(views: list[EventView]) -> EventView | None:
     """Picks the event that shows off the most formatting options."""
     return max(
         views,
-        key=lambda v: (len(v.sources), len(v.regions), len(v.categories)),
+        key=lambda v: (
+            len(v.sources),
+            sum(len(s.regions) for s in v.sources),
+            len(v.types),
+        ),
         default=None,
     )
 

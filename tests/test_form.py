@@ -151,9 +151,33 @@ def test_event_view():
 
     view = form.event_view(family_day)
 
-    assert view.sources == [form.SourceBadge("\U0001f1e8\U0001f1e6", "Canada")]
-    assert sorted(view.regions) == ["Alberta", "Ontario"]
-    assert view.categories == ["public"]
+    [badge] = view.sources
+    assert badge.flag == "\U0001f1e8\U0001f1e6"
+    assert badge.regions == ["AB", "ON"]
+    assert badge.label == "Canada: Alberta, Ontario"
+    assert view.types == [form.TypeBadge("P", "public")]
+
+
+def test_short_date():
+    parsed = config_pb2.Config(
+        sources=[config_pb2.Source(religion="jewish")], combine_multiday=True
+    )
+    events = {e.key: e for e in merge.build(parsed, [2026])}
+
+    assert form.event_view(events["passover"]).short_date == "Apr 2\u20139"
+    assert form.event_view(events["hanukkah"]).short_date == "Dec 5\u201312"
+    assert form.event_view(events["purim"]).short_date == "Tue, Mar 3"
+
+
+def test_national_sources_have_no_regions():
+    parsed = config_pb2.Config(sources=[config_pb2.Source(country="CA")])
+    [canada_day] = [
+        e for e in merge.build(parsed, [2026]) if e.key == "canada day"
+    ]
+
+    [badge] = form.event_view(canada_day).sources
+    assert badge.regions == []
+    assert badge.label == "Canada"
 
 
 def test_card_has_every_title_style_and_description_line():

@@ -141,8 +141,6 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
         featured=form.representative(views)
         or form.event_view(form.sample_event(today.year)),
         config=parsed,
-        title=ics.title,
-        one_day=datetime.timedelta(days=1),
         title_styles=config_pb2.TitleStyle,
         sources=form.views(parsed, years),
         countries=sources.country_names(),
