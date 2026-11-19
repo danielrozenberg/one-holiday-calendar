@@ -82,6 +82,7 @@
 
         {% set add_label = "Add another" if sources else "Add a country or religion" %}
         {% set added = sources | map(attribute="kind") | list %}
+        {% if sources | length < max_sources %}
         <div class="add">
           <label for="add">{{ add_label }}</label>
           <select id="add" name="add">
@@ -111,6 +112,9 @@
             </ul>
           </div>
         </div>
+        {% else %}
+        <p class="muted">A calendar can combine up to {{ max_sources }} countries and religions.</p>
+        {% endif %}
       </section>
 
       </div>

@@ -78,18 +78,21 @@ def build() -> wrappers.Response:
     try:
         parsed = form.parse(flask.request.form)
     except config.InvalidConfigError as e:
-        flask.abort(400, str(e))
+        return _rejected(str(e))
     if not parsed.sources:
         return flask.redirect(flask.url_for("index"), code=303)
     blob = config.encode(parsed)
     if len(blob) > settings.CURRENT.url.max_blob_length:
-        return flask.Response(
+        return _rejected(
             "This calendar has too many hidden holidays to fit in its URL. "
-            "Show some of them again.",
-            status=400,
-            mimetype="text/plain",
+            "Show some of them again."
         )
     return flask.redirect(flask.url_for("calendar", blob=blob), code=303)
+
+
+def _rejected(message: str) -> wrappers.Response:
+    """A 400 with a plain-text reason, which the page shows as is."""
+    return flask.Response(message, status=400, mimetype="text/plain")
 
 
 @app.get("/c/<blob>")
@@ -156,6 +159,7 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
         sources=form.views(parsed, all_events),
         countries=sources.country_names(),
         religions=form.religion_names(),
+        max_sources=settings.CURRENT.url.max_sources,
         flag=sources.flag,
         https_url=flask.request.host_url.rstrip("/") + path if path else "",
         webcal_url=f"webcal://{flask.request.host}{path}" if path else "",

@@ -214,3 +214,35 @@ def test_build_rejects_regions_on_religions(client):
     )
 
     assert client.post("/build", data=data).status_code == 400
+
+
+def _twenty_countries() -> config_pb2.Config:
+    codes = "CA US DE FR GB IT ES MX BR AR JP KR IN AU NZ ZA EG IL TR SE"
+    return config_pb2.Config(
+        sources=[config_pb2.Source(country=c) for c in codes.split()]
+    )
+
+
+def test_build_rejections_are_plain_text(client):
+    data = MultiDict(
+        [
+            (f"s{i}.kind", s.country)
+            for i, s in enumerate(_twenty_countries().sources)
+        ]
+        + [("add", "NO")]
+    )
+
+    response = client.post("/build", data=data)
+
+    assert response.status_code == 400
+    assert response.mimetype == "text/plain"
+    assert response.text == "More than 20 sources"
+
+
+def test_add_box_is_replaced_at_the_source_limit(client):
+    blob = config.encode(_twenty_countries())
+
+    page = client.get(f"/c/{blob}", headers={"Accept": BROWSER_ACCEPT}).text
+
+    assert 'role="combobox"' not in page
+    assert "up to 20 countries and religions" in page
