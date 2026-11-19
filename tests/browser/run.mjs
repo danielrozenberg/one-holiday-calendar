@@ -49,7 +49,7 @@ async function poll(get) {
 }
 
 const children = [];
-const profile = mkdtempSync(join(tmpdir(), "holidaycal-chrome-"));
+const profile = mkdtempSync(join(tmpdir(), "one-holiday-calendar-chrome-"));
 let failures = 0;
 let startError;
 
@@ -87,7 +87,7 @@ try {
   const appPort = await freePort();
   const debugPort = await freePort();
   const baseUrl = `http://127.0.0.1:${appPort}/`;
-  start(python, ["-m", "gunicorn", "-b", `127.0.0.1:${appPort}`, "holidaycal.main:app"]);
+  start(python, ["-m", "gunicorn", "-b", `127.0.0.1:${appPort}`, "one_holiday_calendar.main:app"]);
   start(chrome, [
     "--headless=new",
     "--no-sandbox",

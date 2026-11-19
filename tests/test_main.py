@@ -7,10 +7,10 @@ from unittest import mock
 import pytest
 from werkzeug.datastructures import MultiDict
 
-from holidaycal import config
-from holidaycal import config_pb2
-from holidaycal import main
-from holidaycal import merge
+from one_holiday_calendar import config
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import main
+from one_holiday_calendar import merge
 
 BLOB = config.encode(
     config_pb2.Config(sources=[config_pb2.Source(country="CA")])
@@ -270,7 +270,7 @@ def test_versionz(client):
     response = client.get("/versionz")
 
     assert response.json == {
-        "version": importlib.metadata.version("holidaycal")
+        "version": importlib.metadata.version("one-holiday-calendar")
     }
 
 

@@ -1,7 +1,7 @@
 import datetime
 
-from holidaycal import config_pb2
-from holidaycal import sources
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import sources
 
 
 def _occurrences(**kwargs) -> list[sources.Occurrence]:

@@ -1,6 +1,6 @@
 import pytest
 
-from holidaycal import settings
+from one_holiday_calendar import settings
 
 _VALID = settings.DEFAULT_PATH.read_text(encoding="utf-8")
 

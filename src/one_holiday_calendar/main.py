@@ -10,14 +10,14 @@ import holidays
 from werkzeug import wrappers
 from werkzeug.middleware import proxy_fix
 
-from holidaycal import cache
-from holidaycal import config
-from holidaycal import config_pb2
-from holidaycal import form
-from holidaycal import ics
-from holidaycal import merge
-from holidaycal import settings
-from holidaycal import sources
+from one_holiday_calendar import cache
+from one_holiday_calendar import config
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import form
+from one_holiday_calendar import ics
+from one_holiday_calendar import merge
+from one_holiday_calendar import settings
+from one_holiday_calendar import sources
 
 STATIC_ASSETS = ("app.css", "app.mjs")
 
@@ -70,7 +70,7 @@ def service_worker() -> flask.Response:
 @app.get("/versionz")
 def versionz() -> dict[str, str]:
     """Reports the deployed version, from the package's `pyproject.toml`."""
-    return {"version": importlib.metadata.version("holidaycal")}
+    return {"version": importlib.metadata.version("one-holiday-calendar")}
 
 
 @app.get("/")

@@ -1,10 +1,10 @@
 import pytest
 from werkzeug import datastructures
 
-from holidaycal import config
-from holidaycal import config_pb2
-from holidaycal import form
-from holidaycal import merge
+from one_holiday_calendar import config
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import form
+from one_holiday_calendar import merge
 
 
 def _parse(*pairs: tuple[str, str]) -> config_pb2.Config:

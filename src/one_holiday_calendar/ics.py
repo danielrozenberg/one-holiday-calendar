@@ -5,10 +5,10 @@ from collections.abc import Iterable
 
 import icalendar
 
-from holidaycal import config_pb2
-from holidaycal import merge
-from holidaycal import settings
-from holidaycal import sources
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import merge
+from one_holiday_calendar import settings
+from one_holiday_calendar import sources
 
 
 def years(today: datetime.date) -> range:
@@ -81,7 +81,7 @@ def render(
 ) -> bytes:
     """Renders events as all-day VEVENTs in a VCALENDAR."""
     calendar = icalendar.Calendar()
-    calendar.add("prodid", "-//holidaycal//EN")
+    calendar.add("prodid", "-//one-holiday-calendar//EN")
     calendar.add("version", "2.0")
     calendar.add("calscale", "GREGORIAN")
     feed = settings.CURRENT.feed

@@ -8,9 +8,9 @@ import zlib
 import holidays
 from google.protobuf import message
 
-from holidaycal import config_pb2
-from holidaycal import religions
-from holidaycal import settings
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import religions
+from one_holiday_calendar import settings
 
 
 class InvalidConfigError(ValueError):

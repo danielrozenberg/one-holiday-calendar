@@ -4,9 +4,9 @@ import zlib
 
 import pytest
 
-from holidaycal import config
-from holidaycal import config_pb2
-from holidaycal import settings
+from one_holiday_calendar import config
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import settings
 
 
 def _config(**kwargs) -> config_pb2.Config:

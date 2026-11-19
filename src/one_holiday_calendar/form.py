@@ -10,12 +10,12 @@ from collections.abc import Collection, Iterable
 import holidays
 from werkzeug import datastructures
 
-from holidaycal import config
-from holidaycal import config_pb2
-from holidaycal import ics
-from holidaycal import merge
-from holidaycal import religions
-from holidaycal import sources
+from one_holiday_calendar import config
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import ics
+from one_holiday_calendar import merge
+from one_holiday_calendar import religions
+from one_holiday_calendar import sources
 
 _KIND_FIELD = re.compile(r"s(\d+)\.kind")
 

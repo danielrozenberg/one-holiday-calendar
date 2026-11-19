@@ -3,9 +3,9 @@ import re
 
 import pytest
 
-from holidaycal import config_pb2
-from holidaycal import merge
-from holidaycal import sources
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import merge
+from one_holiday_calendar import sources
 
 
 @pytest.mark.parametrize(

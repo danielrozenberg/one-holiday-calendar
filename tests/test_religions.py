@@ -2,11 +2,11 @@ import datetime
 
 import pytest
 
-from holidaycal import config
-from holidaycal import config_pb2
-from holidaycal import merge
-from holidaycal import religions
-from holidaycal import sources
+from one_holiday_calendar import config
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import merge
+from one_holiday_calendar import religions
+from one_holiday_calendar import sources
 
 
 @pytest.mark.parametrize("religion", religions.RELIGIONS)

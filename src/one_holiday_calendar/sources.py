@@ -9,8 +9,8 @@ from collections.abc import Iterable, Iterator
 import holidays
 from holidays import registry
 
-from holidaycal import config_pb2
-from holidaycal import religions
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import religions
 
 FALLBACK_LANGUAGE = "en_US"
 DEFAULT_CATEGORY = "public"

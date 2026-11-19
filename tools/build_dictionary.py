@@ -10,9 +10,9 @@ Usage:  python tools/build_dictionary.py OUT_FILE
 import datetime
 import sys
 
-from holidaycal import config_pb2
-from holidaycal import ics
-from holidaycal import merge
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import ics
+from one_holiday_calendar import merge
 
 # Countries most likely to be picked; their hide tokens dominate long configs.
 COUNTRIES = [

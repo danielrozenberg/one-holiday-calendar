@@ -3,9 +3,9 @@ import datetime
 import icalendar
 import pytest
 
-from holidaycal import config_pb2
-from holidaycal import ics
-from holidaycal import merge
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import ics
+from one_holiday_calendar import merge
 
 NOW = datetime.datetime(2026, 11, 19, tzinfo=datetime.UTC)
 

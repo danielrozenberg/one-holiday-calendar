@@ -1,5 +1,5 @@
 runtime: python313
-entrypoint: gunicorn -b :$PORT holidaycal.main:app
+entrypoint: gunicorn -b :$PORT one_holiday_calendar.main:app
 
 automatic_scaling:
   min_instances: 1

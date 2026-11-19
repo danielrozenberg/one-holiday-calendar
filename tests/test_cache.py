@@ -1,4 +1,4 @@
-from holidaycal import cache
+from one_holiday_calendar import cache
 
 
 def _builder(value: bytes):

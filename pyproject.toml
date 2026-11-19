@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "holidaycal"
+name = "one-holiday-calendar"
 version = "1.0.0"
 description = "Merged, configurable holiday calendars served as webcal feeds."
 readme = "docs/DESIGN.md"
@@ -29,14 +29,17 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/holidaycal"]
+packages = ["src/one_holiday_calendar"]
 
 [tool.ruff]
 # Follow Google's Python style guide: 4-space indent, 80-column lines.
 line-length = 80
 src = ["src", "tests"]
 target-version = "py313"
-extend-exclude = ["src/holidaycal/*_pb2.py", "src/holidaycal/*_pb2.pyi"]
+extend-exclude = [
+    "src/one_holiday_calendar/*_pb2.py",
+    "src/one_holiday_calendar/*_pb2.pyi",
+]
 
 [tool.ruff.lint]
 select = [
@@ -61,7 +64,7 @@ ignore = ["D203", "D213"]
 convention = "google"
 
 [tool.ruff.lint.isort]
-known-first-party = ["holidaycal"]
+known-first-party = ["one_holiday_calendar"]
 force-single-line = true
 single-line-exclusions = ["typing", "collections.abc"]
 
@@ -70,7 +73,7 @@ single-line-exclusions = ["typing", "collections.abc"]
 
 [tool.pyrefly]
 project-includes = ["src", "tests"]
-project-excludes = ["src/holidaycal/*_pb2.pyi"]
+project-excludes = ["src/one_holiday_calendar/*_pb2.pyi"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

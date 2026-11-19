@@ -33,7 +33,7 @@ GEN="$(mktemp -d)"
 trap 'rm -rf "$GEN"' EXIT
 "$ROOT/tools/genproto.sh" "$GEN" > /dev/null
 for f in "$GEN"/*; do
-  diff -q "$f" "src/holidaycal/$(basename "$f")" \
+  diff -q "$f" "src/one_holiday_calendar/$(basename "$f")" \
     || { echo "Stale gencode: run ./tools/genproto.sh"; exit 1; }
 done
 

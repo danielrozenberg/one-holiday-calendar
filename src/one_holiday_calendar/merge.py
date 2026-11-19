@@ -10,8 +10,8 @@ import re
 import tomllib
 from collections.abc import Collection, Iterable
 
-from holidaycal import config_pb2
-from holidaycal import sources
+from one_holiday_calendar import config_pb2
+from one_holiday_calendar import sources
 
 _MARKERS = re.compile(r"\([^)]*\b(?:observed|estimated)\b[^)]*\)")
 _APOSTROPHES = re.compile(r"['\u2019]")
@@ -37,7 +37,7 @@ class Event:
     def uid(self) -> str:
         """A stable identifier derived from the merge key."""
         digest = hashlib.sha1(f"{self.date}|{self.key}".encode()).hexdigest()
-        return f"{digest}@holidaycal"
+        return f"{digest}@one-holiday-calendar"
 
 
 def normalize(name: str) -> str:

@@ -1,4 +1,4 @@
-# Holiday Calendar
+# One Holiday Calendar
 
 A no-login web app that builds a single subscribable calendar of holidays from
 any mix of countries, subdivisions and religions. The whole configuration lives
@@ -33,7 +33,7 @@ bank, optional, government, school, …). Country names are taken in English
 (`en_US`) where python-holidays has a translation.
 
 Religions (Christian, Orthodox Christian, Jewish, Islamic, Hindu) are
-calendars defined in `src/holidaycal/religions.py` on top of python-holidays'
+calendars defined in `src/one_holiday_calendar/religions.py` on top of python-holidays'
 calendar mixins, which compute the dates (Easter, Hebrew, Hijri and Hindu
 lunisolar calendars). Their holiday names match the countries' English names
 where possible, so they merge.
@@ -45,7 +45,7 @@ URL as a one-character format marker followed by unpadded base64url:
 
 - `A`: the serialized protobuf as is.
 - `B`: the serialized protobuf compressed with raw DEFLATE and the preset
-  dictionary `src/holidaycal/config_dictionary_v1.txt` (common hide tokens,
+  dictionary `src/one_holiday_calendar/config_dictionary_v1.txt` (common hide tokens,
   alias ids and category names, built by `tools/build_dictionary.py`).
 
 `encode` picks the shorter. Measured on random realistic configs, `B` halves
@@ -75,7 +75,7 @@ size at 64 KiB. It holds:
 Empty and default fields cost no bytes, so a typical blob is about 40–60
 characters. Field numbers are never reused; removed fields are `reserved`. The `v` field
 allows a breaking change if one is ever needed. Generated code
-(`src/holidaycal/config_pb2.py` and `.pyi`) is committed and refreshed with
+(`src/one_holiday_calendar/config_pb2.py` and `.pyi`) is committed and refreshed with
 `tools/genproto.sh`; `tools/ci.sh` fails if it is stale.
 
 ## Merging
@@ -84,7 +84,7 @@ Holidays are generated in English: each country's own variant where
 python-holidays has one (`en_CA`, `en_GB`, …), US English otherwise. They are
 merged on `(date, merge key)`. The merge key is the name lowercased, without
 punctuation or "(observed)" / "(estimated)" markers, unless that name belongs to
-a holiday in `src/holidaycal/aliases.toml`, in which case it is that holiday's
+a holiday in `src/one_holiday_calendar/aliases.toml`, in which case it is that holiday's
 id (e.g. `labor_day` for "Labour Day", "Workers' Day" and "Labor Day").
 
 Each holiday in `aliases.toml` lists its names as tiers in order of preference:
@@ -148,7 +148,7 @@ two errors are logged in 5 minutes, or when a second instance is billed for
 
 ## Settings
 
-Tunable values live in `src/holidaycal/settings.toml`, which is deployed with
+Tunable values live in `src/one_holiday_calendar/settings.toml`, which is deployed with
 the code and validated at startup by `settings.py` (pydantic models; unknown
 keys are rejected). They cover URL limits, the feed's name, refresh interval
 and year window, the preview length, the offline page count and the cache

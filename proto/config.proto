@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package holidaycal;
+package one_holiday_calendar;
 
 message Config {
   // Schema version. 0 is the current schema.
