@@ -31,7 +31,7 @@
 
           {% if source.subdivisions %}
           {% set picked = source.subdivisions | selectattr("checked") | list %}
-          <details>
+          <details data-key="{{ source.kind }}:regions">
             <summary>Regions <span class="muted">{{ "all" if source.all_subdivisions else (picked | length ~ " selected" if picked else "national only") }}</span></summary>
             <label class="choice"><input type="checkbox" name="{{ prefix }}all_subdivisions" value="1"{% if source.all_subdivisions %} checked{% endif %}> All regions</label>
             <div class="options">
@@ -43,7 +43,7 @@
           {% endif %}
 
           {% if source.categories %}
-          <details>
+          <details data-key="{{ source.kind }}:types">
             <summary>Holiday types <span class="muted">{{ source.categories | selectattr("checked") | map(attribute="label") | join(", ") }}</span></summary>
             <div class="options">
               {% for option in source.categories %}
@@ -54,7 +54,7 @@
           {% endif %}
 
           {% set hidden = source.holidays | selectattr("checked") | list %}
-          <details>
+          <details data-key="{{ source.kind }}:hidden">
             <summary>Hide holidays <span class="muted">{{ hidden | length ~ " hidden" if hidden else "none hidden" }}</span></summary>
             <div class="options">
               {% for option in source.holidays %}
