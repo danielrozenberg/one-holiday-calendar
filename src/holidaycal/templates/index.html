@@ -73,7 +73,7 @@
             <summary>Hide holidays <span class="muted">{{ hidden | length ~ " hidden" if hidden else "none hidden" }}</span></summary>
             <div class="options">
               {% for option in source.holidays %}
-              <label><input type="checkbox" name="{{ prefix }}excluded" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+              <label class="one-line" title="{{ option.label }}"><input type="checkbox" name="{{ prefix }}excluded" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> <span>{{ option.label }}</span></label>
               {% endfor %}
             </div>
           </details>
