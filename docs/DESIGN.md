@@ -56,15 +56,24 @@ allows a breaking change if one is ever needed. Generated code
 
 ## Merging
 
-Holidays are generated with English names and merged on
-`(date, normalized name)`. Normalization lowercases, strips punctuation and
-"(observed)" and "(estimated)" markers, and maps known spelling variants through
-`src/holidaycal/aliases.toml` (e.g. "Labour Day" and "Labor Day"). A merged
-event remembers every source, subdivision and category it came from.
+Holidays are generated in English: each country's own variant where
+python-holidays has one (`en_CA`, `en_GB`, …), US English otherwise. They are
+merged on `(date, normalized name)`. Normalization lowercases, strips
+punctuation and "(observed)" / "(estimated)" markers, and maps names of the same
+holiday through `src/holidaycal/aliases.toml` (e.g. "Labour Day" and "Labor
+Day", "Pesach" and "Passover", regional variants of Martin Luther King Jr. Day).
+The aliases were curated from a scan of every country, region and category for
+same-date names that look alike; an alias is added only when both names are the
+same holiday. Aliases never chain, and keys stay sorted (both are tested).
 
-Each event's UID is a hash of its merge key, so it is stable across refreshes
-and across configurations. Excluding a holiday uses its normalized name, which
-is stable across years.
+A merged event is named after its first occurrence, so the name comes from the
+top-most configured source: [US, CA] gives "Labor Day", [CA, US] "Labour Day".
+It remembers every source, subdivision and category it came from.
+
+Each event's UID is a hash of its date and merge key, so it is stable across
+refreshes and across configurations. Hiding a holiday stores its merge key; a
+holiday also stays hidden when its unaliased key matches, so adding an alias
+does not unhide holidays in existing URLs.
 
 ## Feed
 

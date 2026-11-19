@@ -11,7 +11,7 @@ from holidays import registry
 from holidaycal import config_pb2
 from holidaycal import religions
 
-LANGUAGE = "en_US"
+FALLBACK_LANGUAGE = "en_US"
 DEFAULT_CATEGORY = "public"
 RELIGIOUS_CATEGORY = "religious"
 
@@ -93,14 +93,27 @@ def _country_occurrences(
 def _holidays(
     code: str, subdivision: str | None, years: list[int], category: str
 ) -> holidays.HolidayBase:
-    supported = holidays.country_holidays(code).supported_languages
     return holidays.country_holidays(
         code,
         subdiv=subdivision,
         years=years,
         categories=category,
-        language=LANGUAGE if LANGUAGE in supported else None,
+        language=english(code),
     )
+
+
+@functools.cache
+def english(code: str) -> str | None:
+    """Picks the country's own English if available, else US English.
+
+    Returns None for countries without translations, whose names are already
+    in English.
+    """
+    supported = holidays.country_holidays(code).supported_languages
+    for language in (f"en_{code}", FALLBACK_LANGUAGE):
+        if language in supported:
+            return language
+    return None
 
 
 def _emit(

@@ -52,3 +52,9 @@ def test_names_are_english_when_supported():
 def test_flag():
     assert sources.flag("CA") == "\U0001f1e8\U0001f1e6"
     assert sources.flag("Jewish") == "✡️"
+
+
+def test_english_prefers_the_countrys_own_variant():
+    assert sources.english("CA") == "en_CA"
+    assert sources.english("DE") == "en_US"
+    assert sources.english("JM") is None

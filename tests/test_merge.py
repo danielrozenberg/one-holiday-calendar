@@ -106,3 +106,55 @@ def test_combine_multiday_keeps_observed_days_apart():
 
     christmas = [e for e in events if e.key == "christmas day"]
     assert [(e.date.day, e.days) for e in christmas] == [(24, 1), (25, 1)]
+
+
+def test_aliases_are_normalized_and_never_chain():
+    aliases = merge._aliases()
+
+    for key, value in aliases.items():
+        assert merge.unaliased(key) == key
+        assert merge.unaliased(value) == value
+        assert value not in aliases
+
+
+@pytest.mark.parametrize(
+    ("order", "name"),
+    [(["US", "CA"], "Labor Day"), (["CA", "US"], "Labour Day")],
+)
+def test_name_comes_from_the_first_source(order, name):
+    events = _build(*(config_pb2.Source(country=c) for c in order))
+
+    [labor_day] = _on(events, 9, 7)
+    assert labor_day.name == name
+
+
+def test_regional_variants_merge_into_the_national_holiday():
+    events = _build(config_pb2.Source(country="US", all_subdivisions=True))
+
+    [mlk_day] = [
+        e
+        for e in events
+        if e.date == datetime.date(2026, 1, 19)
+        and e.key == "martin luther king jr day"
+    ]
+    assert mlk_day.name == "Martin Luther King Jr. Day"
+    assert len({o.name for o in mlk_day.occurrences}) > 1
+
+
+def test_religion_names_merge_with_country_names():
+    events = _build(
+        config_pb2.Source(country="AR", categories=["hebrew"]),
+        config_pb2.Source(religion="jewish"),
+    )
+
+    [passover] = [e for e in _on(events, 4, 2) if e.key == "passover"]
+    assert passover.name == "Pesach"
+    assert {o.source for o in passover.occurrences} == {"AR", "Jewish"}
+
+
+def test_hidden_unaliased_name_stays_hidden():
+    events = _build(
+        config_pb2.Source(country="CA", excluded=["labour day"]),
+    )
+
+    assert not _on(events, 9, 7)

@@ -42,10 +42,15 @@ class Event:
 
 def normalize(name: str) -> str:
     """Returns the merge key of a holiday name."""
+    key = unaliased(name)
+    return _aliases().get(key, key)
+
+
+def unaliased(name: str) -> str:
+    """Returns a holiday name's merge key before aliases are applied."""
     name = _MARKERS.sub(" ", name.lower())
     name = _APOSTROPHES.sub("", name)
-    name = _NON_WORD.sub(" ", name).strip()
-    return _aliases().get(name, name)
+    return _NON_WORD.sub(" ", name).strip()
 
 
 @functools.cache
@@ -63,21 +68,26 @@ def build(config: config_pb2.Config, years: Iterable[int]) -> list[Event]:
         found.extend(
             o
             for o in sources.occurrences(source, years)
-            if normalize(o.name) not in excluded
+            # Unaliased keys keep holidays hidden after a new alias is added.
+            if not {normalize(o.name), unaliased(o.name)} & excluded
         )
     events = merge(found)
     return combine_multiday(events) if config.combine_multiday else events
 
 
 def merge(occurrences: Iterable[sources.Occurrence]) -> list[Event]:
-    """Groups occurrences by date and normalized name, sorted by date."""
+    """Groups occurrences by date and normalized name, sorted by date.
+
+    Each event is named after its first occurrence, so the name follows the
+    order of the configured sources.
+    """
     groups: dict[tuple[datetime.date, str], list[sources.Occurrence]] = (
         collections.defaultdict(list)
     )
     for occurrence in occurrences:
         groups[occurrence.date, normalize(occurrence.name)].append(occurrence)
     return [
-        Event(date, key, _display_name(group), tuple(group))
+        Event(date, key, group[0].name, tuple(group))
         for (date, key), group in sorted(groups.items())
     ]
 
@@ -99,8 +109,3 @@ def combine_multiday(events: Iterable[Event]) -> list[Event]:
             positions[event.key, event.name] = len(combined)
             combined.append(event)
     return combined
-
-
-def _display_name(group: list[sources.Occurrence]) -> str:
-    counts = collections.Counter(o.name for o in group)
-    return min(counts, key=lambda name: (-counts[name], len(name), name))
