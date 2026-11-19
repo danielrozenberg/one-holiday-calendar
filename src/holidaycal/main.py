@@ -16,7 +16,7 @@ from holidaycal import sources
 PREVIEW_DAYS = 365
 
 app = flask.Flask(__name__)
-app.wsgi_app = proxy_fix.ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+app.wsgi_app = proxy_fix.ProxyFix(app.wsgi_app, x_proto=1)
 
 
 @app.get("/")
