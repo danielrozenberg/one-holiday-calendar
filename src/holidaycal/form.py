@@ -5,7 +5,6 @@ import functools
 from collections.abc import Iterable
 
 import holidays
-from holidays import registry
 from werkzeug import datastructures
 
 from holidaycal import config
@@ -40,16 +39,6 @@ class SourceView:
 
 
 @functools.cache
-def country_names() -> dict[str, str]:
-    """Returns English country names by code, sorted by name."""
-    names = {
-        code: key.replace("_", " ").title()
-        for key, (_, code, *_) in registry.COUNTRIES.items()
-    }
-    return dict(sorted(names.items(), key=lambda item: item[1]))
-
-
-@functools.cache
 def subdivision_names(country: str) -> dict[str, str]:
     """Returns subdivision names by code, falling back to the code."""
     calendar = holidays.country_holidays(country)
@@ -66,7 +55,17 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         config.InvalidConfigError: The form describes an unsupported config.
     """
     removed = form.get("remove")
-    parsed = config_pb2.Config()
+    try:
+        title_style = config_pb2.TitleStyle.Value(
+            form.get("title_style", "TITLE_STYLE_PLAIN")
+        )
+    except ValueError as e:
+        raise config.InvalidConfigError("Unknown title style") from e
+    parsed = config_pb2.Config(
+        title_style=title_style,
+        describe_sources=bool(form.get("describe_sources")),
+        describe_categories=bool(form.get("describe_categories")),
+    )
     index = 0
     while (kind := form.get(f"s{index}.kind")) is not None:
         if str(index) != removed:
@@ -145,7 +144,7 @@ def _view(
     return SourceView(
         index=index,
         kind=country,
-        label=country_names()[country],
+        label=sources.country_names()[country],
         all_subdivisions=source.all_subdivisions,
         subdivisions=[
             Option(code, name, code in source.subdivisions)

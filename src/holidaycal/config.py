@@ -50,6 +50,8 @@ def validate(config: config_pb2.Config) -> None:
     """
     if config.v != 0:
         raise InvalidConfigError(f"Unsupported config version {config.v}")
+    if config.title_style not in config_pb2.TitleStyle.values():
+        raise InvalidConfigError(f"Unknown title style {config.title_style}")
     for source in config.sources:
         match source.WhichOneof("kind"):
             case "country":

@@ -11,6 +11,7 @@ from holidaycal import config_pb2
 from holidaycal import form
 from holidaycal import ics
 from holidaycal import merge
+from holidaycal import sources
 
 PREVIEW_DAYS = 365
 
@@ -49,7 +50,7 @@ def calendar(blob: str) -> flask.Response | str:
             now = datetime.datetime.now(datetime.UTC)
             events = merge.build(parsed, ics.years(now.date()))
             return flask.Response(
-                ics.render(events, now), mimetype="text/calendar"
+                ics.render(events, parsed, now), mimetype="text/calendar"
             )
         case _:
             return _page(parsed, blob)
@@ -76,8 +77,11 @@ def _page(parsed: config_pb2.Config, blob: str) -> str:
     return flask.render_template(
         "index.html",
         events=events,
+        config=parsed,
+        title=ics.title,
+        title_styles=config_pb2.TitleStyle,
         sources=form.views(parsed, years),
-        countries=form.country_names(),
+        countries=sources.country_names(),
         religions=form.religion_names(),
         https_url=flask.request.host_url.rstrip("/") + path if path else "",
         webcal_url=f"webcal://{flask.request.host}{path}" if path else "",

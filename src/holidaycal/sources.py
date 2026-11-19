@@ -2,9 +2,11 @@
 
 import dataclasses
 import datetime
+import functools
 from collections.abc import Iterable, Iterator
 
 import holidays
+from holidays import registry
 
 from holidaycal import config_pb2
 from holidaycal import religions
@@ -12,6 +14,16 @@ from holidaycal import religions
 LANGUAGE = "en_US"
 DEFAULT_CATEGORY = "public"
 RELIGIOUS_CATEGORY = "religious"
+
+
+@functools.cache
+def country_names() -> dict[str, str]:
+    """Returns English country names by code, sorted by name."""
+    names = {
+        code: key.replace("_", " ").title()
+        for key, (_, code, *_) in registry.COUNTRIES.items()
+    }
+    return dict(sorted(names.items(), key=lambda item: item[1]))
 
 
 @dataclasses.dataclass(frozen=True)

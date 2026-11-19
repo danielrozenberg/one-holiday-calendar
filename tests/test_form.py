@@ -80,3 +80,20 @@ def test_views_list_holidays_and_exclusions():
     assert form.Option("christmas day", "Christmas Day", True) in view.holidays
     assert form.Option("ON", "Ontario") in view.subdivisions
     assert form.Option("public", "public", True) in view.categories
+
+
+def test_format_options():
+    parsed = _parse(
+        ("add", "CA"),
+        ("title_style", "TITLE_STYLE_PREFIX_NAMES"),
+        ("describe_sources", "1"),
+    )
+
+    assert parsed.title_style == config_pb2.TITLE_STYLE_PREFIX_NAMES
+    assert parsed.describe_sources
+    assert not parsed.describe_categories
+
+
+def test_invalid_title_style():
+    with pytest.raises(config.InvalidConfigError):
+        _parse(("add", "CA"), ("title_style", "BOLD"))

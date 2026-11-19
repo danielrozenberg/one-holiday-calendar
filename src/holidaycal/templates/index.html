@@ -74,6 +74,18 @@
         </optgroup>
       </select>
     </p>
+    <fieldset>
+      <legend>Event titles</legend>
+      {% set current = title_styles.Name(config.title_style) %}
+      {% for value, label in [("TITLE_STYLE_PLAIN", "Christmas Eve"), ("TITLE_STYLE_PREFIX_CODES", "[CA, US] Christmas Eve"), ("TITLE_STYLE_PREFIX_NAMES", "[Canada, United States] Christmas Eve")] %}
+      <label><input type="radio" name="title_style" value="{{ value }}"{% if current == value %} checked{% endif %}> {{ label }}</label>
+      {% endfor %}
+    </fieldset>
+    <fieldset>
+      <legend>Event descriptions</legend>
+      <label><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> List countries and regions</label>
+      <label><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> List holiday types</label>
+    </fieldset>
     <button type="submit">Update</button>
   </form>
   <script>
@@ -98,7 +110,7 @@
         {% for event in events %}
         <tr>
           <td>{{ event.date.strftime("%a %b %-d, %Y") }}</td>
-          <td>{{ event.name }}</td>
+          <td>{{ title(event, config.title_style) }}</td>
           <td>{{ event.occurrences | map(attribute="source") | unique | join(", ") }}</td>
         </tr>
         {% endfor %}

@@ -59,3 +59,10 @@ def test_decode_rejects_future_version():
 
     with pytest.raises(config.InvalidConfigError, match="version"):
         config.decode(blob)
+
+
+def test_decode_rejects_unknown_title_style():
+    blob = config.encode(_config(title_style=7))
+
+    with pytest.raises(config.InvalidConfigError, match="title style"):
+        config.decode(blob)
