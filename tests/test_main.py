@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import re
 from unittest import mock
@@ -246,3 +247,19 @@ def test_add_box_is_replaced_at_the_source_limit(client):
 
     assert 'role="combobox"' not in page
     assert "up to 20 countries and religions" in page
+
+
+def test_preview_keeps_today_for_visitors_behind_utc(client):
+    blob = config.encode(
+        config_pb2.Config(sources=[config_pb2.Source(country="US")])
+    )
+    # 01:00 UTC on Nov 27 is still Thanksgiving evening in California.
+    now = datetime.datetime(2026, 11, 27, 1, tzinfo=datetime.UTC)
+
+    with mock.patch.object(
+        main.datetime, "datetime", wraps=datetime.datetime
+    ) as clock:
+        clock.now.return_value = now
+        page = client.get(f"/c/{blob}?format=html").text
+
+    assert "Thanksgiving Day" in page

@@ -131,7 +131,11 @@ def _render_feed(blob: str, years: range) -> bytes:
 
 
 def _page(blob: str) -> bytes:
-    today = datetime.datetime.now(datetime.UTC).date()
+    # The server runs in UTC, a day ahead of evening visitors in the Americas;
+    # starting a day early keeps their today in the preview.
+    today = datetime.datetime.now(datetime.UTC).date() - datetime.timedelta(
+        days=1
+    )
     key = ("page", blob, today, flask.request.host_url)
     return RESPONSES.get(key, lambda: _render_page(blob, today))
 
