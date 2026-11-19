@@ -48,7 +48,7 @@ def test_source_fields():
     )
 
 
-def test_all_subdivisions_keeps_picked_regions():
+def test_all_subdivisions_drops_picked_regions():
     parsed = _parse(
         ("s0.kind", "CA"),
         ("s0.all_subdivisions", "1"),
@@ -57,7 +57,7 @@ def test_all_subdivisions_keeps_picked_regions():
     )
 
     assert parsed.sources[0] == config_pb2.Source(
-        country="CA", all_subdivisions=True, subdivisions=["ON"]
+        country="CA", all_subdivisions=True
     )
 
 

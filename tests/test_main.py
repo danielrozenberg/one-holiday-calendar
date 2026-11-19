@@ -143,3 +143,17 @@ def test_page_uses_versioned_assets(client):
     response = client.get("/", headers={"Accept": BROWSER_ACCEPT})
 
     assert f"/static/app.js?v={main.APP_VERSION}".encode() in response.data
+
+
+def test_all_regions_disables_region_boxes(client):
+    blob = config.encode(
+        config_pb2.Config(
+            sources=[config_pb2.Source(country="CA", all_subdivisions=True)]
+        )
+    )
+
+    page = client.get(f"/c/{blob}", headers={"Accept": BROWSER_ACCEPT})
+
+    boxes = re.findall(r"<input [^>]*data-region=[^>]*>", page.text)
+    assert boxes
+    assert all("disabled" in box and "checked" not in box for box in boxes)

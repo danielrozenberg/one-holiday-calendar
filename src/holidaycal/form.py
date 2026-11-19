@@ -265,6 +265,8 @@ def _parse_source(
     source.all_subdivisions = bool(form.get(prefix + "all_subdivisions"))
     source.categories.extend(form.getlist(prefix + "category"))
     source.excluded.extend(form.getlist(prefix + "excluded"))
+    if source.all_subdivisions:
+        source.ClearField("subdivisions")
     if list(source.categories) == [sources.DEFAULT_CATEGORY]:
         source.ClearField("categories")
     return source

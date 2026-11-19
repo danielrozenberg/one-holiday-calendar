@@ -48,10 +48,10 @@
           {% set picked = source.subdivisions | selectattr("checked") | list %}
           <details data-key="{{ source.kind }}:regions">
             <summary>Regions <span class="muted">{{ "all" if source.all_subdivisions else (picked | length ~ " selected" if picked else "national only") }}</span></summary>
-            <label class="choice"><input type="checkbox" name="{{ prefix }}all_subdivisions" value="1"{% if source.all_subdivisions %} checked{% endif %}> All regions</label>
+            <label class="choice"><input type="checkbox" name="{{ prefix }}all_subdivisions" value="1" data-all-regions{% if source.all_subdivisions %} checked{% endif %}> All regions</label>
             <div class="options">
               {% for option in source.subdivisions %}
-              <label><input type="checkbox" name="{{ prefix }}subdivision" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> {{ option.label }}</label>
+              <label><input type="checkbox" name="{{ prefix }}subdivision" value="{{ option.value }}" data-region="{{ source.kind }}:{{ option.value }}"{% if option.checked %} checked{% endif %}{% if source.all_subdivisions %} disabled{% endif %}> {{ option.label }}</label>
               {% endfor %}
             </div>
           </details>

@@ -5,6 +5,13 @@ if ("serviceWorker" in navigator) {
 let pending;
 
 document.addEventListener("change", (event) => {
+  const all = event.target.closest?.("[data-all-regions]");
+  if (all) {
+    // Disabled boxes keep their ticks but are left out of the submitted form.
+    for (const box of all.closest(".source").querySelectorAll("[data-region]")) {
+      box.disabled = all.checked;
+    }
+  }
   event.target.form?.requestSubmit();
 });
 
@@ -52,7 +59,15 @@ function swap(next) {
     [...document.querySelectorAll("details[open]")].map((d) => d.dataset.key),
   );
   const focused = document.activeElement;
+  const keptRegions = new Set(
+    [...document.querySelectorAll("[data-region]:disabled:checked")].map(
+      (box) => box.dataset.region,
+    ),
+  );
   document.getElementById("app").replaceWith(next);
+  for (const box of next.querySelectorAll("[data-region]:disabled")) {
+    box.checked ||= keptRegions.has(box.dataset.region);
+  }
   for (const details of next.querySelectorAll("details[data-key]")) {
     details.open = open.has(details.dataset.key);
   }
