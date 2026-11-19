@@ -41,24 +41,30 @@ def title(event: merge.Event, style: config_pb2.TitleStyle.ValueType) -> str:
             return event.name
 
 
+def description_lines(event: merge.Event) -> dict[str, str]:
+    """Returns every description line an event can have, by option."""
+    regions: dict[str, list[str]] = {}
+    for o in event.occurrences:
+        regions.setdefault(o.source, []).append(o.subdivision)
+    categories = dict.fromkeys(o.category for o in event.occurrences)
+    return {
+        "sources": "Observed in: "
+        + ", ".join(
+            _with_regions(code, subdivisions)
+            for code, subdivisions in regions.items()
+        ),
+        "categories": "Types: " + ", ".join(categories).replace("_", " "),
+    }
+
+
 def description(event: merge.Event, parsed: config_pb2.Config) -> str:
     """Lists the event's sources and categories, as configured."""
-    lines = []
-    if parsed.describe_sources:
-        regions: dict[str, list[str]] = {}
-        for o in event.occurrences:
-            regions.setdefault(o.source, []).append(o.subdivision)
-        lines.append(
-            "Observed in: "
-            + ", ".join(
-                _with_regions(code, subdivisions)
-                for code, subdivisions in regions.items()
-            )
-        )
-    if parsed.describe_categories:
-        categories = dict.fromkeys(o.category for o in event.occurrences)
-        lines.append("Types: " + ", ".join(categories).replace("_", " "))
-    return "\n".join(lines)
+    enabled = {
+        "sources": parsed.describe_sources,
+        "categories": parsed.describe_categories,
+    }
+    lines = description_lines(event)
+    return "\n".join(line for key, line in lines.items() if enabled[key])
 
 
 def _with_regions(code: str, subdivisions: list[str]) -> str:

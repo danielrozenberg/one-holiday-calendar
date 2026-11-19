@@ -154,3 +154,43 @@ def test_event_view():
     assert view.sources == [form.SourceBadge("\U0001f1e8\U0001f1e6", "Canada")]
     assert sorted(view.regions) == ["Alberta", "Ontario"]
     assert view.categories == ["public"]
+
+
+def test_card_has_every_title_style_and_description_line():
+    card = form.event_view(form.sample_event(2026)).card
+
+    assert set(card["titles"]) == set(config_pb2.TitleStyle.keys())
+    assert card["titles"]["TITLE_STYLE_SUFFIX_CODES"] == (
+        "Christmas Eve [CA, US, Christian]"
+    )
+    assert card["date"] == "Thursday, December 24, 2026"
+    assert card["sources"] == "Observed in: Canada, United States, Christian"
+    assert card["categories"] == "Types: optional, religious"
+
+
+def test_representative_prefers_most_sources():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="CA"),
+            config_pb2.Source(country="US"),
+            config_pb2.Source(religion="christian"),
+        ]
+    )
+    views = [form.event_view(e) for e in merge.build(parsed, [2026])]
+
+    featured = form.representative(views)
+
+    assert featured is not None
+    assert featured.event.name == "Christmas Day"
+    assert form.representative([]) is None
+
+
+def test_multiday_card_date_is_a_range():
+    parsed = config_pb2.Config(
+        sources=[config_pb2.Source(religion="jewish")], combine_multiday=True
+    )
+    [passover] = [e for e in merge.build(parsed, [2026]) if e.key == "passover"]
+
+    assert form.event_view(passover).card["date"] == (
+        "Thursday, April 2 \u2013 Thursday, April 9, 2026"
+    )

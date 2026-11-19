@@ -13,9 +13,21 @@
     <p class="lede">Combine holidays from countries, regions and religions into one calendar you can subscribe to.</p>
   </header>
 
-  <main id="app" class="layout">
-    <form id="config" method="post" action="{{ url_for('build') }}">
+  <main id="app">
+    <form id="config" class="layout" method="post" action="{{ url_for('build') }}">
       <button type="submit" class="default-submit" tabindex="-1" aria-hidden="true">Update</button>
+      <div class="config-column">
+      {% if webcal_url %}
+      <section class="card" aria-labelledby="subscribe-heading">
+        <h2 id="subscribe-heading">Subscribe</h2>
+        <a class="button primary" href="{{ webcal_url }}">Add to calendar app</a>
+        <div class="copy-row">
+          <input type="text" readonly value="{{ https_url }}" aria-label="Calendar URL">
+          <button type="button" data-copy="{{ https_url }}">Copy</button>
+        </div>
+        <p class="muted">Changing the options above gives a new URL.</p>
+      </section>
+      {% endif %}
 
       <section class="card" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Countries and religions</h2>
@@ -86,53 +98,66 @@
         </div>
       </section>
 
-      <section class="card" aria-labelledby="format-heading">
-        <h2 id="format-heading">Event format</h2>
-        <fieldset>
-          <legend>Titles</legend>
-          {% set current = title_styles.Name(config.title_style) %}
-          {% for value, label in [("TITLE_STYLE_PLAIN", "Christmas Eve"), ("TITLE_STYLE_PREFIX_CODES", "[CA, US] Christmas Eve"), ("TITLE_STYLE_PREFIX_NAMES", "[Canada, United States] Christmas Eve")] %}
-          <label class="choice"><input type="radio" name="title_style" value="{{ value }}"{% if current == value %} checked{% endif %}> {{ label }}</label>
-          {% endfor %}
-        </fieldset>
-        <fieldset>
-          <legend>Descriptions</legend>
-          <label class="choice"><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> List countries and regions</label>
-          <label class="choice"><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> List holiday types</label>
-        </fieldset>
-        <fieldset>
-          <legend>Multi-day holidays</legend>
-          <label class="choice"><input type="radio" name="combine_multiday" value=""{% if not config.combine_multiday %} checked{% endif %}> One event per day</label>
-          <label class="choice"><input type="radio" name="combine_multiday" value="1"{% if config.combine_multiday %} checked{% endif %}> One event spanning all days</label>
-        </fieldset>
+      </div>
+
+      <div class="results">
+      <section class="card event-format" aria-labelledby="format-heading">
+        <div class="card-head">
+          <h2 id="format-heading">Event format</h2>
+          <span class="muted hint" data-field="hint" data-default-hint="{{ 'Most varied holiday' if events else 'Example' }}">{{ "Most varied holiday" if events else "Example" }}</span>
+        </div>
+        {% set card = featured.card %}
+        {% set current = title_styles.Name(config.title_style) %}
+        <article class="gcal" data-card='{{ card | tojson }}'>
+          <div class="gcal-row">
+            <span class="swatch" aria-hidden="true"></span>
+            <div>
+              <button type="button" class="gcal-title" popovertarget="title-formats" title="Change the title format">
+                <span data-field="title">{{ card.titles[current] }}</span>
+                <span class="edit-icon" aria-hidden="true">✎</span>
+              </button>
+              <div class="gcal-date"><span data-field="date">{{ card.date }}</span> · All day</div>
+            </div>
+          </div>
+
+          <div id="title-formats" class="title-formats" popover>
+            <fieldset>
+              <legend>Title format</legend>
+              {% for name in title_styles.keys() %}
+              <label class="title-option"><input type="radio" name="title_style" value="{{ name }}"{% if current == name %} checked{% endif %}> <span data-title-style="{{ name }}">{{ card.titles[name] }}</span></label>
+              {% endfor %}
+            </fieldset>
+          </div>
+
+          <div class="gcal-row">
+            <span class="gcal-icon" aria-hidden="true">☰</span>
+            <div class="gcal-description">
+              <label class="desc-line"><input type="checkbox" name="describe_sources" value="1"{% if config.describe_sources %} checked{% endif %}> <span data-field="sources">{{ card.sources }}</span></label>
+              <label class="desc-line"><input type="checkbox" name="describe_categories" value="1"{% if config.describe_categories %} checked{% endif %}> <span data-field="categories">{{ card.categories }}</span></label>
+              <p class="muted small">Tick the lines to include in every event's description.</p>
+            </div>
+          </div>
+
+          <div class="gcal-row">
+            <span class="gcal-icon" aria-hidden="true">↔</span>
+            <label class="switch-label"><input type="checkbox" role="switch" name="combine_multiday" value="1"{% if config.combine_multiday %} checked{% endif %}> Show multi-day holidays as one event</label>
+          </div>
+        </article>
         <noscript><button type="submit">Update</button></noscript>
       </section>
-    </form>
-
-    <div class="results">
-      {% if webcal_url %}
-      <section class="card" aria-labelledby="subscribe-heading">
-        <h2 id="subscribe-heading">Subscribe</h2>
-        <a class="button primary" href="{{ webcal_url }}">Add to calendar app</a>
-        <div class="copy-row">
-          <input type="text" readonly value="{{ https_url }}" aria-label="Calendar URL">
-          <button type="button" data-copy="{{ https_url }}">Copy</button>
-        </div>
-        <p class="muted">Changing the options above gives a new URL.</p>
-      </section>
-      {% endif %}
 
       <section class="card" aria-labelledby="preview-heading">
         <h2 id="preview-heading">Next 12 months</h2>
         {% if events %}
+        <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th><th scope="col">Region</th><th scope="col">Type</th></tr></thead>
           <tbody>
             {% for view in events %}
             {% set event = view.event %}
-            <tr>
+            <tr class="previewable" data-uid="{{ event.uid }}" data-card='{{ view.card | tojson }}'>
               <td class="date">{{ event.date.strftime("%a, %b %-d") }}{% if event.days > 1 %} – {{ (event.end - one_day).strftime("%a, %b %-d") }}{% endif %}</td>
-              <td>{{ title(event, config.title_style) }}</td>
+              <td><button type="button" class="pin" aria-pressed="false" title="Pin in the event format card">{{ title(event, config.title_style) }}</button></td>
               <td class="flags">{% for badge in view.sources %}<span role="img" aria-label="{{ badge.name }}" title="{{ badge.name }}">{{ badge.flag }}</span>{% endfor %}</td>
               <td class="muted">{{ view.regions | join(", ") or "—" }}</td>
               <td class="muted">{{ view.categories | join(", ") }}</td>
@@ -140,11 +165,13 @@
             {% endfor %}
           </tbody>
         </table>
+        </div>
         {% else %}
         <p class="empty">No holidays selected yet.</p>
         {% endif %}
       </section>
-    </div>
+      </div>
+    </form>
   </main>
 </body>
 </html>

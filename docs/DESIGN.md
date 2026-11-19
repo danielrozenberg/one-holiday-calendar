@@ -124,6 +124,18 @@ and focus, and updates the address bar. Sources are submitted in page order, so
 reordering (↑/↓ buttons, which also work without JavaScript, or the drag
 handle) just moves them in the page before submitting.
 
+The "Event format" card looks like a calendar event and doubles as the format
+controls: clicking the title opens a popover (Popover API, anchored with CSS
+anchor positioning where supported) listing every title style rendered for the
+shown event, and each description line has its own checkbox. It shows the most
+varied holiday in the preview by default (most sources, then regions and types),
+or a sample Christmas Eve when nothing is selected. Hovering or focusing a
+preview row shows that holiday instead; clicking a row pins it for the browser
+tab's session (`sessionStorage`), and clicking again unpins it. Each row carries
+its card content (title in every style, date, description lines) as JSON, so
+previews need no server round trip. Updates animate with the View Transitions
+API where available.
+
 A service worker (`/sw.js`, rendered from `templates/sw.js`) serves the CSS and
 JS from cache and pages network-first, falling back to the last 20 cached pages
 offline. Static URLs carry `?v=<APP_VERSION>`, and the worker's cache is named

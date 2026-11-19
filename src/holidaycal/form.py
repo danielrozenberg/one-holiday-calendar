@@ -1,8 +1,10 @@
 """Translation between the config page's form and `Config`."""
 
 import dataclasses
+import datetime
 import functools
 import re
+import typing
 from collections.abc import Iterable
 
 import holidays
@@ -10,6 +12,7 @@ from werkzeug import datastructures
 
 from holidaycal import config
 from holidaycal import config_pb2
+from holidaycal import ics
 from holidaycal import merge
 from holidaycal import religions
 from holidaycal import sources
@@ -48,6 +51,16 @@ class SourceBadge:
     name: str
 
 
+class Card(typing.TypedDict):
+    """The event format card's content, sent to the page as JSON."""
+
+    uid: str
+    titles: dict[str, str]
+    date: str
+    sources: str
+    categories: str
+
+
 @dataclasses.dataclass(frozen=True)
 class EventView:
     """Everything the preview needs to render one event."""
@@ -56,6 +69,22 @@ class EventView:
     sources: list[SourceBadge]
     regions: list[str]
     categories: list[str]
+
+    @property
+    def card(self) -> Card:
+        """The event card's content for this event, in every title style."""
+        event = self.event
+        lines = ics.description_lines(event)
+        return Card(
+            uid=event.uid,
+            titles={
+                name: ics.title(event, value)
+                for name, value in config_pb2.TitleStyle.items()
+            },
+            date=_long_date(event),
+            sources=lines["sources"],
+            categories=lines["categories"],
+        )
 
 
 def event_view(event: merge.Event) -> EventView:
@@ -78,6 +107,36 @@ def event_view(event: merge.Event) -> EventView:
         regions=list(regions),
         categories=list(categories),
     )
+
+
+def representative(views: list[EventView]) -> EventView | None:
+    """Picks the event that shows off the most formatting options."""
+    return max(
+        views,
+        key=lambda v: (len(v.sources), len(v.regions), len(v.categories)),
+        default=None,
+    )
+
+
+def sample_event(year: int) -> merge.Event:
+    """An example event for the card when no holidays are selected."""
+    date = datetime.date(year, 12, 24)
+    occurrences = (
+        sources.Occurrence(date, "Christmas Eve", "CA", "", "optional"),
+        sources.Occurrence(date, "Christmas Eve", "US", "", "optional"),
+        sources.Occurrence(
+            date, "Christmas Eve", "Christian", "", sources.RELIGIOUS_CATEGORY
+        ),
+    )
+    return merge.Event(date, "christmas eve", "Christmas Eve", occurrences)
+
+
+def _long_date(event: merge.Event) -> str:
+    first = event.date
+    if event.days == 1:
+        return first.strftime("%A, %B %-d, %Y")
+    last = event.end - datetime.timedelta(days=1)
+    return f"{first:%A, %B %-d} \u2013 {last:%A, %B %-d, %Y}"
 
 
 @functools.cache

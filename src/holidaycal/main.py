@@ -133,10 +133,13 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
     events = [
         e for e in merge.build(parsed, years) if today < e.end and e.date < end
     ]
+    views = [form.event_view(e) for e in events]
     path = flask.url_for("calendar", blob=blob) if blob else ""
     return flask.render_template(
         "index.html",
-        events=[form.event_view(e) for e in events],
+        events=views,
+        featured=form.representative(views)
+        or form.event_view(form.sample_event(today.year)),
         config=parsed,
         title=ics.title,
         one_day=datetime.timedelta(days=1),
