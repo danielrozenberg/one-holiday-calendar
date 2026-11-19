@@ -187,3 +187,10 @@ def test_calendar_links_to_its_config_page():
     assert calendar["url"] == PAGE_URL
     assert PAGE_URL in str(calendar["description"])
     assert PAGE_URL in str(calendar["x-wr-caldesc"])
+
+
+def test_refresh_hints_are_durations():
+    text = ics.render([], config_pb2.Config(), NOW, PAGE_URL).decode()
+
+    assert "REFRESH-INTERVAL;VALUE=DURATION:P1D\r\n" in text
+    assert "X-PUBLISHED-TTL:P1D\r\n" in text

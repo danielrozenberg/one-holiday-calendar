@@ -103,7 +103,8 @@ def render(
     refresh = datetime.timedelta(hours=feed.refresh_hours)
     calendar.add("x-wr-calname", feed.calendar_name)
     calendar.add("refresh-interval", refresh, parameters={"VALUE": "DURATION"})
-    calendar.add("x-published-ttl", refresh)
+    # icalendar doesn't know X- properties, so it needs the value's type.
+    calendar.add("x-published-ttl", icalendar.vDuration(refresh))
     about = (
         f"Holidays from One Holiday Calendar. To change them, open {page_url}"
     )
