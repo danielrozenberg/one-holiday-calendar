@@ -24,6 +24,12 @@ def title(event: merge.Event, style: config_pb2.TitleStyle.ValueType) -> str:
     codes = list(dict.fromkeys(o.source for o in event.occurrences))
     names = ", ".join(map(sources.source_name, codes))
     flags = "".join(map(sources.flag, codes))
+    if sources.is_global(codes):
+        codes, names, flags = (
+            [sources.GLOBAL],
+            sources.GLOBAL,
+            sources.GLOBAL_FLAG,
+        )
     match style:
         case config_pb2.TITLE_STYLE_PREFIX_CODES:
             return f"[{', '.join(codes)}] {event.name}"
@@ -47,12 +53,16 @@ def description_lines(event: merge.Event) -> dict[str, str]:
     for o in event.occurrences:
         regions.setdefault(o.source, []).append(o.subdivision)
     categories = dict.fromkeys(o.category for o in event.occurrences)
-    return {
-        "sources": "Observed in: "
-        + ", ".join(
+    observed = (
+        sources.GLOBAL
+        if sources.is_global(regions)
+        else ", ".join(
             _with_regions(code, subdivisions)
             for code, subdivisions in regions.items()
-        ),
+        )
+    )
+    return {
+        "sources": f"Observed in: {observed}",
         "categories": "Types: " + ", ".join(categories).replace("_", " "),
     }
 

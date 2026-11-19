@@ -158,6 +158,16 @@ def event_view(event: merge.Event, hidden: Collection[str] = ()) -> EventView:
                 region_names=[names.get(r, r) for r in regional],
             )
         )
+    if sources.is_global(regions):
+        # One badge; its tooltip still lists every source.
+        badges = [
+            SourceBadge(
+                flag=sources.GLOBAL_FLAG,
+                name=sources.GLOBAL,
+                regions=[],
+                region_names=[b.name for b in badges],
+            )
+        ]
     categories = dict.fromkeys(o.category for o in event.occurrences)
     return EventView(
         event=event,
@@ -179,7 +189,7 @@ def representative(views: list[EventView]) -> EventView | None:
     return max(
         views,
         key=lambda v: (
-            len(v.sources),
+            len({o.source for o in v.event.occurrences}),
             sum(len(s.regions) for s in v.sources),
             len(v.types),
         ),

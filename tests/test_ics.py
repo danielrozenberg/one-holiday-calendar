@@ -139,3 +139,38 @@ def test_multiday_event_spans_its_days():
     ]
     assert passover.decoded("dtstart") == datetime.date(2026, 4, 2)
     assert passover.decoded("dtend") == datetime.date(2026, 4, 10)
+
+
+def _global_christmas() -> merge.Event:
+    config = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="CA"),
+            config_pb2.Source(country="US"),
+            config_pb2.Source(country="DE"),
+            config_pb2.Source(religion="christian"),
+        ]
+    )
+    [event] = [
+        e
+        for e in merge.build(config, [2026])
+        if e.date == datetime.date(2026, 12, 25)
+    ]
+    return event
+
+
+@pytest.mark.parametrize(
+    ("style", "expected"),
+    [
+        (config_pb2.TITLE_STYLE_PREFIX_CODES, "[Global] Christmas Day"),
+        (config_pb2.TITLE_STYLE_SUFFIX_NAMES, "Christmas Day [Global]"),
+        (config_pb2.TITLE_STYLE_PREFIX_FLAGS, "\U0001f30d Christmas Day"),
+    ],
+)
+def test_title_says_global_from_four_sources(style, expected):
+    assert ics.title(_global_christmas(), style) == expected
+
+
+def test_description_says_global_from_four_sources():
+    lines = ics.description_lines(_global_christmas())
+
+    assert lines["sources"] == "Observed in: Global"

@@ -64,8 +64,11 @@ size at 64 KiB. It holds:
   key can mean different holidays elsewhere, such as every country's
   "Independence Day", or Emancipation Day in Puerto Rico, DC and the Virgin
   Islands.
-- **Title style**: plain (`Christmas Eve`) or prefixed with the contributing
-  sources (`[CA, US] Christmas Eve`), using codes or names.
+- **Title style**: plain (`Christmas Eve`), or with the contributing sources
+  as a prefix or suffix, using codes, names or flags (`[CA, US] Christmas Eve`,
+  `Christmas Eve 🇨🇦🇺🇸`). A holiday from `global_sources` (4) or more sources is
+  labelled `Global` (🌍 for flags) instead, there and in descriptions and the
+  preview.
 - **Description options**: whether each event's description lists the
   countries (with regions, for regional holidays) and the holiday types.
 - **Multi-day holidays**: one event per day (default), or one event spanning

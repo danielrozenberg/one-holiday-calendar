@@ -4,13 +4,14 @@ import dataclasses
 import datetime
 import functools
 import re
-from collections.abc import Iterable, Iterator
+from collections.abc import Collection, Iterable, Iterator
 
 import holidays
 from holidays import registry
 
 from one_holiday_calendar import config_pb2
 from one_holiday_calendar import religions
+from one_holiday_calendar import settings
 
 FALLBACK_LANGUAGE = "en_US"
 DEFAULT_CATEGORY = "public"
@@ -33,6 +34,15 @@ def country_names() -> dict[str, str]:
 def _title(name: str) -> str:
     name = _SMALL_WORDS.sub(lambda m: m[0].lower(), name.title())
     return _MC.sub(lambda m: "Mc" + m[1].upper(), name)
+
+
+GLOBAL = "Global"
+GLOBAL_FLAG = "\U0001f30d"
+
+
+def is_global(codes: Collection[str]) -> bool:
+    """Whether a holiday comes from enough sources to be labelled Global."""
+    return len(codes) >= settings.CURRENT.feed.global_sources
 
 
 def source_name(source: str) -> str:

@@ -14,6 +14,9 @@ refresh_hours = 24
 # The feed covers this many years before and after the current one.
 years_before = 1
 years_after = 2
+# Holidays from at least this many sources are labelled "Global" instead of
+# listing them.
+global_sources = 4
 
 [page]
 # How far ahead the preview table looks.

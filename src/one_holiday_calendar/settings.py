@@ -30,6 +30,7 @@ class FeedSettings(_Section):
     refresh_hours: pydantic.PositiveInt
     years_before: pydantic.NonNegativeInt
     years_after: pydantic.NonNegativeInt
+    global_sources: pydantic.PositiveInt
 
 
 class PageSettings(_Section):

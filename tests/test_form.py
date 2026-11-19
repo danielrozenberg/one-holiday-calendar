@@ -378,3 +378,22 @@ def test_hidden_holidays_of_removed_sources_are_dropped():
     )
 
     assert list(parsed.hidden) == ["CA/ON:family day"]
+
+
+def test_event_view_collapses_four_sources_into_global():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="CA"),
+            config_pb2.Source(country="US"),
+            config_pb2.Source(country="DE"),
+            config_pb2.Source(religion="christian"),
+        ]
+    )
+    [christmas] = [
+        e for e in merge.build(parsed, [2026]) if e.key == "christmas_day"
+    ]
+
+    [badge] = form.event_view(christmas).sources
+
+    assert badge.flag == "\U0001f30d"
+    assert badge.label == "Global: Canada, United States, Germany, Christian"
