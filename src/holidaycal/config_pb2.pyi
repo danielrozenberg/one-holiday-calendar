@@ -57,6 +57,7 @@ class Config(_message.Message):
     DESCRIBE_SOURCES_FIELD_NUMBER: _builtins.int
     DESCRIBE_CATEGORIES_FIELD_NUMBER: _builtins.int
     COMBINE_MULTIDAY_FIELD_NUMBER: _builtins.int
+    HIDDEN_FIELD_NUMBER: _builtins.int
     v: _builtins.int
     """Schema version. 0 is the current schema."""
     title_style: Global___TitleStyle.ValueType
@@ -66,6 +67,10 @@ class Config(_message.Message):
     """Show a holiday spanning consecutive days as one event, not one per day."""
     @_builtins.property
     def sources(self) -> _containers.RepeatedCompositeFieldContainer[Global___Source]: ...
+    @_builtins.property
+    def hidden(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
+        """Merge keys (alias ids or normalized names) of holidays to leave out."""
+
     def __init__(
         self,
         *,
@@ -75,10 +80,11 @@ class Config(_message.Message):
         describe_sources: _builtins.bool = ...,
         describe_categories: _builtins.bool = ...,
         combine_multiday: _builtins.bool = ...,
+        hidden: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
     _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["combine_multiday", b"combine_multiday", "describe_categories", b"describe_categories", "describe_sources", b"describe_sources", "sources", b"sources", "title_style", b"title_style", "v", b"v"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["combine_multiday", b"combine_multiday", "describe_categories", b"describe_categories", "describe_sources", b"describe_sources", "hidden", b"hidden", "sources", b"sources", "title_style", b"title_style", "v", b"v"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
     def WhichOneof(self, oneof_group: _Never) -> None: ...
 
@@ -93,7 +99,6 @@ class Source(_message.Message):
     SUBDIVISIONS_FIELD_NUMBER: _builtins.int
     ALL_SUBDIVISIONS_FIELD_NUMBER: _builtins.int
     CATEGORIES_FIELD_NUMBER: _builtins.int
-    EXCLUDED_FIELD_NUMBER: _builtins.int
     country: _builtins.str
     """ISO 3166-1 alpha-2 country code, e.g. "CA"."""
     religion: _builtins.str
@@ -107,10 +112,6 @@ class Source(_message.Message):
     def categories(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
         """python-holidays category names. Empty means "public" only."""
 
-    @_builtins.property
-    def excluded(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]:
-        """Normalized names of holidays to leave out."""
-
     def __init__(
         self,
         *,
@@ -119,11 +120,10 @@ class Source(_message.Message):
         subdivisions: _abc.Iterable[_builtins.str] | None = ...,
         all_subdivisions: _builtins.bool = ...,
         categories: _abc.Iterable[_builtins.str] | None = ...,
-        excluded: _abc.Iterable[_builtins.str] | None = ...,
     ) -> None: ...
     _HasFieldArgType: _TypeAlias = _typing.Literal["country", b"country", "kind", b"kind", "religion", b"religion"]  # noqa: Y015
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["all_subdivisions", b"all_subdivisions", "categories", b"categories", "country", b"country", "excluded", b"excluded", "kind", b"kind", "religion", b"religion", "subdivisions", b"subdivisions"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["all_subdivisions", b"all_subdivisions", "categories", b"categories", "country", b"country", "kind", b"kind", "religion", b"religion", "subdivisions", b"subdivisions"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
     _WhichOneofReturnType_kind: _TypeAlias = _typing.Literal["country", "religion"]  # noqa: Y015
     _WhichOneofArgType_kind: _TypeAlias = _typing.Literal["kind", b"kind"]  # noqa: Y015

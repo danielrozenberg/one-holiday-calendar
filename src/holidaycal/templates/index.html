@@ -16,6 +16,7 @@
   <main id="app">
     <form id="config" class="layout" method="post" action="{{ url_for('build') }}">
       <button type="submit" class="default-submit" tabindex="-1" aria-hidden="true">Update</button>
+      {% for key in config.hidden %}<input type="hidden" name="hidden" value="{{ key }}">{% endfor %}
       <div class="config-column">
       {% if webcal_url %}
       <section class="card" aria-labelledby="subscribe-heading">
@@ -70,15 +71,12 @@
           </details>
           {% endif %}
 
-          {% set hidden = source.holidays | selectattr("checked") | list %}
-          <details data-key="{{ source.kind }}:hidden">
-            <summary>Hide holidays <span class="muted">{{ hidden | length ~ " hidden" if hidden else "none hidden" }}</span></summary>
-            <div class="options">
-              {% for option in source.holidays %}
-              <label class="one-line" title="{{ option.label }}"><input type="checkbox" name="{{ prefix }}excluded" value="{{ option.value }}"{% if option.checked %} checked{% endif %}> <span>{{ option.label }}</span></label>
-              {% endfor %}
-            </div>
-          </details>
+          {% for notice in source.notices %}
+          <div class="notice" role="status">
+            <span>{{ notice.message }}</span>
+            <button type="submit" name="{{ notice.action }}" value="{{ notice.value }}">{{ notice.button }}</button>
+          </div>
+          {% endfor %}
         </div>
         {% endfor %}
 
@@ -149,21 +147,27 @@
       </section>
 
       <section class="card" aria-labelledby="preview-heading">
-        <h2 id="preview-heading">Next 12 months</h2>
+        <div class="card-head">
+          <h2 id="preview-heading">Next 12 months</h2>
+          {% if config.hidden %}
+          <span class="muted hint">{{ config.hidden | length }} hidden · <button type="submit" class="link-button" name="unhide_all" value="1">Show all</button></span>
+          {% endif %}
+        </div>
         {% if events %}
         <div class="table-scroll">
         <table class="preview">
-          <colgroup><col class="col-date"><col><col class="col-from"><col class="col-type"></colgroup>
-          <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th><th scope="col">Type</th></tr></thead>
+          <colgroup><col class="col-date"><col><col class="col-from"><col class="col-type"><col class="col-eye"></colgroup>
+          <thead><tr><th scope="col">Date</th><th scope="col">Holiday</th><th scope="col">From</th><th scope="col">Type</th><th scope="col"><span class="visually-hidden">Show in calendar</span></th></tr></thead>
           <tbody>
             {% for view in events %}
             {% set event = view.event %}
             {% set from_label = view.sources | map(attribute="label") | join("; ") %}
-            <tr class="previewable" data-uid="{{ event.uid }}" data-card='{{ view.card | tojson }}'>
+            <tr class="previewable{% if view.hidden %} is-hidden{% endif %}" data-uid="{{ event.uid }}" data-card='{{ view.card | tojson }}'>
               <td class="date" title="{{ view.card.date }}">{{ view.short_date }}</td>
               <td class="clip"><button type="button" class="pin" aria-pressed="false" title="{{ event.name }}">{{ event.name }}</button></td>
               <td class="clip" title="{{ from_label }}"><span class="visually-hidden">{{ from_label }}</span><span aria-hidden="true">{% for badge in view.sources %}<span class="flag">{{ badge.flag }}</span>{% if badge.regions %}<span class="regions"> ({{ badge.regions | join(", ") }})</span>{% endif %}{% if not loop.last %} {% endif %}{% endfor %}</span></td>
               <td class="types">{% for type in view.types %}<abbr title="{{ type.name | capitalize }}">{{ type.letter }}</abbr>{% endfor %}</td>
+              <td><button type="submit" class="icon-button eye" name="toggle_hidden" value="{{ event.key }}" aria-pressed="{{ 'false' if view.hidden else 'true' }}" aria-label="Show {{ event.name }} in the calendar" title="{{ 'Hidden: click to show' if view.hidden else 'Shown: click to hide' }}">{{ "🙈" if view.hidden else "👁️" }}</button></td>
             </tr>
             {% endfor %}
           </tbody>

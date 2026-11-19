@@ -5,7 +5,6 @@ import datetime
 import functools
 import re
 import typing
-from collections.abc import Iterable
 
 import holidays
 from werkzeug import datastructures
@@ -31,6 +30,19 @@ class Option:
 
 
 @dataclasses.dataclass(frozen=True)
+class HiddenNotice:
+    """A notice that all of a source's holidays, or a part of them, are hidden.
+
+    Its button submits `action=value` to drop that part from the config.
+    """
+
+    message: str
+    action: str
+    value: str
+    button: str
+
+
+@dataclasses.dataclass(frozen=True)
 class SourceView:
     """Everything the page needs to render one configured source."""
 
@@ -40,7 +52,7 @@ class SourceView:
     all_subdivisions: bool
     subdivisions: list[Option]
     categories: list[Option]
-    holidays: list[Option]
+    notices: list[HiddenNotice]
 
 
 _TYPE_LETTERS = {
@@ -100,6 +112,7 @@ class EventView:
     event: merge.Event
     sources: list[SourceBadge]
     types: list[TypeBadge]
+    hidden: bool = False
 
     @property
     def short_date(self) -> str:
@@ -129,7 +142,7 @@ class EventView:
         )
 
 
-def event_view(event: merge.Event) -> EventView:
+def event_view(event: merge.Event, hidden: bool = False) -> EventView:
     """Describes an event's sources, regions and categories for display."""
     regions: dict[str, set[str]] = {}
     for o in event.occurrences:
@@ -149,6 +162,7 @@ def event_view(event: merge.Event) -> EventView:
     categories = dict.fromkeys(o.category for o in event.occurrences)
     return EventView(
         event=event,
+        hidden=hidden,
         sources=badges,
         types=[
             TypeBadge(
@@ -222,6 +236,7 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         describe_sources=bool(form.get("describe_sources")),
         describe_categories=bool(form.get("describe_categories")),
         combine_multiday=bool(form.get("combine_multiday")),
+        hidden=sorted(_hidden(form)),
     )
     indices = [
         match[1]
@@ -230,14 +245,55 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
     ]
     if move := form.get("move"):
         _move(indices, move)
-    parsed.sources.extend(
-        _parse_source(form, f"s{index}.", form[f"s{index}.kind"])
+    by_index = {
+        index: _parse_source(form, f"s{index}.", form[f"s{index}.kind"])
         for index in indices
-    )
+    }
+    if drop := form.get("drop_region"):
+        _drop_region(by_index, drop)
+    if drop := form.get("drop_type"):
+        _drop_type(by_index, drop)
+    parsed.sources.extend(by_index.values())
     if added := form.get("add"):
         parsed.sources.append(_new_source(added))
     config.validate(parsed)
     return parsed
+
+
+def _hidden(form: datastructures.MultiDict[str, str]) -> set[str]:
+    if form.get("unhide_all"):
+        return set()
+    hidden = set(form.getlist("hidden"))
+    if toggled := form.get("toggle_hidden"):
+        hidden ^= {toggled}
+    return hidden
+
+
+def _target(
+    by_index: dict[str, config_pb2.Source], value: str
+) -> tuple[config_pb2.Source, str]:
+    index, _, part = value.partition(":")
+    if index not in by_index or not part:
+        raise config.InvalidConfigError(f"Unknown source part {value}")
+    return by_index[index], part
+
+
+def _drop_region(by_index: dict[str, config_pb2.Source], value: str) -> None:
+    source, region = _target(by_index, value)
+    if source.all_subdivisions:
+        source.all_subdivisions = False
+        source.subdivisions.extend(subdivision_names(source.country))
+    remaining = [code for code in source.subdivisions if code != region]
+    source.ClearField("subdivisions")
+    source.subdivisions.extend(remaining)
+
+
+def _drop_type(by_index: dict[str, config_pb2.Source], value: str) -> None:
+    source, category = _target(by_index, value)
+    current = list(source.categories) or [sources.DEFAULT_CATEGORY]
+    source.ClearField("categories")
+    source.categories.extend(c for c in current if c != category)
+    _default_categories(source)
 
 
 def _move(indices: list[str], move: str) -> None:
@@ -264,12 +320,15 @@ def _parse_source(
     source.subdivisions.extend(form.getlist(prefix + "subdivision"))
     source.all_subdivisions = bool(form.get(prefix + "all_subdivisions"))
     source.categories.extend(form.getlist(prefix + "category"))
-    source.excluded.extend(form.getlist(prefix + "excluded"))
     if source.all_subdivisions:
         source.ClearField("subdivisions")
+    _default_categories(source)
+    return source
+
+
+def _default_categories(source: config_pb2.Source) -> None:
     if list(source.categories) == [sources.DEFAULT_CATEGORY]:
         source.ClearField("categories")
-    return source
 
 
 def religion_names() -> dict[str, str]:
@@ -286,45 +345,42 @@ def _new_source(kind: str) -> config_pb2.Source:
     return config_pb2.Source(country=kind)
 
 
-def views(parsed: config_pb2.Config, years: Iterable[int]) -> list[SourceView]:
-    """Builds the page's view of each configured source."""
-    years = list(years)
+def views(
+    parsed: config_pb2.Config, events: list[merge.Event]
+) -> list[SourceView]:
+    """Builds the page's view of each source, given all its merged events."""
+    hidden = set(parsed.hidden)
     return [
-        _view(index, source, years)
+        _view(index, source, events, hidden)
         for index, source in enumerate(parsed.sources)
     ]
 
 
 def _view(
-    index: int, source: config_pb2.Source, years: list[int]
+    index: int,
+    source: config_pb2.Source,
+    events: list[merge.Event],
+    hidden: set[str],
 ) -> SourceView:
-    unfiltered = config_pb2.Source()
-    unfiltered.CopyFrom(source)
-    unfiltered.ClearField("excluded")
-    names: dict[str, str] = {}
-    for occurrence in sources.occurrences(unfiltered, years):
-        names.setdefault(merge.normalize(occurrence.name), occurrence.name)
-    holiday_options = [
-        Option(key, name, merge.is_hidden(name, source.excluded))
-        for key, name in sorted(names.items(), key=lambda item: item[1])
-    ]
     if source.HasField("religion"):
         kind = RELIGION_PREFIX + source.religion
+        label = religion_names()[kind]
         return SourceView(
             index=index,
             kind=kind,
-            label=religion_names()[kind],
+            label=label,
             all_subdivisions=False,
             subdivisions=[],
             categories=[],
-            holidays=holiday_options,
+            notices=_notices(index, label, label, events, hidden),
         )
     country = source.country
+    label = sources.country_names()[country]
     categories = set(source.categories) or {sources.DEFAULT_CATEGORY}
     return SourceView(
         index=index,
         kind=country,
-        label=sources.country_names()[country],
+        label=label,
         all_subdivisions=source.all_subdivisions,
         subdivisions=[
             Option(code, name, code in source.subdivisions)
@@ -334,5 +390,70 @@ def _view(
             Option(category, category.replace("_", " "), category in categories)
             for category in config.supported_categories(country)
         ],
-        holidays=holiday_options,
+        notices=_notices(index, country, label, events, hidden),
     )
+
+
+def _notices(
+    index: int,
+    code: str,
+    label: str,
+    events: list[merge.Event],
+    hidden: set[str],
+) -> list[HiddenNotice]:
+    """Flags a source, region or type whose holidays are all hidden."""
+    found = [
+        (o, event.key in hidden)
+        for event in events
+        for o in event.occurrences
+        if o.source == code
+    ]
+    if found and all(is_hidden for _, is_hidden in found):
+        return [
+            HiddenNotice(
+                f"Every holiday from {label} is hidden.",
+                "remove",
+                str(index),
+                f"Remove {label}",
+            )
+        ]
+    notices = []
+    by_region = _group(found, lambda o: o.subdivision)
+    region_names = subdivision_names(code) if by_region.keys() - {""} else {}
+    for region, all_hidden in by_region.items():
+        if region and all_hidden:
+            name = region_names.get(region, region)
+            notices.append(
+                HiddenNotice(
+                    f"Every holiday specific to {name} is hidden.",
+                    "drop_region",
+                    f"{index}:{region}",
+                    f"Remove {name}",
+                )
+            )
+    by_type = _group(found, lambda o: o.category)
+    if len(by_type) > 1:
+        for category, all_hidden in by_type.items():
+            if all_hidden:
+                name = category.replace("_", " ")
+                notices.append(
+                    HiddenNotice(
+                        f"Every {name} holiday from {label} is hidden.",
+                        "drop_type",
+                        f"{index}:{category}",
+                        f"Remove {name} holidays",
+                    )
+                )
+    return notices
+
+
+def _group(
+    found: list[tuple[sources.Occurrence, bool]],
+    part: typing.Callable[[sources.Occurrence], str],
+) -> dict[str, bool]:
+    """Maps each part (region, type) to whether all its holidays are hidden."""
+    groups: dict[str, bool] = {}
+    for occurrence, is_hidden in found:
+        key = part(occurrence)
+        groups[key] = groups.get(key, True) and is_hidden
+    return groups

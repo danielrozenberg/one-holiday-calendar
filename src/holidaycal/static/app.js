@@ -217,7 +217,7 @@ document.addEventListener("focusout", (event) => {
 
 document.addEventListener("click", (event) => {
   const row = event.target.closest?.("tr.previewable");
-  if (!row) return;
+  if (!row || event.target.closest("button:not(.pin)")) return;
   setPinnedUid(row === pinnedRow() ? null : row.dataset.uid);
   transition(() => {
     restoreCard();

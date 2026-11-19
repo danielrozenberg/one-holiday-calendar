@@ -24,17 +24,17 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x63onfig.proto\x12\nholidaycal\"\xb6\x01\n\x06\x43onfig\x12\t\n\x01v\x18\x01 \x01(\r\x12#\n\x07sources\x18\x02 \x03(\x0b\x32\x12.holidaycal.Source\x12+\n\x0btitle_style\x18\x03 \x01(\x0e\x32\x16.holidaycal.TitleStyle\x12\x18\n\x10\x64\x65scribe_sources\x18\x04 \x01(\x08\x12\x1b\n\x13\x64\x65scribe_categories\x18\x05 \x01(\x08\x12\x18\n\x10\x63ombine_multiday\x18\x06 \x01(\x08\"\x8d\x01\n\x06Source\x12\x11\n\x07\x63ountry\x18\x01 \x01(\tH\x00\x12\x12\n\x08religion\x18\x02 \x01(\tH\x00\x12\x14\n\x0csubdivisions\x18\x03 \x03(\t\x12\x18\n\x10\x61ll_subdivisions\x18\x04 \x01(\x08\x12\x12\n\ncategories\x18\x05 \x03(\t\x12\x10\n\x08\x65xcluded\x18\x06 \x03(\tB\x06\n\x04kind*\xd7\x01\n\nTitleStyle\x12\x15\n\x11TITLE_STYLE_PLAIN\x10\x00\x12\x1c\n\x18TITLE_STYLE_PREFIX_CODES\x10\x01\x12\x1c\n\x18TITLE_STYLE_PREFIX_NAMES\x10\x02\x12\x1c\n\x18TITLE_STYLE_SUFFIX_CODES\x10\x03\x12\x1c\n\x18TITLE_STYLE_SUFFIX_NAMES\x10\x04\x12\x1c\n\x18TITLE_STYLE_PREFIX_FLAGS\x10\x05\x12\x1c\n\x18TITLE_STYLE_SUFFIX_FLAGS\x10\x06\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x63onfig.proto\x12\nholidaycal\"\xc6\x01\n\x06\x43onfig\x12\t\n\x01v\x18\x01 \x01(\r\x12#\n\x07sources\x18\x02 \x03(\x0b\x32\x12.holidaycal.Source\x12+\n\x0btitle_style\x18\x03 \x01(\x0e\x32\x16.holidaycal.TitleStyle\x12\x18\n\x10\x64\x65scribe_sources\x18\x04 \x01(\x08\x12\x1b\n\x13\x64\x65scribe_categories\x18\x05 \x01(\x08\x12\x18\n\x10\x63ombine_multiday\x18\x06 \x01(\x08\x12\x0e\n\x06hidden\x18\x07 \x03(\t\"{\n\x06Source\x12\x11\n\x07\x63ountry\x18\x01 \x01(\tH\x00\x12\x12\n\x08religion\x18\x02 \x01(\tH\x00\x12\x14\n\x0csubdivisions\x18\x03 \x03(\t\x12\x18\n\x10\x61ll_subdivisions\x18\x04 \x01(\x08\x12\x12\n\ncategories\x18\x05 \x03(\tB\x06\n\x04kind*\xd7\x01\n\nTitleStyle\x12\x15\n\x11TITLE_STYLE_PLAIN\x10\x00\x12\x1c\n\x18TITLE_STYLE_PREFIX_CODES\x10\x01\x12\x1c\n\x18TITLE_STYLE_PREFIX_NAMES\x10\x02\x12\x1c\n\x18TITLE_STYLE_SUFFIX_CODES\x10\x03\x12\x1c\n\x18TITLE_STYLE_SUFFIX_NAMES\x10\x04\x12\x1c\n\x18TITLE_STYLE_PREFIX_FLAGS\x10\x05\x12\x1c\n\x18TITLE_STYLE_SUFFIX_FLAGS\x10\x06\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'config_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_TITLESTYLE']._serialized_start=358
-  _globals['_TITLESTYLE']._serialized_end=573
+  _globals['_TITLESTYLE']._serialized_start=355
+  _globals['_TITLESTYLE']._serialized_end=570
   _globals['_CONFIG']._serialized_start=29
-  _globals['_CONFIG']._serialized_end=211
-  _globals['_SOURCE']._serialized_start=214
-  _globals['_SOURCE']._serialized_end=355
+  _globals['_CONFIG']._serialized_end=227
+  _globals['_SOURCE']._serialized_start=229
+  _globals['_SOURCE']._serialized_end=352
 # @@protoc_insertion_point(module_scope)

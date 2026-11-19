@@ -8,6 +8,7 @@
   --accent: #2f6fdb;
   --accent-text: #ffffff;
   --danger: #c43c3c;
+  --warning: #c98a00;
   --radius: 10px;
   --shadow: 0 1px 2px rgb(0 0 0 / 6%);
 }
@@ -22,6 +23,7 @@
     --accent: #6c9ef0;
     --accent-text: #0e1420;
     --danger: #ec7c7c;
+    --warning: #e0b040;
     --shadow: none;
   }
 }
@@ -200,6 +202,38 @@ table.preview th, table.preview td { padding: 0.35rem 0.4rem; }
 .col-date { width: 6.5rem; }
 .col-from { width: 30%; }
 .col-type { width: 3.5rem; }
+.col-eye { width: 2.25rem; }
+
+tr.is-hidden td:not(:last-child) { opacity: 0.45; }
+tr.is-hidden .pin { text-decoration: line-through; }
+.eye { padding: 0 0.25rem; }
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warning) 12%, transparent);
+  font-size: 0.9rem;
+}
+
+.notice::before { content: "⚠️"; }
+.notice span { flex: 1; min-width: 12rem; }
+.notice button { padding: 0.25rem 0.75rem; }
 
 td.clip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 td.clip .pin {

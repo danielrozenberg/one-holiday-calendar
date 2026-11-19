@@ -12,10 +12,10 @@ def _config(**kwargs) -> config_pb2.Config:
                 country="CA",
                 subdivisions=["ON", "BC"],
                 categories=["public", "optional"],
-                excluded=["groundhog day"],
             ),
             config_pb2.Source(country="US"),
         ],
+        hidden=["groundhog day"],
         **kwargs,
     )
 
@@ -87,8 +87,8 @@ def test_decode_rejects_too_many_sources():
 
 def test_decode_rejects_duplicate_sources():
     sources = [
-        config_pb2.Source(country="US", excluded=["christmas day"]),
-        config_pb2.Source(country="US", excluded=["new years day"]),
+        config_pb2.Source(country="US"),
+        config_pb2.Source(country="US", all_subdivisions=True),
     ]
     blob = config.encode(config_pb2.Config(sources=sources))
 

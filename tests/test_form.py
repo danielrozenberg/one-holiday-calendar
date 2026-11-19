@@ -23,12 +23,17 @@ def test_add_religion():
     )
 
 
+def _views(parsed: config_pb2.Config) -> list[form.SourceView]:
+    events = merge.build(parsed, [2026], include_hidden=True)
+    return form.views(parsed, events)
+
+
 def test_religion_view():
-    [view] = form.views(_parse(("s0.kind", "@hindu")), [2026])
+    [view] = _views(_parse(("s0.kind", "@hindu")))
 
     assert (view.kind, view.label) == ("@hindu", "Hindu")
     assert not view.subdivisions
-    assert form.Option("diwali", "Diwali") in view.holidays
+    assert view.notices == []
 
 
 def test_source_fields():
@@ -37,14 +42,12 @@ def test_source_fields():
         ("s0.subdivision", "ON"),
         ("s0.category", "public"),
         ("s0.category", "optional"),
-        ("s0.excluded", "christmas day"),
     )
 
     assert parsed.sources[0] == config_pb2.Source(
         country="CA",
         subdivisions=["ON"],
         categories=["public", "optional"],
-        excluded=["christmas day"],
     )
 
 
@@ -72,13 +75,10 @@ def test_invalid():
         _parse(("add", "XX"))
 
 
-def test_views_list_holidays_and_exclusions():
-    parsed = _parse(("s0.kind", "CA"), ("s0.excluded", "christmas day"))
-
-    [view] = form.views(parsed, [2026])
+def test_views_list_regions_and_types():
+    [view] = _views(_parse(("s0.kind", "CA")))
 
     assert view.label == "Canada"
-    assert form.Option("christmas_day", "Christmas Day", True) in view.holidays
     assert form.Option("ON", "Ontario") in view.subdivisions
     assert form.Option("public", "public", True) in view.categories
 
@@ -218,3 +218,104 @@ def test_multiday_card_date_is_a_range():
     assert form.event_view(passover).card["date"] == (
         "Thu, Apr 2 \u2013 Thu, Apr 9, 2026"
     )
+
+
+@pytest.mark.parametrize(
+    ("fields", "hidden"),
+    [
+        ([("hidden", "b"), ("hidden", "a")], ["a", "b"]),
+        ([("hidden", "a"), ("toggle_hidden", "b")], ["a", "b"]),
+        ([("hidden", "a"), ("toggle_hidden", "a")], []),
+        ([("hidden", "a"), ("unhide_all", "1")], []),
+    ],
+)
+def test_hidden(fields, hidden):
+    assert list(_parse(("add", "CA"), *fields).hidden) == hidden
+
+
+def test_drop_region():
+    parsed = _parse(
+        ("s0.kind", "CA"),
+        ("s0.subdivision", "ON"),
+        ("s0.subdivision", "BC"),
+        ("drop_region", "0:ON"),
+    )
+
+    assert list(parsed.sources[0].subdivisions) == ["BC"]
+
+
+def test_drop_region_from_all_regions():
+    parsed = _parse(
+        ("s0.kind", "CA"), ("s0.all_subdivisions", "1"), ("drop_region", "0:ON")
+    )
+
+    source = parsed.sources[0]
+    assert not source.all_subdivisions
+    assert "ON" not in source.subdivisions
+    assert "BC" in source.subdivisions
+
+
+def test_drop_type():
+    parsed = _parse(
+        ("s0.kind", "US"),
+        ("s0.category", "public"),
+        ("s0.category", "government"),
+        ("drop_type", "0:government"),
+    )
+
+    assert list(parsed.sources[0].categories) == []
+
+
+def test_drop_unknown_source():
+    with pytest.raises(config.InvalidConfigError):
+        _parse(("s0.kind", "CA"), ("drop_region", "3:ON"))
+
+
+def _keys(parsed: config_pb2.Config, **match: str) -> list[str]:
+    events = merge.build(parsed, [2026], include_hidden=True)
+    return sorted(
+        {
+            e.key
+            for e in events
+            for o in e.occurrences
+            if all(getattr(o, k) == v for k, v in match.items())
+        }
+    )
+
+
+def test_notice_when_every_holiday_of_a_source_is_hidden():
+    parsed = config_pb2.Config(sources=[config_pb2.Source(country="CA")])
+    parsed.hidden.extend(_keys(parsed))
+
+    [view] = _views(parsed)
+
+    assert [(n.action, n.value) for n in view.notices] == [("remove", "0")]
+
+
+def test_notice_when_every_holiday_of_a_region_is_hidden():
+    parsed = config_pb2.Config(
+        sources=[config_pb2.Source(country="CA", subdivisions=["ON", "BC"])]
+    )
+    parsed.hidden.extend(_keys(parsed, subdivision="ON"))
+
+    [view] = _views(parsed)
+
+    assert [(n.action, n.value) for n in view.notices] == [
+        ("drop_region", "0:ON")
+    ]
+    assert "Ontario" in view.notices[0].message
+
+
+def test_notice_when_every_holiday_of_a_type_is_hidden():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="CA", categories=["public", "optional"])
+        ]
+    )
+    parsed.hidden.extend(_keys(parsed, category="optional"))
+
+    [view] = _views(parsed)
+
+    assert [(n.action, n.value) for n in view.notices] == [
+        ("drop_type", "0:optional")
+    ]

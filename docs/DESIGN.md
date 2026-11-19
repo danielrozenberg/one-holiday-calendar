@@ -38,8 +38,9 @@ The configuration is a protobuf message (`proto/config.proto`), serialized and
 encoded as unpadded base64url. It holds:
 
 - **Sources**: each one is either a country, with optional subdivisions (or
-  all of them), categories (`public` when empty) and excluded holidays; or a
-  religion, with excluded holidays.
+  all of them) and categories (`public` when empty); or a religion.
+- **Hidden holidays**: merge keys (alias ids or normalized names) left out of
+  the calendar, whichever sources contribute them.
 - **Title style**: plain (`Christmas Eve`) or prefixed with the contributing
   sources (`[CA, US] Christmas Eve`), using codes or names.
 - **Description options**: whether each event's description lists the
@@ -83,9 +84,7 @@ the same holiday. Ids stay sorted and a name belongs to one holiday at most
 category it came from.
 
 Each event's UID is a hash of its date and merge key, so it is stable across
-refreshes and across configurations. Hiding a holiday stores its merge key; a
-holiday also stays hidden when its unaliased key matches, so adding an alias
-does not unhide holidays in existing URLs.
+refreshes and across configurations.
 
 ## Feed
 
@@ -144,6 +143,13 @@ POST in the background, swaps in the new `#app` content, keeps open sections
 and focus, and updates the address bar. Sources are submitted in page order, so
 reordering (↑/↓ buttons, which also work without JavaScript, or the drag
 handle) just moves them in the page before submitting.
+
+Each preview row has an eye button that toggles the holiday's key in the
+hidden list. Hidden holidays stay in the preview, dimmed, so they can be shown
+again; a "Show all" button clears the list. When every holiday a country, one of
+its regions, or one of its types contributes (over the feed's years) is hidden,
+that source's card shows a notice with a button to remove the country, region or
+type from the config.
 
 The "Event format" card looks like a calendar event and doubles as the format
 controls: clicking the title opens a popover (Popover API, anchored with CSS

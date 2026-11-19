@@ -8,7 +8,7 @@ import hashlib
 import importlib.resources
 import re
 import tomllib
-from collections.abc import Collection, Iterable
+from collections.abc import Iterable
 
 from holidaycal import config_pb2
 from holidaycal import sources
@@ -51,12 +51,6 @@ def _tier(name: str) -> int:
     return _aliases().get(unaliased(name), ("", 0))[1]
 
 
-def is_hidden(name: str, excluded: Collection[str]) -> bool:
-    """Whether a holiday name matches a source's excluded keys."""
-    # Unaliased keys keep holidays hidden after a new alias is added.
-    return normalize(name) in excluded or unaliased(name) in excluded
-
-
 def unaliased(name: str) -> str:
     """Returns a holiday name's merge key before aliases are applied."""
     name = _MARKERS.sub(" ", name.lower())
@@ -81,18 +75,26 @@ def _aliases() -> dict[str, tuple[str, int]]:
     }
 
 
-def build(config: config_pb2.Config, years: Iterable[int]) -> list[Event]:
-    """Collects every configured source's holidays and merges them."""
+def build(
+    config: config_pb2.Config,
+    years: Iterable[int],
+    *,
+    include_hidden: bool = False,
+) -> list[Event]:
+    """Collects every configured source's holidays and merges them.
+
+    Holidays whose merge key is in `config.hidden` are left out unless
+    `include_hidden` is set.
+    """
     years = list(years)
-    found: list[sources.Occurrence] = []
-    for source in config.sources:
-        excluded = set(source.excluded)
-        found.extend(
-            o
-            for o in sources.occurrences(source, years)
-            if not is_hidden(o.name, excluded)
-        )
-    events = merge(found)
+    events = merge(
+        o
+        for source in config.sources
+        for o in sources.occurrences(source, years)
+    )
+    if not include_hidden:
+        hidden = set(config.hidden)
+        events = [e for e in events if e.key not in hidden]
     return combine_multiday(events) if config.combine_multiday else events
 
 

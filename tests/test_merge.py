@@ -60,14 +60,18 @@ def test_labour_day_merges_with_labor_day():
     assert {o.source for o in labor_day.occurrences} == {"US", "CA"}
 
 
-def test_excluded_holidays_are_dropped_per_source():
-    events = _build(
-        config_pb2.Source(country="CA", excluded=["christmas day"]),
-        config_pb2.Source(country="US"),
+def test_hidden_holidays_are_dropped_for_every_source():
+    parsed = config_pb2.Config(
+        sources=[
+            config_pb2.Source(country="CA"),
+            config_pb2.Source(country="US"),
+        ],
+        hidden=["christmas_day", "labor_day"],
     )
 
-    [christmas] = _on(events, 12, 25)
-    assert {o.source for o in christmas.occurrences} == {"US"}
+    assert not _on(merge.build(parsed, [2026]), 12, 25)
+    assert not _on(merge.build(parsed, [2026]), 9, 7)
+    assert _on(merge.build(parsed, [2026], include_hidden=True), 12, 25)
 
 
 def test_uid_is_stable_and_depends_on_key():
@@ -174,11 +178,3 @@ def test_religion_names_merge_with_country_names():
     [passover] = [e for e in _on(events, 4, 2) if e.key == "passover"]
     assert passover.name == "Pesach"
     assert {o.source for o in passover.occurrences} == {"AR", "Jewish"}
-
-
-def test_hidden_unaliased_name_stays_hidden():
-    events = _build(
-        config_pb2.Source(country="CA", excluded=["labour day"]),
-    )
-
-    assert not _on(events, 9, 7)

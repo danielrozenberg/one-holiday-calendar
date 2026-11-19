@@ -15,6 +15,8 @@ message Config {
   bool describe_categories = 5;
   // Show a holiday spanning consecutive days as one event, not one per day.
   bool combine_multiday = 6;
+  // Merge keys (alias ids or normalized names) of holidays to leave out.
+  repeated string hidden = 7;
 }
 
 message Source {
@@ -29,8 +31,6 @@ message Source {
   bool all_subdivisions = 4;
   // python-holidays category names. Empty means "public" only.
   repeated string categories = 5;
-  // Normalized names of holidays to leave out.
-  repeated string excluded = 6;
 }
 
 enum TitleStyle {
