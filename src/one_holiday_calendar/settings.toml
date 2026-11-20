@@ -20,7 +20,7 @@ global_sources = 4
 
 [page]
 # How far ahead the preview table looks.
-preview_days = 365
+preview_days = 730
 # How many visited pages the service worker keeps for offline use.
 offline_pages = 20
 
