@@ -151,8 +151,8 @@ def _page(blob: str) -> bytes:
 
 def _render_page(blob: str, today: datetime.date) -> bytes:
     parsed = config.decode(blob)
-    years = ics.years(today)
     end = today + datetime.timedelta(days=settings.CURRENT.page.preview_days)
+    years = range(today.year, end.year + 1)
     all_events = merge.build(parsed, years, include_hidden=True)
     hidden = set(parsed.hidden)
     views = [

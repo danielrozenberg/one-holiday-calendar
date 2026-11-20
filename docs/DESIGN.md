@@ -114,8 +114,8 @@ refreshes and across configurations.
 
 ## Feed
 
-All-day events from the start of the previous year to the end of the year
-after next, with a one-day refresh hint (`REFRESH-INTERVAL`,
+All-day events from ten years back to thirty years ahead
+(`feed.years_before` and `feed.years_after`), with a one-day refresh hint (`REFRESH-INTERVAL`,
 `X-PUBLISHED-TTL`). The calendar's description (`DESCRIPTION`, `X-WR-CALDESC`)
 and `URL` link back to its config page, on the host the feed was served from.
 
@@ -188,7 +188,7 @@ handle) just moves them in the page before submitting.
 Each preview row has an eye button (greyed out while hidden) that hides or
 shows the row for every source contributing to it. Hidden holidays stay in the preview, dimmed, so they can be shown
 again; a "Show all" button clears the list. When every holiday a country, one of
-its regions, or one of its types contributes (over the feed's years) is hidden,
+its regions, or one of its types contributes (over the preview's years) is hidden,
 that source's card shows a notice with a button to remove the country, region or
 type from the config.
 

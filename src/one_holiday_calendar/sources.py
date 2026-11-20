@@ -4,6 +4,7 @@ import dataclasses
 import datetime
 import functools
 import re
+import warnings
 from collections.abc import Collection, Iterable, Iterator
 
 import holidays
@@ -19,6 +20,11 @@ RELIGION_PREFIX = "@"
 RELIGIOUS_CATEGORY = "religious"
 _SMALL_WORDS = re.compile(r"(?<= )(?:And|Of|The|Da)\b")
 _MC = re.compile(r"\bMc(\w)")
+
+# Lunar calendars end in the 2030s; later feed years just have no such events.
+warnings.filterwarnings(
+    "ignore", "Requested Holidays are available only", UserWarning
+)
 
 
 @functools.cache

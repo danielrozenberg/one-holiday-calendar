@@ -25,12 +25,8 @@ def _render() -> icalendar.Calendar:
 
 
 def test_years():
-    assert list(ics.years(datetime.date(2026, 11, 19))) == [
-        2025,
-        2026,
-        2027,
-        2028,
-    ]
+    years = ics.years(datetime.date(2026, 11, 19))
+    assert (years.start, years.stop) == (2016, 2057)
 
 
 def test_render_all_day_events():
