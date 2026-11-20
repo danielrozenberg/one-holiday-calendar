@@ -68,9 +68,16 @@ export class Page {
   }
 
   async goto(path) {
-    const loaded = this.#once("Page.loadEventFired");
-    await this.send("Page.navigate", { url: new URL(path, this.baseUrl).href });
-    await loaded;
+    // shortcut: the service worker sometimes aborts a navigation away from a
+    // large page, so a stalled load is retried; find the cause if users see it.
+    for (let attempt = 1; ; attempt++) {
+      const loaded = this.#once("Page.loadEventFired");
+      await this.send("Page.navigate", { url: new URL(path, this.baseUrl).href });
+      const stalled = new Promise((resolve) => setTimeout(resolve, 5000, "stalled"));
+      if ((await Promise.race([loaded, stalled])) !== "stalled" || attempt === 3) {
+        return;
+      }
+    }
   }
 
   /** Runs a page action and waits for the in-place update it triggers. */
