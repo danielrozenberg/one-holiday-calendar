@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "one-holiday-calendar"
-version = "1.0.1"
+version = "1.0.2"
 description = "Merged, configurable holiday calendars served as webcal feeds."
 readme = "docs/DESIGN.md"
 license = "ISC"
