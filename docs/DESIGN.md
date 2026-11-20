@@ -64,6 +64,8 @@ size at 64 KiB. It holds:
   key can mean different holidays elsewhere, such as every country's
   "Independence Day", or Emancipation Day in Puerto Rico, DC and the Virgin
   Islands.
+  Saving the form drops entries that the configured sources, regions and
+  types no longer produce in the feed's years.
 - **Title style**: plain (`Christmas Eve`), or with the contributing sources
   as a prefix or suffix, using codes, names or flags (`[CA, US] Christmas Eve`,
   `Christmas Eve 🇨🇦🇺🇸`). A holiday from `global_sources` (4) or more sources is
@@ -191,6 +193,13 @@ again; a "Show all" button clears the list. When every holiday a country, one of
 its regions, or one of its types contributes (over the preview's years) is hidden,
 that source's card shows a notice with a button to remove the country, region or
 type from the config.
+
+A country's card only offers regions that add events to its national holidays
+in some type, and types that have holidays in its selected regions, judged over
+the preview's years; ticked ones are always offered. Types with identical
+holidays share one option (e.g. "Public/Government"), which saves the default
+type when it is among them. A country left with only the default type shows no
+type choice.
 
 The "Event format" card looks like a calendar event and doubles as the format
 controls: clicking the title opens a popover (Popover API, anchored with CSS

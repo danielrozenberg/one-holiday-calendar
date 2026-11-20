@@ -1,5 +1,4 @@
 import datetime
-import hashlib
 import importlib.metadata
 import re
 from unittest import mock
@@ -12,6 +11,7 @@ from one_holiday_calendar import config
 from one_holiday_calendar import config_pb2
 from one_holiday_calendar import main
 from one_holiday_calendar import merge
+from one_holiday_calendar import settings
 
 BLOB = config.encode(
     config_pb2.Config(sources=[config_pb2.Source(country="CA")])
@@ -192,16 +192,17 @@ def test_add_leaves_out_sources_already_added(client):
 
 
 def test_build_rejects_configs_too_long_for_a_url(client):
-    data = MultiDict(
-        [("s0.kind", "US"), ("s0.all_subdivisions", "1")]
-        # Random names don't compress, so the URL stays long.
-        + [
-            ("hidden", "US:" + hashlib.sha256(str(i).encode()).hexdigest())
-            for i in range(400)
-        ]
+    data = MultiDict([("s0.kind", "CA"), ("hidden", "CA:canada day")])
+    tiny = settings.CURRENT.model_copy(
+        update={
+            "url": settings.CURRENT.url.model_copy(
+                update={"max_blob_length": 8}
+            )
+        }
     )
 
-    response = client.post("/build", data=data)
+    with mock.patch.object(settings, "CURRENT", tiny):
+        response = client.post("/build", data=data)
 
     assert response.status_code == 400
     assert "too many hidden holidays" in response.text
@@ -298,3 +299,14 @@ def test_feed_links_to_the_page_it_was_served_from(client):
 
     calendar = icalendar.Calendar.from_ical(response.data)
     assert calendar["url"] == f"https://localhost/c/{BLOB}"
+
+
+@pytest.mark.parametrize(("country", "shown"), [("AU", False), ("US", True)])
+def test_page_offers_types_only_when_there_is_a_choice(client, country, shown):
+    blob = config.encode(
+        config_pb2.Config(sources=[config_pb2.Source(country=country)])
+    )
+
+    page = client.get(f"/c/{blob}?format=html").text
+
+    assert ("Holiday types" in page) == shown

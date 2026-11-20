@@ -83,7 +83,7 @@ def index() -> bytes:
 def build() -> wrappers.Response:
     """Encodes the submitted form and redirects to its calendar URL."""
     try:
-        parsed = form.parse(flask.request.form)
+        parsed = form.parse(flask.request.form, _today())
     except config.InvalidConfigError as e:
         return _rejected(str(e))
     if not parsed.sources:
@@ -139,12 +139,16 @@ def _render_feed(blob: str, years: range, page_url: str) -> bytes:
     return ics.render(merge.build(parsed, years), parsed, now, page_url)
 
 
-def _page(blob: str) -> bytes:
+def _today() -> datetime.date:
     # The server runs in UTC, a day ahead of evening visitors in the Americas;
     # starting a day early keeps their today in the preview.
-    today = datetime.datetime.now(datetime.UTC).date() - datetime.timedelta(
+    return datetime.datetime.now(datetime.UTC).date() - datetime.timedelta(
         days=1
     )
+
+
+def _page(blob: str) -> bytes:
+    today = _today()
     key = ("page", blob, today, flask.request.host_url)
     return RESPONSES.get(key, lambda: _render_page(blob, today))
 
@@ -152,7 +156,7 @@ def _page(blob: str) -> bytes:
 def _render_page(blob: str, today: datetime.date) -> bytes:
     parsed = config.decode(blob)
     end = today + datetime.timedelta(days=settings.CURRENT.page.preview_days)
-    years = range(today.year, end.year + 1)
+    years = form.preview_years(today)
     all_events = merge.build(parsed, years, include_hidden=True)
     hidden = set(parsed.hidden)
     views = [
@@ -169,7 +173,7 @@ def _render_page(blob: str, today: datetime.date) -> bytes:
         or form.event_view(form.sample_event(today.year)),
         config=parsed,
         title_styles=config_pb2.TitleStyle,
-        sources=form.views(parsed, all_events),
+        sources=form.views(parsed, all_events, years),
         countries=sources.country_names(),
         religions=form.religion_names(),
         max_sources=settings.CURRENT.url.max_sources,

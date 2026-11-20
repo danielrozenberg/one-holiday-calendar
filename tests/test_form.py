@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from werkzeug import datastructures
 
@@ -6,9 +8,11 @@ from one_holiday_calendar import config_pb2
 from one_holiday_calendar import form
 from one_holiday_calendar import merge
 
+TODAY = datetime.date(2026, 11, 19)
+
 
 def _parse(*pairs: tuple[str, str]) -> config_pb2.Config:
-    return form.parse(datastructures.MultiDict(list(pairs)))
+    return form.parse(datastructures.MultiDict(list(pairs)), TODAY)
 
 
 def test_add_country():
@@ -25,7 +29,7 @@ def test_add_religion():
 
 def _views(parsed: config_pb2.Config) -> list[form.SourceView]:
     events = merge.build(parsed, [2026], include_hidden=True)
-    return form.views(parsed, events)
+    return form.views(parsed, events, range(2026, 2027))
 
 
 def test_religion_view():
@@ -223,19 +227,28 @@ def test_multiday_card_date_is_a_range():
 @pytest.mark.parametrize(
     ("fields", "hidden"),
     [
-        ([("hidden", "CA:b"), ("hidden", "CA:a")], ["CA:a", "CA:b"]),
-        ([("hidden", "CA:a"), ("toggle_hidden", "CA:b")], ["CA:a", "CA:b"]),
-        ([("hidden", "CA:a"), ("toggle_hidden", "CA:a")], []),
-        ([("hidden", "CA:a"), ("unhide_all", "1")], []),
         (
-            [("hidden", "CA:a"), ("toggle_hidden", "CA:a|CA:b")],
-            ["CA:a", "CA:b"],
+            [("hidden", "CA:labor_day"), ("hidden", "CA:canada day")],
+            ["CA:canada day", "CA:labor_day"],
+        ),
+        (
+            [("hidden", "CA:canada day"), ("toggle_hidden", "CA:labor_day")],
+            ["CA:canada day", "CA:labor_day"],
+        ),
+        ([("hidden", "CA:canada day"), ("toggle_hidden", "CA:canada day")], []),
+        ([("hidden", "CA:canada day"), ("unhide_all", "1")], []),
+        (
+            [
+                ("hidden", "CA:canada day"),
+                ("toggle_hidden", "CA:canada day|CA:labor_day"),
+            ],
+            ["CA:canada day", "CA:labor_day"],
         ),
         (
             [
-                ("hidden", "CA:a"),
-                ("hidden", "CA:b"),
-                ("toggle_hidden", "CA:a|CA:b"),
+                ("hidden", "CA:canada day"),
+                ("hidden", "CA:labor_day"),
+                ("toggle_hidden", "CA:canada day|CA:labor_day"),
             ],
             [],
         ),
@@ -370,6 +383,7 @@ def test_region_notice_ignores_holidays_also_shown_nationally():
 def test_hidden_holidays_of_removed_sources_are_dropped():
     parsed = _parse(
         ("s0.kind", "CA"),
+        ("s0.subdivision", "ON"),
         ("s1.kind", "@jewish"),
         ("hidden", "CA/ON:family day"),
         ("hidden", "US:independence day"),
@@ -397,3 +411,69 @@ def test_event_view_collapses_four_sources_into_global():
 
     assert badge.flag == "\U0001f30d"
     assert badge.label == "Global: Canada, United States, Germany, Christian"
+
+
+def _source_view(source: config_pb2.Source) -> form.SourceView:
+    [view] = _views(config_pb2.Config(sources=[source]))
+    return view
+
+
+def test_lone_default_type_offers_no_choice():
+    assert _source_view(config_pb2.Source(country="AU")).categories == []
+
+
+def test_types_follow_the_selected_regions():
+    view = _source_view(config_pb2.Source(country="AU", subdivisions=["NSW"]))
+
+    assert [o.value for o in view.categories] == ["bank", "public", "school"]
+
+
+def test_identical_types_share_the_default_types_option():
+    view = _source_view(
+        config_pb2.Source(country="US", categories=["public", "government"])
+    )
+
+    assert view.categories == [
+        form.Option("public", "Public/Government", True),
+        form.Option("unofficial", "Unofficial", False),
+    ]
+
+
+def test_types_split_when_regions_differ():
+    view = _source_view(config_pb2.Source(country="US", subdivisions=["TX"]))
+
+    assert [o.label for o in view.categories] == [
+        "Government",
+        "Public",
+        "Unofficial",
+    ]
+
+
+def test_regions_that_add_nothing_are_not_offered():
+    regions = [
+        o.value
+        for o in _source_view(config_pb2.Source(country="US")).subdivisions
+    ]
+
+    assert "TX" in regions
+    assert "AZ" not in regions
+
+
+def test_ticked_regions_stay_offered():
+    view = _source_view(config_pb2.Source(country="US", subdivisions=["AZ"]))
+
+    assert form.Option("AZ", "Arizona", True) in view.subdivisions
+
+
+def test_hidden_holidays_of_dropped_regions_and_types_are_dropped():
+    parsed = _parse(
+        ("s0.kind", "CA"),
+        ("s0.subdivision", "BC"),
+        ("s0.category", "public"),
+        ("hidden", "CA/ON:family day"),
+        ("hidden", "CA/BC:family day"),
+        ("hidden", "CA:christmas_day"),
+        ("hidden", "CA:boxing day"),
+    )
+
+    assert list(parsed.hidden) == ["CA/BC:family day", "CA:christmas_day"]

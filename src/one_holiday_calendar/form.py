@@ -15,6 +15,7 @@ from one_holiday_calendar import config_pb2
 from one_holiday_calendar import ics
 from one_holiday_calendar import merge
 from one_holiday_calendar import religions
+from one_holiday_calendar import settings
 from one_holiday_calendar import sources
 
 _KIND_FIELD = re.compile(r"s(\d+)\.kind")
@@ -233,7 +234,37 @@ def subdivision_names(country: str) -> dict[str, str]:
     return {code: names.get(code, code) for code in calendar.subdivisions}
 
 
-def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
+def preview_years(today: datetime.date) -> range:
+    """The years the page previews, which also judge what a choice adds."""
+    end = today + datetime.timedelta(days=settings.CURRENT.page.preview_days)
+    return range(today.year, end.year + 1)
+
+
+@functools.cache
+def _contributing_regions(country: str, years: range) -> frozenset[str]:
+    """The regions that add events to the national holidays, in any type."""
+    source = config_pb2.Source(
+        country=country,
+        all_subdivisions=True,
+        categories=config.supported_categories(country),
+    )
+    occurrences = list(sources.occurrences(source, years))
+    national = {_event_key(o) for o in occurrences if not o.subdivision}
+    return frozenset(
+        o.subdivision
+        for o in occurrences
+        if o.subdivision and _event_key(o) not in national
+    )
+
+
+def _event_key(o: sources.Occurrence) -> tuple[str, datetime.date, str]:
+    """What makes an occurrence a distinct event within its type."""
+    return o.category, o.date, merge.normalize(o.name)
+
+
+def parse(
+    form: datastructures.MultiDict[str, str], today: datetime.date
+) -> config_pb2.Config:
     """Builds a validated config from submitted form fields.
 
     Raises:
@@ -265,7 +296,7 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         for index in indices
     }
     if drop := form.get("drop_region"):
-        _drop_region(by_index, drop)
+        _drop_region(by_index, drop, preview_years(today))
     if drop := form.get("drop_type"):
         _drop_type(by_index, drop)
     parsed.sources.extend(by_index.values())
@@ -273,18 +304,21 @@ def parse(form: datastructures.MultiDict[str, str]) -> config_pb2.Config:
         new = _new_source(added)
         if new not in parsed.sources:
             parsed.sources.append(new)
-    _drop_stale_hidden(parsed)
     config.validate(parsed)
+    _drop_stale_hidden(parsed, ics.years(today))
     return parsed
 
 
-def _drop_stale_hidden(parsed: config_pb2.Config) -> None:
-    """Forgets hidden holidays of sources that are no longer configured."""
-    configured = {
-        s.country or sources.RELIGION_PREFIX + s.religion
-        for s in parsed.sources
+def _drop_stale_hidden(parsed: config_pb2.Config, years: range) -> None:
+    """Forgets hidden holidays that the configured sources no longer have."""
+    if not parsed.hidden:
+        return
+    current = {
+        merge.hide_token(o)
+        for source in parsed.sources
+        for o in sources.occurrences(source, years)
     }
-    kept = [t for t in parsed.hidden if merge.hidden_source(t) in configured]
+    kept = [t for t in parsed.hidden if t in current]
     parsed.ClearField("hidden")
     parsed.hidden.extend(kept)
 
@@ -308,11 +342,17 @@ def _target(
     return by_index[index], part
 
 
-def _drop_region(by_index: dict[str, config_pb2.Source], value: str) -> None:
+def _drop_region(
+    by_index: dict[str, config_pb2.Source], value: str, years: range
+) -> None:
     source, region = _target(by_index, value)
     if source.all_subdivisions:
         source.all_subdivisions = False
-        source.subdivisions.extend(subdivision_names(source.country))
+        source.subdivisions.extend(
+            code
+            for code in subdivision_names(source.country)
+            if code in _contributing_regions(source.country, years)
+        )
     remaining = [code for code in source.subdivisions if code != region]
     source.ClearField("subdivisions")
     source.subdivisions.extend(remaining)
@@ -378,12 +418,18 @@ def _new_source(kind: str) -> config_pb2.Source:
 
 
 def views(
-    parsed: config_pb2.Config, events: list[merge.Event]
+    parsed: config_pb2.Config, events: list[merge.Event], years: range
 ) -> list[SourceView]:
-    """Builds the page's view of each source, given all its merged events."""
+    """Builds the page's view of each source.
+
+    Args:
+        parsed: The config.
+        events: Every merged event of `years`, hidden ones included.
+        years: The years that judge whether a region or type adds holidays.
+    """
     hidden = set(parsed.hidden)
     return [
-        _view(index, source, events, hidden)
+        _view(index, source, events, hidden, years)
         for index, source in enumerate(parsed.sources)
     ]
 
@@ -393,6 +439,7 @@ def _view(
     source: config_pb2.Source,
     events: list[merge.Event],
     hidden: set[str],
+    years: range,
 ) -> SourceView:
     if source.HasField("religion"):
         kind = sources.RELIGION_PREFIX + source.religion
@@ -408,7 +455,7 @@ def _view(
         )
     country = source.country
     label = sources.country_names()[country]
-    categories = set(source.categories) or {sources.DEFAULT_CATEGORY}
+    contributing = _contributing_regions(country, years)
     return SourceView(
         index=index,
         kind=country,
@@ -417,13 +464,48 @@ def _view(
         subdivisions=[
             Option(code, name, code in source.subdivisions)
             for code, name in subdivision_names(country).items()
+            if code in contributing or code in source.subdivisions
         ],
-        categories=[
-            Option(category, type_name(category), category in categories)
-            for category in config.supported_categories(country)
-        ],
+        categories=_type_options(source, years),
         notices=_notices(index, country, label, events, hidden),
     )
+
+
+def _type_options(source: config_pb2.Source, years: range) -> list[Option]:
+    """Lists the types that have holidays in the source's regions.
+
+    Types with identical holidays share one option, valued by the default type
+    if it is among them. A lone default type needs no choice, so it gets none.
+    Ticked types are always listed, so they can be unticked.
+    """
+    every = config.supported_categories(source.country)
+    probe = config_pb2.Source(
+        country=source.country,
+        subdivisions=source.subdivisions,
+        all_subdivisions=source.all_subdivisions,
+        categories=every,
+    )
+    found: dict[str, set[tuple[datetime.date, str]]] = {c: set() for c in every}
+    for o in sources.occurrences(probe, years):
+        found[o.category].add((o.date, merge.hide_token(o)))
+    selected = set(source.categories) or {sources.DEFAULT_CATEGORY}
+    groups: dict[frozenset[tuple[datetime.date, str]] | str, list[str]] = {}
+    for category, held in found.items():
+        if held or category in selected:
+            groups.setdefault(frozenset(held) or category, []).append(category)
+    options = []
+    for members in groups.values():
+        members.sort(key=lambda c: c != sources.DEFAULT_CATEGORY)
+        options.append(
+            Option(
+                members[0],
+                "/".join(map(type_name, members)),
+                any(c in selected for c in members),
+            )
+        )
+    if [o.value for o in options] == [sources.DEFAULT_CATEGORY]:
+        return []
+    return options
 
 
 def _notices(
