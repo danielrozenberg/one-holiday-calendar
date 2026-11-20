@@ -30,24 +30,31 @@ self.addEventListener("fetch", (event) => {
       caches.match(request).then((cached) => cached ?? fetch(request)),
     );
   } else if (request.mode === "navigate") {
-    event.respondWith(networkFirst(request));
+    event.respondWith(networkFirst(event));
   }
 });
 
-async function networkFirst(request) {
-  const cache = await caches.open(VERSION);
+async function networkFirst(event) {
+  const { request } = event;
   try {
     const response = await fetch(request);
-    if (response.ok) {
-      await cache.put(request, response.clone());
-      await trim(cache);
-    }
+    if (response.ok) event.waitUntil(cachePage(request.url));
     return response;
   } catch (error) {
-    const cached = await cache.match(request);
+    const cached = await caches.match(request.url);
     if (cached) return cached;
     throw error;
   }
+}
+
+// Caches a page with its own request: teeing the navigation's response would
+// pump its body through this worker, and the page would abort if it stopped.
+async function cachePage(url) {
+  const response = await fetch(url, { headers: { Accept: "text/html" } });
+  if (!response.ok) return;
+  const cache = await caches.open(VERSION);
+  await cache.put(url, response);
+  await trim(cache);
 }
 
 async function trim(cache) {

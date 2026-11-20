@@ -223,4 +223,7 @@ the choice into a plain `<select>`, which pages without JavaScript use directly.
 A service worker (`/sw.js`, rendered from `templates/sw.js`) serves the CSS and
 JS from cache and pages network-first, falling back to the last 20 cached pages
 offline. Static URLs carry `?v=<APP_VERSION>`, and the worker's cache is named
-after it, so any code or asset change replaces the cache.
+after it, so any code or asset change replaces the cache. The worker passes each page
+through untouched and caches it with a second request: copying the response
+would stream the page through the worker, and the page would stop loading
+if the browser stopped the worker.

@@ -189,6 +189,20 @@ export const tests = [
     },
   },
   {
+    name: "finishes loading a page when the service worker stops",
+    async run(page, check) {
+      await page.add("US");
+      await page.update(`document.querySelector("[data-all-regions]").click()`);
+      await page.evaluate("navigator.serviceWorker.ready.then(() => true)");
+      const url = await page.evaluate("location.href");
+      await page.send("ServiceWorker.enable");
+      await page.goto(url, {
+        onNavigated: () => page.send("ServiceWorker.stopAllWorkers"),
+      });
+      check("loaded", (await page.evaluate(names)) === "United States");
+    },
+  },
+  {
     name: "serves pages offline through the service worker",
     async run(page, check) {
       await page.add("CA");
