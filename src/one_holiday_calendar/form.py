@@ -177,11 +177,16 @@ def event_view(event: merge.Event, hidden: Collection[str] = ()) -> EventView:
         types=[
             TypeBadge(
                 _TYPE_LETTERS.get(category, category[:1].upper()),
-                category.replace("_", " "),
+                type_name(category),
             )
             for category in categories
         ],
     )
+
+
+def type_name(category: str) -> str:
+    """A holiday category's name as the page shows it, e.g. "Half day"."""
+    return category.replace("_", " ").capitalize()
 
 
 def representative(views: list[EventView]) -> EventView | None:
@@ -414,7 +419,7 @@ def _view(
             for code, name in subdivision_names(country).items()
         ],
         categories=[
-            Option(category, category.replace("_", " "), category in categories)
+            Option(category, type_name(category), category in categories)
             for category in config.supported_categories(country)
         ],
         notices=_notices(index, country, label, events, hidden),
@@ -482,7 +487,7 @@ def _notices(
                         f"Every {name} holiday from {label} is hidden.",
                         "drop_type",
                         f"{index}:{category}",
-                        f"Remove {name} holidays",
+                        f"Remove {type_name(category)} holidays",
                     )
                 )
     return notices

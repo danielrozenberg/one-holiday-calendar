@@ -80,7 +80,7 @@ def test_views_list_regions_and_types():
 
     assert view.label == "Canada"
     assert form.Option("ON", "Ontario") in view.subdivisions
-    assert form.Option("public", "public", True) in view.categories
+    assert form.Option("public", "Public", True) in view.categories
 
 
 def test_format_options():
@@ -155,7 +155,7 @@ def test_event_view():
     assert badge.flag == "\U0001f1e8\U0001f1e6"
     assert badge.regions == ["AB", "ON"]
     assert badge.label == "Canada: Alberta, Ontario"
-    assert view.types == [form.TypeBadge("P", "public")]
+    assert view.types == [form.TypeBadge("P", "Public")]
 
 
 def test_short_date():
